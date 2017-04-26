@@ -1,0 +1,10 @@
+package geos.def;
+
+import geos.core.ControllerCore;
+
+public class ModelRest extends ControllerCore{
+	// ESTA CLASE ES CREADA COMO OBJETO DE ALMACENAR MODELOS CREADOS
+	// EN FORMATO REST
+	// ES UNA CLASE VACIA QUE SE INSTANCIA DESDE EL KERNEL DEL FRAMEWORK
+	// USANDO LOS METODOS HEREDADOS POR REST
+}
