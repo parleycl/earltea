@@ -24,11 +24,11 @@ set = { "DB_TYPE",
 		"DB_MAX_POOL"}, 
 defaultTo = { 
 		"Oracle",
-		"172.30.21.26",
-		"GEOCGR",
-		"iOda7Piz",
-		"CGR1",
-		"1541",
+		"",
+		"",
+		"",
+		"",
+		"",
 		"5"
 })
 public class DatabasePool implements Process, PropertiesDepend {
