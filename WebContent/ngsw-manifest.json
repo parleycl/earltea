@@ -1,0 +1,30 @@
+{
+  "static": {
+    "urls": {
+      "/index.html": "79930499fd1c1db2b95655febc0a64f6fd321985",
+      "/css/main.css": "c161c67a424b464ff300a34d74b474e8e8aa2b99",
+      "/js/app.js": "48f6b7b8888c21c991ca038c961fce764cf170d8",
+      "/js/shims.js": "94d6d6fa75755a73717b2c5bdc95b83c2c568074",
+      "/assets/data.json": "4442de734b100da8d244b35d34a355dee4dd9618",
+      "/assets/svg/more.svg": "9838cd822e0f989a0befbd365365ee2751bbdebc",
+      "/assets/favicon/favicon-DEV.ico": "aa4fb0706ed367fb5c2fd6bd2b058c0dce8cc785",
+      "/assets/favicon/favicon-PROD.ico": "5d40a29d26398292f08a46b26f6788ec60f5f43e",
+      "/assets/data/icon.png": "5637e5f31480ab7086cc450a5a7daa3e8c59002b",
+      "/assets/img/LOGO-90.svg": "c86c8a058db39783525fdd17d713ac6ba4942e7d",
+      "/assets/img/back.jpg": "50e647811a888e79dd9883f407250f88742cf839",
+      "/app/features/map/cartografia.json": "1d77c7fa46c9d71dc4266e09378937d0b36ef32f"
+    }
+  },
+  "routing": {
+    "index": "/index.html",
+    "routes": {
+      "/": {
+        "prefix": false
+      }
+    }
+  },
+  "push": {
+    "showNotifications": true,
+    "backgroundOnly": false
+  }
+}
