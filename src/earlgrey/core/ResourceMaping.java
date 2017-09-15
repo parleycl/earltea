@@ -3,7 +3,6 @@ package earlgrey.core;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Field;
@@ -12,21 +11,17 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
-import org.jboss.vfs.*;
 
 import javax.servlet.ServletContext;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 
 import earlgrey.annotations.AddPropertie;
 import earlgrey.annotations.AddPropertieArray;
@@ -95,44 +90,35 @@ public class ResourceMaping {
 		this.MapControllers();
 		this.MapModels();
 		this.search_database_drivers();
-		
 	}
 	// MAPEO DE LOS ERRORES
 	private void MapError(){
 		log.Info("Mapeo de Errores: Iniciando mapeo de errores");
 		String packageName = "earlgrey.error";
 		URL root = Thread.currentThread().getContextClassLoader().getResource(packageName.replace(".", "/"));
-		try {
-			URLConnection conn = root.openConnection();
-			VirtualFile vf = (VirtualFile)conn.getContent();
-			File contentsFile = vf.getPhysicalFile();
-			File dir = contentsFile;
-			File[] files = dir.listFiles(new FilenameFilter() {
-			    public boolean accept(File dir, String name) {
-			        return name.endsWith(".class");
+		// Filter .class files.
+		File[] files = new File(root.getFile()).listFiles(new FilenameFilter() {
+		    public boolean accept(File dir, String name) {
+		        return name.endsWith(".class");
+		    }
+		});
+		// Find classes implementing ICommand.
+		for (File file : files) {
+		    String className = file.getName().replaceAll(".class$", "");
+			try {
+				Class<?> cls = Thread.currentThread().getContextClassLoader().loadClass(packageName + "." + className);
+			    if (ErrorBase.class.isAssignableFrom(cls)) {
+			       Field[] campos = cls.getFields();
+			       for(Field campo: campos){
+			    	   ErrorCode error = campo.getAnnotation(ErrorCode.class);
+			    	   ErrorDef reso = new ErrorDef(cls,error.code(),error.description());
+			    	   this.ErrorTable.put(String.valueOf(error.code()), reso);
+			       }
 			    }
-			});
-			// Find classes implementing ICommand.
-			for (File file : files) {
-			    String className = file.getName().replaceAll(".class$", "");
-				try {
-					Class<?> cls = Thread.currentThread().getContextClassLoader().loadClass(packageName + "." + className);
-				    if (ErrorBase.class.isAssignableFrom(cls)) {
-				       Field[] campos = cls.getFields();
-				       for(Field campo: campos){
-				    	   ErrorCode error = campo.getAnnotation(ErrorCode.class);
-				    	   ErrorDef reso = new ErrorDef(cls,error.code(),error.description());
-				    	   this.ErrorTable.put(String.valueOf(error.code()), reso);
-				       }
-				    }
-				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
 		}
 		//INFORMAMOS
 		log.Info("Mapeo de Errores: Proceso concluido con exito");
@@ -287,36 +273,23 @@ public class ResourceMaping {
 		log.Info("Mapeo de Packages: Iniciando mapeo de packages");
 		String packageName = "earlgrey";
 		URL root = Thread.currentThread().getContextClassLoader().getResource(packageName);
-		try {
-			URLConnection conn = root.openConnection();
-			VirtualFile vf = (VirtualFile)conn.getContent();
-			File contentsFile = vf.getPhysicalFile();
-			File dir = contentsFile;
-			File[] packages = dir.listFiles(new FilenameFilter() {
-			    public boolean accept(File dir, String name) {
-			    	return true;
-			    }
-			});
-			URL root2 = Thread.currentThread().getContextClassLoader().getResource(packagename);
-			URLConnection conn2 = root2.openConnection();
-			VirtualFile vf2 = (VirtualFile)conn.getContent();
-			File contentsFile2 = vf.getPhysicalFile();
-			File dir2 = contentsFile;
-			File[] packages_project = dir2.listFiles(new FilenameFilter() {
-			    public boolean accept(File dir, String name) {
-			    	return true;
-			    }
-			});
-			this.packages = new ArrayList<String>();
-			for(int i=0;i<packages.length;i++){
-				this.packages.add(packageName+"."+packages[i].getName()); 
-			}
-			for(int i=0;i<packages_project.length;i++){
-				this.packages.add(packagename+"."+packages_project[i].getName()); 
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		File[] packages = new File(root.getFile()).listFiles(new FilenameFilter() {
+		    public boolean accept(File dir, String name) {
+		    	return true;
+		    }
+		});
+		URL root2 = Thread.currentThread().getContextClassLoader().getResource(packagename);
+		File[] packages_project = new File(root2.getFile()).listFiles(new FilenameFilter() {
+		    public boolean accept(File dir, String name) {
+		    	return true;
+		    }
+		});
+		this.packages = new ArrayList<String>();
+		for(int i=0;i<packages.length;i++){
+			this.packages.add(packageName+"."+packages[i].getName()); 
+		}
+		for(int i=0;i<packages_project.length;i++){
+			this.packages.add(packagename+"."+packages_project[i].getName()); 
 		}
 		log.Info("Mapeo de Packages: Mapeo Finalizado");
 	}
@@ -325,25 +298,14 @@ public class ResourceMaping {
 		log.Info("Mapeo de JAR Files: Iniciando mapeo de paquetes JAR");
 		String packageName = "external";
 		URL root = Thread.currentThread().getContextClassLoader().getResource(packageName);
+		File[] packages = new File(root.getFile()).listFiles(new FilenameFilter() {
+		    public boolean accept(File dir, String name) {
+		    	return true;
+		    }
+		});
 		this.jar = new ArrayList<String>();
-		if(root != null){
-			try {
-				URLConnection conn = root.openConnection();
-				VirtualFile vf = (VirtualFile)conn.getContent();
-				File contentsFile = vf.getPhysicalFile();
-				File dir = contentsFile;
-				File[] packages = dir.listFiles(new FilenameFilter() {
-				    public boolean accept(File dir, String name) {
-				    	return true;
-				    }
-				});
-				for(int i=0;i<packages.length;i++){
-					this.jar.add(root+packages[i].getName()); 
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		for(int i=0;i<packages.length;i++){
+			this.jar.add(root+packages[i].getName()); 
 		}
 		log.Info("Mapeo de JAR Files Finalizado");
 	}
@@ -372,24 +334,14 @@ public class ResourceMaping {
 		for(int l=0;l<this.packages.size();l++){
 			String packageName = this.packages.get(l);
 			URL root = Thread.currentThread().getContextClassLoader().getResource(packageName.replace(".", "/"));
-			try {
-				URLConnection conn = root.openConnection();
-				VirtualFile vf = (VirtualFile)conn.getContent();
-				File contentsFile = vf.getPhysicalFile();
-				File dir = contentsFile;
-				File[] packages = dir.listFiles(new FilenameFilter() {
-				    public boolean accept(File dir, String name) {
-				    	return true;
-				    }
-				});
-				for(int i=0;i<packages.length;i++){
-					this.clases.add(packageName+"."+packages[i].getName());
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			File[] packages = new File(root.getFile()).listFiles(new FilenameFilter() {
+			    public boolean accept(File dir, String name) {
+			    	return true;
+			    }
+			});
+			for(int i=0;i<packages.length;i++){
+				this.clases.add(packageName+"."+packages[i].getName());
 			}
-			
 		}
 		log.Info("Mapeo de Clases: Mapeo Finalizado");
 	}

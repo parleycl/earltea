@@ -11,8 +11,6 @@ import earlgrey.database.Connector;
 import earlgrey.database.OracleConnector;
 import earlgrey.database.PostgresConnector;
 import earlgrey.error.Error800;
-import earlgrey.interfaces.PropertiesDepend;
-import earlgrey.interfaces.Process;
 
 @AddPropertieSet(name = "DB_CONFIG", 
 set = { "DB_TYPE",
@@ -24,14 +22,14 @@ set = { "DB_TYPE",
 		"DB_MAX_POOL"}, 
 defaultTo = { 
 		"Oracle",
-		"",
-		"",
-		"",
-		"",
-		"",
+		"172.30.21.172",
+		"GEOCGR",
+		"iOda7Piz",
+		"CGR1",
+		"1541",
 		"5"
 })
-public class DatabasePool implements Process, PropertiesDepend {
+public class DatabasePool {
 	private static DatabasePool instance = null;
 	private Properties prop;
 	private JSONObject config;
@@ -47,7 +45,6 @@ public class DatabasePool implements Process, PropertiesDepend {
 	}
 	public DatabasePool(){
 		instance = this;
-		Engine.getInstance().registerTask(this);
 		this.prop = Properties.getInstance();
 		this.log = new Logging(this.getClass().getName());
 		this.drivers = ResourceMaping.getInstance().getDatabaseDriverTable();
@@ -133,10 +130,5 @@ public class DatabasePool implements Process, PropertiesDepend {
 			}
 		}
 		return cone;
-	}
-	@Override
-	public void propertiesRestart() {
-		// TODO Auto-generated method stub
-		this.makeConnection();
 	}
 }

@@ -17,7 +17,7 @@ import earlgrey.core.HttpRequest;
 import earlgrey.core.HttpResponse;
 import earlgrey.core.ModelCore;
 
-@Console(description = "Controlador para manejar los usuarios del admin panel.", name = "Users", version = 1)
+@Console(description = "Controlador para manejar los usuarios del admin panel.", name = "Properties", version = 1)
 @Route(route = "/users")
 public class User extends ControllerCore{
 	//CONTROLADOR DE PRUEBA PARA EFECTUAR DESARROLLO DE LA PLATAFORMA.

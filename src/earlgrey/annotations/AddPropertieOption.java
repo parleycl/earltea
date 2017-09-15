@@ -12,5 +12,5 @@ import java.lang.annotation.Target;
 public @interface AddPropertieOption {
 	String name();
 	String[] option();
-	int defaultTo() default 0;
+	int defaultTo();
 }

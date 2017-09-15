@@ -12,6 +12,7 @@ import earlgrey.annotations.ModelJoin;
 /**
  * Servlet implementation class Servicie
  */
+@WebServlet("/console/*")
 public class AdminApi extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -21,6 +22,7 @@ public class AdminApi extends HttpServlet {
     public AdminApi() {
         super();
         // TODO Auto-generated constructor stub
+        System.out.println("dfdfd");
     }
 
 	/**

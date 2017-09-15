@@ -28,6 +28,7 @@ public class Rest extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		System.out.println("sds");
 		Gear engine = new Gear(request,response);
 		engine.get(false);
 	

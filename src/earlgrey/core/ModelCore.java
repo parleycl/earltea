@@ -51,19 +51,29 @@ public class ModelCore {
 	}
 	public ModelCore find() {
 		// SE PREPARAN LOS PARAMETROS
+		System.out.println("sdsd");
 		this.prepareParams();
+		System.out.println("sdsd1");
 		this.conector = DatabasePool.getInstance().getConector();
+		System.out.println("sdsd2");
 		if(conector != null){
 			this.mapFields();
+			System.out.println("sdsd3");
 			// BUSCAMOS EL NOMBRE DE LA TABLA
 			// EN ESTE SEGMENTO VA EL CODIGO DE LA CONSULTA
 			QueryBuilder q = new QueryBuilder(table,this);
+			System.out.println("sdsd4");
 			q.select(fields);
+			System.out.println("sdsd5");
 			q.where(prepare_fields);
+			System.out.println("sdsd6");
 			conector.prepare(q.getQuery());
+			System.out.println("sdsd7");
 			// PREPARAMOS LOS FIELDS
 			conector.complete(q.prepared(), q.prepared_list());
+			System.out.println("sdsd8");
 			this.set = conector.execute();
+			System.out.println("sdsd9");
 			// SE ACABA EL CODIGO DE LA CONSULTA
 			return this;
 		}

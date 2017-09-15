@@ -10,8 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.ArrayUtils;
 import org.json.JSONObject;
 
-import com.sun.mail.iap.Response;
-
 import earlgrey.core.HttpRequest;
 import earlgrey.core.Logging;
 import earlgrey.core.ModelCore;

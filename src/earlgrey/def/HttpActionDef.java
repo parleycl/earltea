@@ -4,12 +4,10 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Hashtable;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 
 import earlgrey.annotations.ParamOptional;
@@ -76,13 +74,6 @@ public class HttpActionDef implements Runnable, Process{
 		ParamRequire[] pa_re = this.route.metodo.getAnnotationsByType(ParamRequire.class);
 		for(int i=0; i<pa_re.length; i++){
 			if(!this.parametros.has(pa_re[i].name())){
-				return false;
-			}
-			if(pa_re[i].type() == int.class && !StringUtils.isNumeric(this.parametros.getString(pa_re[i].name()))){
-				return false;
-			}
-			Pattern redbl=Pattern.compile("[\\x00-\\x20]*[+-]?(((((\\p{Digit}+)(\\.)?((\\p{Digit}+)?)([eE][+-]?(\\p{Digit}+))?)|(\\.((\\p{Digit}+))([eE][+-]?(\\p{Digit}+))?)|(((0[xX](\\p{XDigit}+)(\\.)?)|(0[xX](\\p{XDigit}+)?(\\.)(\\p{XDigit}+)))[pP][+-]?(\\p{Digit}+)))[fFdD]?))[\\x00-\\x20]*");
-			if(pa_re[i].type() == double.class && !redbl.matcher(this.parametros.getString(pa_re[i].name())).matches()){
 				return false;
 			}
 		}

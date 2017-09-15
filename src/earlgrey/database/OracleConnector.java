@@ -228,7 +228,9 @@ public class OracleConnector implements Connector{
 		 try {
 			this.query = query;
 			this.prepared_fields = 1;
-			this.pstm  = (OraclePreparedStatement)this.con.prepareStatement(query);
+			System.out.println(query);
+			this.pstm  = (OraclePreparedStatement)this.con.prepareStatement("SELECT * FROM DUAL");
+			System.out.println(query);
 			return this.pstm;
 		} catch (SQLException e) {
 			System.out.println("IMPOSIBLE GENERAR STATMENT, ERROR DE CONSULTA: "+query+"\n\r"+e.getMessage());

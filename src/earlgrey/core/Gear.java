@@ -81,7 +81,7 @@ public class Gear {
 		JSONObject params = new JSONObject();
 		while(param.hasMoreElements()){
 			String name = param.nextElement();
-			params.put(name,this.request.getParameter(name));
+			params.put(name,this.request.getAttribute(name));
 		}
 		Router router = new Router();
 		RouteDef action = router.route(route);
@@ -119,6 +119,13 @@ public class Gear {
 			String name = param.nextElement();
 			params.put(name,this.request.getParameter(name));
 		}
+		Enumeration<String> enume = this.request.getHeaderNames();
+		while(enume.hasMoreElements()){
+			System.out.println(enume.nextElement());
+		}
+		System.out.println(this.request.getHeader("iv-groups"));
+		System.out.println(this.request.getHeader("iv-user"));
+		System.out.println(this.request.getHeader("iv-remote-address"));
 		Router router = new Router();
 		RouteDef action = router.route(route);
 		//DECIDIMOS LA ACTION
