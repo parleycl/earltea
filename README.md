@@ -24,7 +24,7 @@ Para la compilación y distribución del framework se utiliza la herramienta [Ap
 
 ```bash
 $ ant -p
-Buildfile: /home/sgonzalezvi/git/earlgrey/build.xml
+Buildfile: /home/user/git/earlgrey/build.xml
 
 Main targets:
 
@@ -41,11 +41,11 @@ Default target: dist
 $ ant compile
 $ ll build
 total 20K
-drwxrwxr-x  3 sgonzalezvi sgonzalezvi 4,0K jul  4 18:28 com
-drwxrwxr-x 15 sgonzalezvi sgonzalezvi 4,0K jul  4 18:28 earlgrey
-drwxrwxr-x  3 sgonzalezvi sgonzalezvi 4,0K jul  4 18:28 javax
-drwxrwxr-x  9 sgonzalezvi sgonzalezvi 4,0K jul  4 18:28 oracle
-drwxrwxr-x  6 sgonzalezvi sgonzalezvi 4,0K jul  4 18:28 org
+drwxrwxr-x  3 user user 4,0K jul  4 18:28 com
+drwxrwxr-x 15 user user 4,0K jul  4 18:28 earlgrey
+drwxrwxr-x  3 user user 4,0K jul  4 18:28 javax
+drwxrwxr-x  9 user user 4,0K jul  4 18:28 oracle
+drwxrwxr-x  6 user user 4,0K jul  4 18:28 org
 
 ```
 
@@ -55,6 +55,6 @@ drwxrwxr-x  6 sgonzalezvi sgonzalezvi 4,0K jul  4 18:28 org
 $ ant dist
 $ ll dist 
 total 5,6M
--rw-rw-r-- 1 sgonzalezvi sgonzalezvi 5,6M jul  4 18:28 earlgrey.jar
+-rw-rw-r-- 1 user user 5,6M jul  4 18:28 earlgrey-17.2.jar
 ```
 
