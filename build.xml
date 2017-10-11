@@ -1,0 +1,54 @@
+<project name="Earlgrey Framework" default="dist">
+    <!-- Global properties -->
+    <property name="build.dir" value="build"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="src.dir" value="src"/>
+    <property name="lib.dir" value="${src.dir}/META-INF/lib"/>
+
+    <!-- Classpath -->
+    <path id="classpath">
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+    </path>
+
+    <!-- Private Targets -->
+    <target name="getVersion">
+        <loadfile property="version_file" srcfile="VERSION" failonerror="false"/>
+        <property name="version" value="${version_file}"/>
+        <echo>Version: ${version_file}</echo>
+    </target>
+
+    <!-- Targets -->
+    <target name="clean" description="Clean up">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <target name="compile" description="Compile the source">
+        <mkdir dir="${build.dir}"/>
+        <javac 
+            srcdir="${src.dir}/earlgrey"
+            destdir="${build.dir}"
+            includeantruntime="false"
+            includeJavaRuntime="true"
+            classpathref="classpath"/>
+
+        <unzip dest="${build.dir}">
+            <fileset dir="${lib.dir}">
+                <include name="**/*.jar" />
+            </fileset>
+        </unzip>
+
+        <delete file="${build.dir}/COPYING" />
+        <delete file="${build.dir}/README" />
+        <delete dir="${build.dir}/META-INF" />
+    </target>
+
+    <target name="dist" depends="compile, getVersion" description="Generate the distribution">
+        <mkdir dir="${dist.dir}"/>
+        <jar destfile="${dist.dir}/earlgrey-${version}.jar" basedir="${build.dir}">
+            <manifest>
+                <attribute name="Manifest-Version" value="1.0"/>
+            </manifest>
+        </jar>
+    </target>
+</project>
