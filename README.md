@@ -8,7 +8,7 @@ client server architecture. Build apps with frontend frameworks like Angular and
 
 TO DO
 
-## Compilación y distribución
+## Compilation and distribution
 
 To compile and package this project you need to use Maven [Apache Maven](https://maven.apache.org/).
 
