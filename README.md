@@ -31,7 +31,7 @@ To compile and package this project you need to use Maven [Apache Maven](https:/
 mvn clean package
 ```
 
-### Using Earlgrey
+## Using Earlgrey
 
 To use Earlgrey only you need import the jar to your web project and start the Earlgrey Kernel in a Servlet listener in the contextInitialized event. The Earlgrey System automatically read the project structure and load the Earlgrey structures to implement a lightweight system based on services architecture with an admin console with hot configuration options.
 
