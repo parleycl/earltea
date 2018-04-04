@@ -67,6 +67,24 @@ public class Gear {
 			this.digest("DELETE");
 		}
 	}
+	public void patch(boolean console) {
+		this.verbose = "PATCH";
+		if(console){
+			this.digest_console("PATCH");
+		}
+		else{
+			this.digest("PATCH");
+		}
+	}
+	public void options(boolean console) {
+		this.verbose = "DELETE";
+		if(console){
+			this.digest_console("DELETE");
+		}
+		else{
+			this.digest("DELETE");
+		}
+	}
 	private void digest_console(String verbose){
 		Enumeration<String> param = this.request.getParameterNames();
 		String uri = this.request.getRequestURI();
@@ -207,6 +225,30 @@ public class Gear {
 				break;
 			case "PUT":
 				if(route.PUT){
+					HttpActionDef action = new HttpActionDef(route, this.request, this.response, params, this);
+					this.ID = engine.registerTask(action);
+					action.set_id(this.ID);
+					action.run();
+				}
+				else
+				{
+					this.response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+				}
+				break;
+			case "PATCH":
+				if(route.PATCH){
+					HttpActionDef action = new HttpActionDef(route, this.request, this.response, params, this);
+					this.ID = engine.registerTask(action);
+					action.set_id(this.ID);
+					action.run();
+				}
+				else
+				{
+					this.response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+				}
+				break;
+			case "OPTIONS":
+				if(route.OPTIONS){
 					HttpActionDef action = new HttpActionDef(route, this.request, this.response, params, this);
 					this.ID = engine.registerTask(action);
 					action.set_id(this.ID);

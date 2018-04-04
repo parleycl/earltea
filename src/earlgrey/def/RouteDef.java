@@ -33,6 +33,9 @@ public class RouteDef implements Cloneable {
 	public boolean GET;
 	public boolean PUT;
 	public boolean DELETE;
+	public boolean PATCH;
+	public boolean CORS;
+	public boolean OPTIONS;
 	public boolean ModelRest = false;
 	public Class<ModelCore> Model;
 	protected Logging log = new Logging(this.getClass().getName());
