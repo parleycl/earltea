@@ -33,12 +33,19 @@ import earlgrey.annotations.AddPropertieArray;
 import earlgrey.annotations.AddPropertieOption;
 import earlgrey.annotations.AddPropertieSet;
 import earlgrey.annotations.AddPropertieSetTemplate;
+import earlgrey.annotations.Blueprints;
+import earlgrey.annotations.CORS;
 import earlgrey.annotations.Console;
 import earlgrey.annotations.Controller;
 import earlgrey.annotations.ControllerAction;
+import earlgrey.annotations.DELETE;
 import earlgrey.annotations.DatabaseDriver;
 import earlgrey.annotations.ErrorCode;
+import earlgrey.annotations.GET;
 import earlgrey.annotations.Model;
+import earlgrey.annotations.PATCH;
+import earlgrey.annotations.POST;
+import earlgrey.annotations.PUT;
 import earlgrey.annotations.Policie;
 import earlgrey.annotations.Route;
 import earlgrey.database.Connector;
@@ -89,7 +96,6 @@ public class ResourceMaping {
 		this.mapFiles();
 		this.MapError();
 		this.MapPackages(packages);
-		this.MapJar();
 		this.loadJAR();
 		this.MapClases();
 		this.MapProperties();
@@ -106,7 +112,6 @@ public class ResourceMaping {
 		this.mapFiles();
 		this.MapError();
 		this.MapPackages();
-		this.MapJar();
 		this.loadJAR();
 		this.MapClases();
 		this.MapProperties();
@@ -162,16 +167,18 @@ public class ResourceMaping {
 						this.ControllerTable.put(controlador.name(), cls);
 						// BUSCAMOS UNA POSIBLE RUTA
 						Route ruta = cls.getAnnotation(Route.class);
-						if(ruta != null){
+						/*if(ruta != null){
 							String ruta_uri = ruta.route().trim();
 							if(ruta_uri.endsWith("/")) ruta_uri = ruta_uri.substring(0, (ruta_uri.length()-1));
 							if(ruta_uri.startsWith("/")) ruta_uri = ruta_uri.substring(1);
 							this.log.Info("Enrutando Controlador: "+ruta.route());
 							RouteDef router = this.MapRoute(ruta_uri, cls);
-							router.DELETE = controlador.DELETE();
-							router.GET = controlador.GET();
-							router.POST = controlador.POST();
-							router.PUT = controlador.PUT();
+							if(cls.getAnnotation(DELETE.class) != null) router.DELETE = true;
+							if(cls.getAnnotation(GET.class) != null) router.GET = true;
+							if(cls.getAnnotation(POST.class) != null) router.POST = true;
+							if(cls.getAnnotation(PUT.class) != null) router.PUT = true;
+							if(cls.getAnnotation(PATCH.class) != null) router.PATCH = true;
+							if(cls.getAnnotation(CORS.class) != null) router.CORS = true;
 							//BUSCAMOS POLICIES
 							Policie policie = cls.getAnnotation(Policie.class);
 							if(policie != null){
@@ -187,7 +194,7 @@ public class ResourceMaping {
 						else
 						{
 							this.log.Warning("El controlador no posee una ruta valida. Se ha declarado pero no es ruteable.", Error500.ROUTE_NOT_DECLARED);
-						}
+						}*/
 						//BUSCAMOS ACTIONS AL INTERIOR
 						Method[] metodos = cls.getDeclaredMethods();
 						for(int g=0;g<metodos.length;g++){
@@ -214,12 +221,28 @@ public class ResourceMaping {
 										if(ruta_uri_action.startsWith("/")) ruta_uri_action = ruta_uri_action.substring(1);
 										ruta_uri = ruta_uri + "/" + ruta_uri_action;
 									}
-									this.log.Info("Enrutando Controller Action: "+rutaAction.route());
 									RouteDef router = this.MapRoute(ruta_uri, cls, metodos[g]);
-									router.DELETE = action.DELETE();
-									router.GET = action.GET();
-									router.POST = action.POST();
-									router.PUT = action.PUT();
+									if(metodos[g].getAnnotation(DELETE.class) != null) {
+										this.log.Info("Enrutando Controller Action: DELETE "+ruta_uri);
+										router.DELETE = true;
+									}
+									if(metodos[g].getAnnotation(GET.class) != null) {
+										this.log.Info("Enrutando Controller Action: GET "+ruta_uri);
+										router.GET = true;
+									}
+									if(metodos[g].getAnnotation(POST.class) != null) {
+										this.log.Info("Enrutando Controller Action: POST "+ruta_uri);
+										router.POST = true;
+									}
+									if(metodos[g].getAnnotation(PUT.class) != null) {
+										this.log.Info("Enrutando Controller Action: PUT "+ruta_uri);
+										router.PUT = true;
+									}
+									if(metodos[g].getAnnotation(PATCH.class) != null) {
+										this.log.Info("Enrutando Controller Action: PATCH "+ruta_uri);
+										router.PATCH = true;
+									}
+									if(cls.getAnnotation(CORS.class) != null) router.CORS = true;
 									//BUSCAMOS POLICIES
 									Policie policie = metodos[g].getAnnotation(Policie.class);
 									if(policie != null){
@@ -344,35 +367,9 @@ public class ResourceMaping {
 		}*/
 		log.Info("Mapeo de Packages: Mapeo Finalizado");
 	}
-	// FUNCION PARA MAPEAR LOS JAR
-	private void MapJar() {
-		log.Info("Mapeo de JAR Files: Iniciando mapeo de paquetes JAR");
-		String packageName = "external";
-		URL root = Thread.currentThread().getContextClassLoader().getResource(packageName);
-		this.jar = new ArrayList<String>();
-		/*if(root != null){
-			try {
-				URLConnection conn = root.openConnection();
-				VirtualFile vf = (VirtualFile)conn.getContent();
-				File contentsFile = vf.getPhysicalFile();
-				File dir = contentsFile;
-				File[] packages = dir.listFiles(new FilenameFilter() {
-				    public boolean accept(File dir, String name) {
-				    	return true;
-				    }
-				});
-				for(int i=0;i<packages.length;i++){
-					this.jar.add(root+packages[i].getName()); 
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}*/
-		log.Info("Mapeo de JAR Files Finalizado");
-	}
 	// CARGAMOS LOS .JAR
 	private void loadJAR(){
+		this.jar = new ArrayList<String>();
 		URL[] jars = new URL[this.jar.size()];
 		for(int i=0; i<this.jar.size();i++){
 			try {
@@ -555,7 +552,8 @@ public class ResourceMaping {
 						// DE LO CONTRARIO NO TIENE SENTIDO EL QUE TENGA UNA RUTA ASIGNADA
 						// EN CASO DE QUE TENGA PROPIEDADES REST SE DEBE ASIGNAR UN OBJETO DE EJECUCIÓN PARA EL MODELO
 						// SI EL MODELO AUTOINSTANCIADO NO POSEE RUTA DAREMOS UN WARNING INFORMANDO
-						if(model.REST()){
+						Blueprints blueprints = cls.getAnnotation(Blueprints.class);
+						if(blueprints != null){
 							Route route = cls.getAnnotation(Route.class);
 							if(route != null){
 								this.log.Info("Enrutando Modelo RESTFULL: "+route.route());
@@ -568,6 +566,8 @@ public class ResourceMaping {
 								router.GET = true;
 								router.POST = true;
 								router.PUT = true;
+								router.PATCH = true;
+								if(cls.getAnnotation(CORS.class) != null) router.CORS = true;
 								router.Model = (Class<ModelCore> ) cls;
 								//BUSCAMOS POLICIES
 								Policie policie = cls.getAnnotation(Policie.class);
@@ -611,7 +611,7 @@ public class ResourceMaping {
 						this.ConsoleTable.put(controlador.name(), cls);
 						// BUSCAMOS UNA POSIBLE RUTA
 						Route ruta = cls.getAnnotation(Route.class);
-						if(ruta != null){
+						/*if(ruta != null){
 							String ruta_uri = ruta.route().trim();
 							if(ruta_uri.endsWith("/")) ruta_uri = ruta_uri.substring(0, (ruta_uri.length()-1));
 							if(ruta_uri.startsWith("/")) ruta_uri = ruta_uri.substring(1);
@@ -637,7 +637,7 @@ public class ResourceMaping {
 						else
 						{
 							this.log.Warning("El controlador de consola no posee una ruta valida. Se ha declarado pero no es ruteable.", Error500.ROUTE_NOT_DECLARED);
-						}
+						}*/
 						//BUSCAMOS ACTIONS AL INTERIOR
 						Method[] metodos = cls.getDeclaredMethods();
 						for(int g=0;g<metodos.length;g++){
@@ -666,12 +666,28 @@ public class ResourceMaping {
 										if(ruta_uri_action.startsWith("/")) ruta_uri_action = ruta_uri_action.substring(1);
 										ruta_uri = ruta_uri + "/" + ruta_uri_action;
 									}
-									this.log.Info("Enrutando Console Controller Action: "+ruta_uri);
 									RouteDef router = this.MapRoute(ruta_uri, cls, metodos[g]);
-									router.DELETE = action.DELETE();
-									router.GET = action.GET();
-									router.POST = action.POST();
-									router.PUT = action.PUT();
+									if(metodos[g].getAnnotation(DELETE.class) != null) {
+										this.log.Info("Enrutando Controller Action: DELETE "+ruta_uri);
+										router.DELETE = true;
+									}
+									if(metodos[g].getAnnotation(GET.class) != null) {
+										this.log.Info("Enrutando Controller Action: GET "+ruta_uri);
+										router.GET = true;
+									}
+									if(metodos[g].getAnnotation(POST.class) != null) {
+										this.log.Info("Enrutando Controller Action: POST "+ruta_uri);
+										router.POST = true;
+									}
+									if(metodos[g].getAnnotation(PUT.class) != null) {
+										this.log.Info("Enrutando Controller Action: PUT "+ruta_uri);
+										router.PUT = true;
+									}
+									if(metodos[g].getAnnotation(PATCH.class) != null) {
+										this.log.Info("Enrutando Controller Action: PATCH "+ruta_uri);
+										router.PATCH = true;
+									}
+									if(cls.getAnnotation(CORS.class) != null) router.CORS = true;
 									//BUSCAMOS POLICIES
 									Policie policie = metodos[g].getAnnotation(Policie.class);
 									if(policie != null){
