@@ -17,12 +17,12 @@ To compile and package this project you need to use Maven [Apache Maven](https:/
 - Linux Debian Distribution
    
    ```bash
-   $ sudo apt-get install ant
+   $ sudo apt-get install mvn
    ```
 - Linux Redhat Distribution
    
    ```bash
-   $ sudo yum install ant
+   $ sudo yum install mvn
    ```
 
 ### Compiling and Packaging Earlgrey
