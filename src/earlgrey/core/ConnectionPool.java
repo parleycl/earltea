@@ -17,7 +17,7 @@ import earlgrey.interfaces.Process;
 public class ConnectionPool implements Process, PropertiesDepend {
 	private static ConnectionPool instance = null;
 	private Properties prop;
-	private JSONObject config;
+	private PropertieSet config;
 	private ArrayList<Connector> free_conectors = new ArrayList<Connector>();
 	private ArrayList<Connector> connections = new ArrayList<Connector>();
 	private Logging log;
@@ -43,26 +43,29 @@ public class ConnectionPool implements Process, PropertiesDepend {
 		String username = this.config.getString("DB_USERNAME");
 		String password = this.config.getString("DB_PASSWORD");
 		String source = this.config.getString("DB_SOURCE");
-		String port = this.config.getString("DB_PORT");
+		String port = this.config.getNumber("DB_PORT");
+		String demand = this.config.getOption("DB_ON_DEMAND");
 		int pool = Integer.valueOf(this.config.getString("DB_MAX_POOL"));
 		try {
-			String type = this.config.getString("DB_TYPE");
+			String type = this.config.getOption("DB_TYPE");
 			if(drivers.containsKey(type)){
 				Class<?> clase = drivers.get(type);
 				Connector driver = (Connector) clase.newInstance();
-				this.log.Info("Cargando Datasource "+this.datasource);
-				this.log.Info("Cargando Driver "+type);
-				driver.setCredencial(username, password, source, host, port);
-				if(driver.TestConector()){
-					this.driver = driver;
-					this.log.Info("Estableciendo pool de conexión en: "+pool);
-					for(int h=0;h<pool;h++){
-						Connector driver_pool = (Connector) clase.newInstance();
-						driver_pool.setCredencial(username, password, source, host, port);
-						driver_pool.setPool(this);
-						this.free_conectors.add(driver_pool);
+				if(!host.equals("") || !username.equals("") || !password.equals("") || !source.equals("")) {
+					this.log.Info("Cargando Datasource "+this.datasource);
+					this.log.Info("Cargando Driver "+type);
+					driver.setCredencial(username, password, source, host, port);
+					if(driver.TestConector()){
+						this.driver = driver;
+						this.log.Info("Estableciendo pool de conexión en: "+pool);
+						for(int h=0;h<pool;h++){
+							Connector driver_pool = (Connector) clase.newInstance();
+							driver_pool.setCredencial(username, password, source, host, port);
+							driver_pool.setPool(this);
+							this.free_conectors.add(driver_pool);
+						}
+						return;
 					}
-					return;
 				}
 			}
 			// SI NO SE ACOGE A NIGUNO DE LOS DRIVERS ESTABLECIDOS SE INICIA GEOS SIN DRIVER PERSISTENTE.

@@ -434,11 +434,11 @@ public class Properties {
 		}
 		return null;
 	}
-	public JSONObject getPropertieSet(String propname){
+	public PropertieSet getPropertieSet(String propname){
 		if(this.target.has(propname)){
 			if(this.target.getJSONObject(propname).getString("type").equals("set")){
 				int selected = this.target.getJSONObject(propname).getInt("value");
-				return this.target.getJSONObject(propname).getJSONArray("sets").getJSONObject(selected);
+				return new PropertieSet(this.target.getJSONObject(propname).getJSONArray("sets").getJSONObject(selected));
 			}
 			else{
 				this.log.Warning("La propertie ("+propname+") especificada no corresponde al tipo llamado. Tipo declarado "+this.target.getJSONObject(propname).getString("type"), Error60.PROPERTIE_TYPE_INCORRECT);

@@ -24,15 +24,17 @@ set = { "DB_TYPE",
 		"DB_PASSWORD", 
 		"DB_SOURCE", 
 		"DB_PORT", 
-		"DB_MAX_POOL"}, 
+		"DB_MAX_POOL",
+		"DB_ON_DEMAND"}, 
 defaultTo = { 
-		"",
-		"",
-		"",
-		"",
-		"",
-		"",
-		""
+		"[OPTION]||ORACLE/MYSQL/POSTGRES||ORACLE",
+		"[STRING]('')",
+		"[STRING]('')",
+		"[STRING]('')",
+		"[STRING]('')",
+		"[STRING]('')",
+		"[STRING]('')",
+		"[OPTION]||YES/NO||NO"
 })
 public class DatasourceManager implements Process, PropertiesDepend {
 	private Hashtable<String,ConnectionPool> sources;
@@ -55,8 +57,8 @@ public class DatasourceManager implements Process, PropertiesDepend {
 	}
 	private void makeDataSources(){
 		/*CREAMOS EL DATASOURCE POR DEFECTO*/
-		this.registerConnection("DEFAULTDB");
-		this.sources.put("DEFAULTDB", new ConnectionPool("DEFAULTDB"));
+		//this.registerConnection("DEFAULTDB");
+		//this.sources.put("DEFAULTDB", new ConnectionPool("DEFAULTDB"));
 		/*ITERAMOS EL RESTO DE LOS ELEMENTOS*/
 		Hashtable<String, Class<?>> model = ResourceMaping.getInstance().getModelTable();
 		Enumeration<String> keys = model.keys();
