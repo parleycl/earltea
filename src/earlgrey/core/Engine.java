@@ -1,10 +1,12 @@
 package earlgrey.core;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Hashtable;
 
 import earlgrey.def.HttpActionDef;
 import earlgrey.interfaces.Process;
+import earlgrey.interfaces.PropertiesDepend;
 
 public class Engine {
 	// ADMINISTRADOR DE PETICIONES Y TAREAS
@@ -15,6 +17,7 @@ public class Engine {
 	// FREE AND PROCESS COUNTER
 	ArrayList<Integer> space = new ArrayList();
 	int process_counter = 1;
+	private boolean restarting = false;
 	//METODO DE INSTANCIA
 	public static synchronized Engine getInstance(){
 		if(instance == null) instance = new Engine();
@@ -45,5 +48,33 @@ public class Engine {
 		p = null;
 		this.process.remove(ID);
 		space.add(ID);
+	}
+	public void restartByProperties(){
+		this.log.Info("Reiniciando procesos dependientes de properties.");
+		this.restarting = true;
+		Enumeration<Integer> en = this.process.keys();
+		while(en.hasMoreElements()){
+			Integer index = en.nextElement();
+			if(PropertiesDepend.class.isAssignableFrom(this.process.get(index).getClass())){
+				PropertiesDepend prop = (PropertiesDepend)this.process.get(index);
+				prop.propertiesRestart();
+			}
+		}
+		this.log.Info("Reinicio finalizado.");
+		this.restarting = false;
+	}
+	public boolean getRestartStatus(){
+		return this.restarting;
+	}
+	public void registerTask(Process prop){
+		if(this.space.size() == 0){
+			int process = this.process_counter++;
+			this.process.put(process, prop);
+		}
+		else{
+			int process = this.space.get(0);
+			this.space.remove(0);
+			this.process.put(process, prop);
+		}
 	}
 }

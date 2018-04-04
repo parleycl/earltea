@@ -1,16 +1,20 @@
 package earlgrey.types;
 
 
+import java.sql.Clob;
+import java.sql.SQLException;
+
 import org.json.JSONArray;
 import org.json.JSONML;
 import org.json.JSONObject;
 
 import earlgrey.utils.ConversorCoordenadas;
+import oracle.jdbc.OraclePreparedStatement;
 
-public class CENTROID extends Type{
+public class CentroideType implements IType{
 	String gml;
 	JSONObject coord = null;
-	public CENTROID(String GML){
+	public CentroideType(String GML){
 		super();
 		this.gml = GML;
 	}
@@ -41,12 +45,25 @@ public class CENTROID extends Type{
 			coord = new JSONObject();
 			return coord.toString();
 		}
+	}
+	public static String GetSQLQuery(Object field, Object table) {
+		// TODO Auto-generated method stub
+		return "SDO_UTIL.TO_GMLGEOMETRY("+(String)table+"."+(String)field+") AS "+(String)field;
+	}
+	public static Object GetSQLResult(Object GML) {
+		// TODO Auto-generated method stub
+		Clob result = (Clob)GML;
+		String data = "";
+		try {
+			data = result.getSubString(1, ((Long)result.length()).intValue());
 			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return new CentroideType(data);
+	}
+	public static void SQLPrepareField(OraclePreparedStatement pstm, int number){
 		
 	}
-	public static String GetSQL(String field) {
-		// TODO Auto-generated method stub
-		return "SDO_UTIL.TO_GMLGEOMETRY("+field+") AS "+field;
-	}
-
 }

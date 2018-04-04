@@ -1,5 +1,7 @@
 package earlgrey.types;
 
+import java.sql.Clob;
+import java.sql.SQLException;
 import java.util.Hashtable;
 
 import org.json.JSONArray;
@@ -8,11 +10,13 @@ import org.json.JSONObject;
 
 import earlgrey.utils.ConversorCoordenadas;
 import earlgrey.utils.GeoAlgorithm;
+import oracle.jdbc.OraclePreparedStatement;
 
-public class GEOM extends Type{
+public class GeometriaType implements IType{
 	String gml;
 	JSONArray[] coord = null;
-	public GEOM(String GML){
+	private final double TOLERANCIA = 0.001;
+	public GeometriaType(String GML){
 		super();
 		this.gml = GML;
 	}
@@ -47,8 +51,7 @@ public class GEOM extends Type{
 					coords.put(new Double(cor[1]));
 					coords.put(new Double(cor[0]));
 				}
-				
-				coord[i] = GeoAlgorithm.cluster_simplfication(coords,0.005);
+				coord[i] = GeoAlgorithm.cluster_simplfication(coords,TOLERANCIA);
 			}
 		}
 		else if(poly.getString("tagName").equals("gml:Polygon")){
@@ -68,8 +71,7 @@ public class GEOM extends Type{
 				coords.put(new Double(cor[1]));
 				coords.put(new Double(cor[0]));
 			}
-			
-			coord[0] = GeoAlgorithm.cluster_simplfication(coords,0.005);
+			coord[0] = GeoAlgorithm.cluster_simplfication(coords,TOLERANCIA);
 		}
 	}
 	public JSONArray[] getCoord() {
@@ -81,7 +83,9 @@ public class GEOM extends Type{
 		{
 			this.GMLCONVERT();
 			JSONArray r = new JSONArray(coord);
-			return r.toString();
+			JSONObject geometria = new JSONObject();
+			geometria.put("coordinates", r);
+			return geometria.toString();
 		}
 		else
 		{
@@ -89,13 +93,29 @@ public class GEOM extends Type{
 			return r.toString();
 		}
 	}
-	public static String GetSQL(String field) {
-		// TODO Auto-generated method stub
-		return "SDO_UTIL.TO_GMLGEOMETRY("+field+") AS "+field;
-	}
 	public void Simplify(double tolerance){
 		for(int i=0; i < coord.length;i++){
 			coord[i] = GeoAlgorithm.cluster_simplfication(coord[i],tolerance);
 		}
+	}
+	public static String GetSQLQuery(Object field, Object table) {
+		// TODO Auto-generated method stub
+		return "SDO_UTIL.TO_GMLGEOMETRY("+(String)table+"."+(String)field+") AS "+(String)field;
+	}
+	public static Object GetSQLResult(Object GML) {
+		// TODO Auto-generated method stub
+		Clob result = (Clob)GML;
+		String data = "";
+		try {
+			data = result.getSubString(1, ((Long)result.length()).intValue());
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return new GeometriaType(data);
+	}
+	public static void SQLPrepareField(OraclePreparedStatement pstm, int number){
+		
 	}
 }

@@ -1,5 +1,6 @@
 package earlgrey.core;
 
+import java.io.BufferedReader;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -7,6 +8,8 @@ import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.HTTP;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import earlgrey.core.Logging;
@@ -64,6 +67,24 @@ public class Gear {
 			this.digest("DELETE");
 		}
 	}
+	public void patch(boolean console) {
+		this.verbose = "PATCH";
+		if(console){
+			this.digest_console("PATCH");
+		}
+		else{
+			this.digest("PATCH");
+		}
+	}
+	public void options(boolean console) {
+		this.verbose = "DELETE";
+		if(console){
+			this.digest_console("DELETE");
+		}
+		else{
+			this.digest("DELETE");
+		}
+	}
 	private void digest_console(String verbose){
 		Enumeration<String> param = this.request.getParameterNames();
 		String uri = this.request.getRequestURI();
@@ -78,11 +99,8 @@ public class Gear {
 		// MODIFICAMOS LA RUTA PARA INDICAR QUE ES CONSOLA
 		route = "admin/console/"+route;
 		// EXTRAEMOS LOS PARAMETROS
-		JSONObject params = new JSONObject();
-		while(param.hasMoreElements()){
-			String name = param.nextElement();
-			params.put(name,this.request.getAttribute(name));
-		}
+		JSONObject params = this.extract_params();
+		
 		Router router = new Router();
 		RouteDef action = router.route(route);
 		if(action == null){
@@ -102,7 +120,6 @@ public class Gear {
 		}
 	}
 	private void digest(String verbose){
-		Enumeration<String> param = this.request.getParameterNames();
 		String uri = this.request.getRequestURI();
 		// VERIFICAMOS QUE SEA UNA QUERY VALIDA
 		// EN CASO CONTRARIIO RETORNAMOS UN ERROR 404
@@ -114,18 +131,9 @@ public class Gear {
 		String route = uri.substring((uri.indexOf("/api/")+5));
 		// MODIFICAMOS LA RUTA PARA INDICAR QUE ES CONSOLA
 		// EXTRAEMOS LOS PARAMETROS
-		JSONObject params = new JSONObject();
-		while(param.hasMoreElements()){
-			String name = param.nextElement();
-			params.put(name,this.request.getParameter(name));
-		}
-		Enumeration<String> enume = this.request.getHeaderNames();
-		while(enume.hasMoreElements()){
-			System.out.println(enume.nextElement());
-		}
-		System.out.println(this.request.getHeader("iv-groups"));
-		System.out.println(this.request.getHeader("iv-user"));
-		System.out.println(this.request.getHeader("iv-remote-address"));
+		
+		JSONObject params = this.extract_params();
+		
 		Router router = new Router();
 		RouteDef action = router.route(route);
 		//DECIDIMOS LA ACTION
@@ -144,6 +152,37 @@ public class Gear {
 			}
 			this.doAction(action, params);
 		}
+	}
+	private JSONObject extract_params() {
+		String content = this.request.getHeader("Content-Type");
+		JSONObject params = new JSONObject();
+		if(content != null && content.equals("application/json")){
+			StringBuffer jb = new StringBuffer();
+			String line = null;
+			try {
+			    BufferedReader reader = this.request.getReader();
+			    while ((line = reader.readLine()) != null)
+			      jb.append(line);
+			} catch (Exception e) {
+				this.response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			}
+			
+			try {
+			    params =  new JSONObject(jb.toString());
+			} catch (JSONException e) {
+			    // crash and burn
+				this.response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			}
+		}
+		else
+		{
+			Enumeration<String> param = this.request.getParameterNames();
+			while(param.hasMoreElements()){
+				String name = param.nextElement();
+				params.put(name,this.request.getParameter(name));
+			}
+		}
+		return params;
 	}
 	private void doAction(RouteDef route, JSONObject params){
 		Engine engine = Engine.getInstance();
@@ -186,6 +225,30 @@ public class Gear {
 				break;
 			case "PUT":
 				if(route.PUT){
+					HttpActionDef action = new HttpActionDef(route, this.request, this.response, params, this);
+					this.ID = engine.registerTask(action);
+					action.set_id(this.ID);
+					action.run();
+				}
+				else
+				{
+					this.response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+				}
+				break;
+			case "PATCH":
+				if(route.PATCH){
+					HttpActionDef action = new HttpActionDef(route, this.request, this.response, params, this);
+					this.ID = engine.registerTask(action);
+					action.set_id(this.ID);
+					action.run();
+				}
+				else
+				{
+					this.response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+				}
+				break;
+			case "OPTIONS":
+				if(route.OPTIONS){
 					HttpActionDef action = new HttpActionDef(route, this.request, this.response, params, this);
 					this.ID = engine.registerTask(action);
 					action.set_id(this.ID);

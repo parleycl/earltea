@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.ArrayUtils;
 import org.json.JSONObject;
 
+import com.sun.mail.iap.Response;
+
 import earlgrey.core.HttpRequest;
 import earlgrey.core.Logging;
 import earlgrey.core.ModelCore;
@@ -31,6 +33,9 @@ public class RouteDef implements Cloneable {
 	public boolean GET;
 	public boolean PUT;
 	public boolean DELETE;
+	public boolean PATCH;
+	public boolean CORS;
+	public boolean OPTIONS;
 	public boolean ModelRest = false;
 	public Class<ModelCore> Model;
 	protected Logging log = new Logging(this.getClass().getName());
@@ -69,10 +74,20 @@ public class RouteDef implements Cloneable {
 		if(route.length > 0){
 			while(route.length > 0){
 				if(route[0].startsWith(":")){
-					String param = route[0].substring(1, (route[0].length()-1));
-					this.ParamByUri.add(param);
-					route = ArrayUtils.remove(route,0);
-					continue;
+					String param = route[0].substring(1, (route[0].length()));
+					String key = "{"+param+"}";
+					this.ParamByUri.add(key);
+					if(RouteTable.containsKey(key)){
+						RouteDef router = this.RouteTable.get(key);
+						route = ArrayUtils.remove(route,0);
+						return router.digest_route(route,clase);
+					}
+					else {
+						RouteDef router = new RouteDef(key);
+						this.RouteTable.put(key, router);
+						route = ArrayUtils.remove(route,0);
+						return router.digest_route(route, clase);
+					}
 				}
 				else
 				{
@@ -102,10 +117,20 @@ public class RouteDef implements Cloneable {
 		if(route.length > 0){
 			while(route.length > 0){
 				if(route[0].startsWith(":")){
-					String param = route[0].substring(1, (route[0].length()-1));
-					this.ParamByUri.add(param);
-					route = ArrayUtils.remove(route,0);
-					continue;
+					String param = route[0].substring(1, (route[0].length()));
+					String key = "{"+param+"}";
+					this.ParamByUri.add(key);
+					if(RouteTable.containsKey(key)){
+						RouteDef router = this.RouteTable.get(key);
+						route = ArrayUtils.remove(route,0);
+						return router.digest_route(route,clase, metodo);
+					}
+					else {
+						RouteDef router = new RouteDef(key);
+						this.RouteTable.put(key, router);
+						route = ArrayUtils.remove(route,0);
+						return router.digest_route(route, clase, metodo);
+					}
 				}
 				else
 				{
@@ -140,8 +165,8 @@ public class RouteDef implements Cloneable {
 	protected Object clone() throws CloneNotSupportedException {
         return super.clone();
     }
-	public RouteDef route(String[] route){
-		JSONObject params = new JSONObject();
+	public RouteDef route(String[] route, JSONObject params){		
+		if(params == null) params = new JSONObject();
 		Method metodo = null;
 		int param_counter = 0;
 		if(route.length > 0){
@@ -149,7 +174,7 @@ public class RouteDef implements Cloneable {
 				if(RouteTable.containsKey(route[0])){
 					RouteDef router = this.RouteTable.get(route[0]);
 					route = ArrayUtils.remove(route,0);
-					return router.route(route);
+					return router.route(route, params);
 				}
 				else {
 					// BUSCAMOS UN METODO DENTRO DE LA CLASE EN CASO DE SER UN ENDPOINT
@@ -161,14 +186,18 @@ public class RouteDef implements Cloneable {
 								metodo = met[k];
 							}
 						}
-						route = ArrayUtils.remove(route,0);
-						continue;
+						if(metodo != null) {
+							route = ArrayUtils.remove(route,0);
+							continue;
+						}
 					}
 					// EN CASO CONTRARIO INTENTAMOS SABER SI SON PARAMETROS
 					if(this.ParamByUri.size() > param_counter){
-						params.put(this.ParamByUri.get(param_counter++), route[0]);
+						String pam = this.ParamByUri.get(param_counter++);
+						params.put(pam.substring(1,pam.length()-1), route[0]);
+						RouteDef router = this.RouteTable.get(pam);
 						route = ArrayUtils.remove(route,0);
-						continue;
+						return router.route(route, params);
 					}
 					else
 					{

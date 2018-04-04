@@ -12,7 +12,6 @@ import earlgrey.annotations.ModelJoin;
 /**
  * Servlet implementation class Servicie
  */
-@WebServlet("/console/*")
 public class AdminApi extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -22,7 +21,6 @@ public class AdminApi extends HttpServlet {
     public AdminApi() {
         super();
         // TODO Auto-generated constructor stub
-        System.out.println("dfdfd");
     }
 
 	/**
@@ -46,5 +44,15 @@ public class AdminApi extends HttpServlet {
 		// TODO Auto-generated method stub
 		Gear engine = new Gear(request,response);
 		engine.put(true);
+	}
+	@Override
+	protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "*");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+        response.setHeader("Access-Control-Max-Age", "86400");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+		super.doOptions(request, response);
 	}
 }

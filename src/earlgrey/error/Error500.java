@@ -21,4 +21,6 @@ public class Error500 extends ErrorBase{
 	public static int HTTP_RENDER_ERROR = 508;
 	@ErrorCode(description="El metodo no se puede invocar con los elementos standard, asegurese que esta bien declarado como metodo publico estatico y recibiendo como parametro request y response.", code=509)
 	public static int METHOD_INVOCATION_ERROR = 509;
+	@ErrorCode(description="Existio un error al procesar el filtro de la llamada http.", code=510)
+	public static int CHAIN_FILTER_ERROR = 510;
 }

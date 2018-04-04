@@ -1,9 +1,14 @@
 package earlgrey.annotations;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Repeatable;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD, ElementType.TYPE})
 @Repeatable(ModelJoins.class)
 public @interface ModelJoin {
-	String table();
 	String field();
-	String relation();
+	Class model();
 }

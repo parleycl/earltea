@@ -1,6 +1,9 @@
 package earlgrey.core;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -14,25 +17,42 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import earlgrey.annotations.Model;
+import earlgrey.annotations.ModelField;
+import earlgrey.annotations.ModelJoin;
+import earlgrey.annotations.ModelRelation;
+import earlgrey.annotations.PrimaryKey;
 import earlgrey.database.Connector;
 import earlgrey.database.QueryBuilder;
-import earlgrey.types.CENTROID;
-import earlgrey.types.GEOM;
+import earlgrey.def.RelationDef;
+import earlgrey.error.Error500;
+import earlgrey.error.Error70;
+import earlgrey.error.Error800;
+import earlgrey.types.IType;
 
 public class ModelCore {
 	protected ResultSet set;
 	protected Object result;
 	protected Class<?> model;
 	protected String table;
+	protected String datasource;
 	protected Connector conector;
+	protected Field primaryKey;
 	protected Hashtable<String,Field> fields = new Hashtable<String,Field>();
+	protected Hashtable<String,RelationDef> relation = new Hashtable<String,RelationDef>();
+	protected Hashtable<String,RelationDef> join = new Hashtable<String,RelationDef>();
 	protected Hashtable<String,Field> prepare_fields = new Hashtable<String,Field>();
+	protected ArrayList<String> where_field = new ArrayList<String>();
+	protected boolean transaction;
+	protected static Hashtable<String,Connector> conector_transaction = new Hashtable<String,Connector>();
+	// LOGGING
+	private Logging log = new Logging(this.getClass().getName());
 	//PARTIMOS CON EL METODO FIND
 	public ModelCore(){
 		this.model = this.getClass();
 		this.mapFields();
 		Model modelo = this.getClass().getAnnotation(Model.class);
 		this.table = modelo.tableName();
+		this.datasource = modelo.datasource();
 	}
 	public static ModelCore Find(JSONObject query, Class<?> clase){
 		try {
@@ -49,31 +69,74 @@ public class ModelCore {
 		if(query != null) this.transformParams(query);
 		return this.find();
 	}
+	public ModelCore findOne(JSONObject query){
+		if(query != null) this.transformParams(query);
+		return this.findOne();
+	}
 	public ModelCore find() {
 		// SE PREPARAN LOS PARAMETROS
-		System.out.println("sdsd");
 		this.prepareParams();
-		System.out.println("sdsd1");
-		this.conector = DatabasePool.getInstance().getConector();
-		System.out.println("sdsd2");
+		this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
 		if(conector != null){
 			this.mapFields();
-			System.out.println("sdsd3");
 			// BUSCAMOS EL NOMBRE DE LA TABLA
 			// EN ESTE SEGMENTO VA EL CODIGO DE LA CONSULTA
 			QueryBuilder q = new QueryBuilder(table,this);
-			System.out.println("sdsd4");
-			q.select(fields);
-			System.out.println("sdsd5");
+			q.select(fields, this.relation);
+			q.join(this.join);
 			q.where(prepare_fields);
-			System.out.println("sdsd6");
-			conector.prepare(q.getQuery());
-			System.out.println("sdsd7");
+			q.s_where(this.where_field);
+			q.makeConditional();
+			conector.prepare(q.getQuery(), this.primaryKey);
 			// PREPARAMOS LOS FIELDS
-			conector.complete(q.prepared(), q.prepared_list());
-			System.out.println("sdsd8");
+			conector.complete(q.prepared(), q.prepared_list(), q.prepared_match(), q.prepared_match_list());
 			this.set = conector.execute();
-			System.out.println("sdsd9");
+			// SE ACABA EL CODIGO DE LA CONSULTA
+			return this;
+		}
+		return null;
+	}
+	public ModelCore match() {
+		// SE PREPARAN LOS PARAMETROS
+		this.prepareParams();
+		this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
+		if(conector != null){
+			this.mapFields();
+			// BUSCAMOS EL NOMBRE DE LA TABLA
+			// EN ESTE SEGMENTO VA EL CODIGO DE LA CONSULTA
+			QueryBuilder q = new QueryBuilder(table,this);
+			q.select(fields, this.relation);
+			q.join(this.join);
+			q.match(prepare_fields);
+			q.s_where(this.where_field);
+			q.makeConditional();
+			conector.prepare(q.getQuery(), this.primaryKey);
+			// PREPARAMOS LOS FIELDS
+			conector.complete(q.prepared(), q.prepared_list(), q.prepared_match(), q.prepared_match_list());
+			this.set = conector.execute();
+			// SE ACABA EL CODIGO DE LA CONSULTA
+			return this;
+		}
+		return null;
+	}
+	public ModelCore findOne() {
+		// SE PREPARAN LOS PARAMETROS
+		this.prepareParams();
+		this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
+		if(conector != null){
+			this.mapFields();
+			// BUSCAMOS EL NOMBRE DE LA TABLA
+			// EN ESTE SEGMENTO VA EL CODIGO DE LA CONSULTA
+			QueryBuilder q = new QueryBuilder(table,this);
+			q.select(fields, this.relation);
+			q.where(prepare_fields);
+			q.s_where(this.where_field);
+			q.one();
+			q.makeConditional();
+			conector.prepare(q.getQuery(), this.primaryKey);
+			// PREPARAMOS LOS FIELDS
+			conector.complete(q.prepared(), q.prepared_list(), q.prepared_match(), q.prepared_match_list());
+			this.set = conector.execute();
 			// SE ACABA EL CODIGO DE LA CONSULTA
 			return this;
 		}
@@ -93,7 +156,7 @@ public class ModelCore {
 	public int count() {
 		// SE PREPARAN LOS PARAMETROS
 		this.prepareParams();
-		this.conector = DatabasePool.getInstance().getConector();
+		this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
 		if(conector != null){
 			this.mapFields();
 			// BUSCAMOS EL NOMBRE DE LA TABLA
@@ -101,9 +164,11 @@ public class ModelCore {
 			QueryBuilder q = new QueryBuilder(table,this);
 			q.count();
 			q.where(prepare_fields);
-			conector.prepare(q.getQuery());
+			q.s_where(this.where_field);
+			q.makeConditional();
+			conector.prepare(q.getQuery(), this.primaryKey);
 			// PREPARAMOS LOS FIELDS
-			conector.complete(q.prepared(), q.prepared_list());
+			conector.complete(q.prepared(), q.prepared_list(), q.prepared_match(), q.prepared_match_list());
 			this.set = conector.execute();
 			// SE ACABA EL CODIGO DE LA CONSULTA
 			try {
@@ -142,19 +207,77 @@ public class ModelCore {
 					else if(campo.getType().equals(String.class)){
 						campo.set(m, set.getString(llave));
 					}
-					else if(campo.getType().equals(GEOM.class)){
-						campo.set(m, new GEOM(set.getString(llave)));
+					else if(IType.class.isAssignableFrom(campo.getType())){
+						try {
+							Method inv = campo.getType().getMethod("GetSQLResult", Object.class);
+							campo.set(m, inv.invoke(null, set.getObject(llave)));
+						} catch (NoSuchMethodException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (SecurityException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IllegalArgumentException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (InvocationTargetException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
-					else if(campo.getType().equals(CENTROID.class)){
-						campo.set(m, new CENTROID(set.getString(llave)));
+				}
+				Enumeration<String> r_keys = relation.keys();
+				while(r_keys.hasMoreElements()){
+					String llave = r_keys.nextElement();
+					Field campo = relation.get(llave).field;
+					if(campo.getType().equals(int.class) || campo.getType().equals(Integer.class)){
+						campo.set(m, set.getInt(llave));
+					}
+					else if(campo.getType().equals(float.class) || campo.getType().equals(Float.class)){
+						campo.set(m, set.getFloat(llave));
+					}
+					else if(campo.getType().equals(double.class) || campo.getType().equals(Double.class)){
+						campo.set(m, set.getDouble(llave));
+					}
+					else if(campo.getType().equals(String.class)){
+						campo.set(m, set.getString(llave));
+					}
+					else if(IType.class.isAssignableFrom(campo.getType())){
+						try {
+							Method inv = campo.getType().getMethod("GetSQLResult", Object.class);
+							campo.set(m, inv.invoke(null, set.getObject(llave)));
+						} catch (NoSuchMethodException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (SecurityException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IllegalArgumentException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (InvocationTargetException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IllegalAccessException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 				}
 				retorno.add(m);
 			}
 		} catch (SQLException | InstantiationException | IllegalAccessException e) {
 			// TODO Auto-generated catch block
+			StackTraceElement[] stack = e.getStackTrace();
+			this.log.Critic(e.getCause().getMessage(), 510);
+			this.log.Critic("Ha existido un error al examinar el juego de datos SQL", Error500.METHOD_INVOCATION_ERROR);
+			for(int i=0;i<stack.length;i++){
+				this.log.Critic(stack[i].toString(), Error800.DATABASE_SQL_SET);
+			}
 			conector.close();
-			e.printStackTrace();
 		}
 		this.conector.close();
 		return retorno;
@@ -183,11 +306,70 @@ public class ModelCore {
 					else if(campo.getType().equals(String.class)){
 						objeto.put(llave, set.getString(llave));
 					}
-					else if(campo.getType().equals(GEOM.class)){
-						objeto.put(llave, new GEOM(set.getString(llave)));
+					else if(IType.class.isAssignableFrom(campo.getType())){
+						try {
+							Method inv = campo.getType().getMethod("GetSQLResult", Object.class);
+							objeto.put(llave, inv.invoke(null, set.getObject(llave)));
+						} catch (NoSuchMethodException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (SecurityException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IllegalArgumentException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (InvocationTargetException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IllegalAccessException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
-					else if(campo.getType().equals(CENTROID.class)){
-						objeto.put(llave, new CENTROID(set.getString(llave)));
+				}
+				Enumeration<String> r_keys = relation.keys();
+				while(r_keys.hasMoreElements()){
+					String llave = r_keys.nextElement();
+					Field campo = relation.get(llave).field;
+					if(campo.getType().equals(int.class) || campo.getType().equals(Integer.class)){
+						objeto.put(llave, set.getInt(llave));
+					}
+					else if(campo.getType().equals(float.class) || campo.getType().equals(Float.class)){
+						objeto.put(llave, set.getFloat(llave));
+					}
+					else if(campo.getType().equals(double.class) || campo.getType().equals(Double.class)){
+						objeto.put(llave, set.getDouble(llave));
+					}
+					else if(campo.getType().equals(String.class)){
+						objeto.put(llave, set.getString(llave));
+					}
+					else if(IType.class.isAssignableFrom(campo.getType())){
+						try {
+							Method inv = campo.getType().getMethod("GetSQLResult", Object.class);
+							objeto.put(llave, inv.invoke(null, set.getObject(llave)));
+						} catch (NoSuchMethodException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (SecurityException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IllegalArgumentException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (InvocationTargetException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (JSONException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IllegalAccessException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 				}
 				retorno.put(objeto);
@@ -211,6 +393,10 @@ public class ModelCore {
 	public JSONArray getJSON(int limit){
 		return this.getJSON(0,limit);
 	}
+	public JSONObject getOneJSON(){
+		JSONArray result = this.getJSON(0,1);
+		return result.getJSONObject(0);
+	}
 	private void prepareParams(){
 		Field[] campos = this.getClass().getFields();
 		for(int i=0;i<campos.length;i++){
@@ -230,52 +416,235 @@ public class ModelCore {
 		while(llaves.hasNext()){
 			String llave = llaves.next();
 			try {
-				Field campo = this.getClass().getField(llave);
-				if(campo.getType().equals(int.class) || campo.getType().equals(Integer.class)){
-					campo.set(this, query.getInt(llave));
-				}
-				else if(campo.getType().equals(float.class) || campo.getType().equals(Float.class)){
-					campo.set(this, query.getDouble(llave));
-				}
-				else if(campo.getType().equals(double.class) || campo.getType().equals(Double.class)){
-					campo.set(this, query.getDouble(llave));
-				}
-				else if(campo.getType().equals(String.class)){
-					campo.set(this, query.getString(llave));
+				if(query.has(llave)){
+					Field campo = this.getClass().getField(llave);
+					if(campo.getType().equals(int.class) || campo.getType().equals(Integer.class)){
+						campo.set(this, query.getInt(llave));
+					}
+					else if(campo.getType().equals(float.class) || campo.getType().equals(Float.class)){
+						campo.set(this, query.getDouble(llave));
+					}
+					else if(campo.getType().equals(double.class) || campo.getType().equals(Double.class)){
+						campo.set(this, query.getDouble(llave));
+					}
+					else if(campo.getType().equals(String.class)){
+						campo.set(this, query.getString(llave));
+					}
 				}
 			} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException | JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
 		}
 	}
 	// INCLUIMOS LOS OTROS METODOS
-	public static ModelCore findOne(){
-		return null;
-	}
-	public static ModelCore match(){
+	public static ModelCore FindOne(){
 		return null;
 	}
 	public static void update(){
 		
 	}
-	public static void insert(){
-		
+	public boolean insert(){
+		this.prepareParams();
+		if(conector_transaction.contains(this.datasource)){
+			this.conector = conector_transaction.get(this.datasource);
+            this.transaction = true;
+		}
+		else
+		{
+			this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
+		}
+		if(conector != null){
+			this.mapNNFields();
+			// BUSCAMOS EL NOMBRE DE LA TABLA
+			// EN ESTE SEGMENTO VA EL CODIGO DE LA CONSULTA
+			QueryBuilder q = new QueryBuilder(table,this);
+			q.insert(fields, this.relation);
+			q.setField(prepare_fields);
+			conector.prepare(q.getQuery(), this.primaryKey);
+			// PREPARAMOS LOS FIELDS
+			conector.complete(q.prepared(), q.prepared_list());
+			if(!conector.executeUpdate()){
+				// HANDLEREAMOS EL INSERT
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+	public int getLastId(){
+		// SE ACABA EL CODIGO DE LA CONSULTA
+		try {
+			return conector.getLastInsertedId();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return -1;
 	}
 	public static void delete(){
 		
 	}
-	public static void transaction(){
-		
+	public static void openTransaction(Class clase){
+		Model modelo = (Model) clase.getAnnotation(Model.class);
+		String datasource = modelo.datasource();
+		if(!conector_transaction.containsKey(datasource)){
+			Connector con = DatasourceManager.getInstance().getConnection(datasource).getConector();
+			con.startTransaction();
+			conector_transaction.put(datasource, con);
+		}
+	}
+	public static boolean finishTransaction(Class clase) {
+		Model modelo = (Model) clase.getAnnotation(Model.class);
+		String datasource = modelo.datasource();
+		if(!conector_transaction.containsKey(datasource)){
+			Connector con = conector_transaction.get(datasource);
+			conector_transaction.remove(datasource);
+			boolean resultado = con.finishTransaction();
+			con.closeTransaction();
+			con.close();
+			return resultado;
+		}
+		return false;
+	}
+	public static boolean finishAllTransaction() {
+		Enumeration<String> keys = conector_transaction.keys();
+		ArrayList<Connector> conectores = new ArrayList<Connector>();
+		while(keys.hasMoreElements()){
+			String key = keys.nextElement();
+			Connector con = conector_transaction.get(key);
+			if(con.finishTransaction()){
+				conectores.add(con);
+			}
+			else
+			{
+				for(int i=0; i<conectores.size(); i++){
+					Connector con_rollback = conectores.get(i);
+					con_rollback.rollback();
+					con.close();
+				}
+				return false;
+			}
+		}
+		// Finiquitamos las transacciones dejandolas en true autocommit
+		for(int i=0; i<conectores.size(); i++){
+			Connector con = conectores.get(i);
+			con.closeTransaction();
+			con.close();
+		}
+		return true;
 	}
 	private void mapFields(){
+		this.fields = new Hashtable<String,Field>();
 		Field[] field_array = model.getFields();
 		for(int i=0;i<field_array.length;i++){
-			this.fields.put(field_array[i].getName(), field_array[i]);
+			Annotation[] anotaciones = field_array[i].getDeclaredAnnotations();
+			boolean field = false;
+			boolean relation = false;
+			for(int l=0; l<anotaciones.length;l++){
+				try{
+					if(PrimaryKey.class.isAssignableFrom(anotaciones[l].getClass())){
+						if(this.primaryKey != null) {
+							if(this.primaryKey.getName() != field_array[i].getName()) throw new Exception("No se puede declarar mas de una llave primaria");
+						}
+						this.primaryKey = field_array[i];
+					}
+					else if(ModelField.class.isAssignableFrom(anotaciones[l].getClass())){
+						if(relation) throw new Exception("No se puede declarar un campo como ModelField si previamente fue declarado como ModelRelation");
+						this.fields.put(field_array[i].getName(), field_array[i]);
+						field = true;
+					}
+					else if(ModelRelation.class.isAssignableFrom(anotaciones[l].getClass())){
+						if(field) throw new Exception("No se puede declarar un campo como ModelRelation si previamente fue declarado como ModelField");
+						ModelRelation relacion = (ModelRelation) anotaciones[l];
+						this.relation.put(field_array[i].getName(), new RelationDef(field_array[i], relacion.model()));
+						relation = true;
+					}
+					else if(ModelJoin.class.isAssignableFrom(anotaciones[l].getClass())){
+						ModelJoin join = (ModelJoin) anotaciones[l];
+						this.join.put(field_array[i].getName(), new RelationDef(field_array[i], join.field(), join.model()));
+					}
+				}
+				catch(Exception e){
+					StackTraceElement[] stack = e.getCause().getStackTrace();
+					this.log.Critic("Ha existido un error al establecer el modelo de datos", Error70.FIELD_OVERLAYED_DEFINITION);
+					this.log.Critic("Cause: "+e.getCause().getMessage(), Error70.FIELD_OVERLAYED_DEFINITION);
+					this.log.Critic("Cause: ", Error70.FIELD_OVERLAYED_DEFINITION);
+					this.log.Critic("Localized Message: "+e.getLocalizedMessage(), Error70.FIELD_OVERLAYED_DEFINITION);
+					this.log.Critic("Message:"+e.getMessage(), Error70.FIELD_OVERLAYED_DEFINITION);
+					this.log.Critic("-------------------- STACK --------------------", Error70.FIELD_OVERLAYED_DEFINITION);
+					for(int k=0;k<stack.length;k++){
+						this.log.Critic(stack[k].toString(), Error70.FIELD_OVERLAYED_DEFINITION);
+					}
+				}
+				
+			}
+		}
+	}
+	private void mapNNFields() {
+		this.fields = new Hashtable<String,Field>();
+		Field[] field_array = model.getFields();
+		for(int i=0;i<field_array.length;i++){
+			Annotation[] anotaciones = field_array[i].getDeclaredAnnotations();
+			boolean field = false;
+			boolean relation = false;
+			for(int l=0; l<anotaciones.length;l++){
+				try{
+					if(PrimaryKey.class.isAssignableFrom(anotaciones[l].getClass())){
+						if(this.primaryKey != null) {
+							if(this.primaryKey.getName() != field_array[i].getName()) throw new Exception("No se puede declarar mas de una llave primaria");
+						}
+						this.primaryKey = field_array[i];
+					}
+					else if(ModelField.class.isAssignableFrom(anotaciones[l].getClass())){
+						if(relation) throw new Exception("No se puede declarar un campo como ModelField si previamente fue declarado como ModelRelation");
+						if(field_array[i].get(this) != null){
+							this.fields.put(field_array[i].getName(), field_array[i]);
+							field = true;
+						}
+					}
+					else if(ModelRelation.class.isAssignableFrom(anotaciones[l].getClass())){
+						if(field) throw new Exception("No se puede declarar un campo como ModelRelation si previamente fue declarado como ModelField");
+						ModelRelation relacion = (ModelRelation) anotaciones[l];
+						if(field_array[i].get(this) != null){
+							this.relation.put(field_array[i].getName(), new RelationDef(field_array[i], relacion.model()));
+							relation = true;
+						}
+					}
+					else if(ModelJoin.class.isAssignableFrom(anotaciones[l].getClass())){
+						ModelJoin join = (ModelJoin) anotaciones[l];
+						if(field_array[i].get(this) != null){
+							this.join.put(field_array[i].getName(), new RelationDef(field_array[i], join.field(), join.model()));
+						}
+					}
+				}
+				catch(Exception e){
+					StackTraceElement[] stack = e.getCause().getStackTrace();
+					this.log.Critic("Ha existido un error al establecer el modelo de datos", Error70.FIELD_OVERLAYED_DEFINITION);
+					this.log.Critic("Cause: "+e.getCause().getMessage(), Error70.FIELD_OVERLAYED_DEFINITION);
+					this.log.Critic("Cause: ", Error70.FIELD_OVERLAYED_DEFINITION);
+					this.log.Critic("Localized Message: "+e.getLocalizedMessage(), Error70.FIELD_OVERLAYED_DEFINITION);
+					this.log.Critic("Message:"+e.getMessage(), Error70.FIELD_OVERLAYED_DEFINITION);
+					this.log.Critic("-------------------- STACK --------------------", Error70.FIELD_OVERLAYED_DEFINITION);
+					for(int k=0;k<stack.length;k++){
+						this.log.Critic(stack[k].toString(), Error70.FIELD_OVERLAYED_DEFINITION);
+					}
+				}
+			}
 		}
 	}
 	public void finalize() {
 	    this.conector.close();
 	}
+	public void mayorOrEqual(String string, String from) {
+		// TODO Auto-generated method stub
+		
+	}
+	public void minorOrEqual(String string, String from) {
+		// TODO Auto-generated method stub
+	}
+	public void where(String key, String operator, String value){
+		this.where_field.add(key+" "+operator+" "+value);
+	}
+	
 }

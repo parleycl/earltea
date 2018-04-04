@@ -2,6 +2,8 @@ package earlgrey.database;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -13,12 +15,15 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import org.json.JSONException;
+
 import earlgrey.annotations.DatabaseDriver;
-import earlgrey.core.DatabasePool;
+import earlgrey.core.ConnectionPool;
 import earlgrey.core.Logging;
 import earlgrey.core.ModelCore;
 import earlgrey.core.ResourceMaping;
 import earlgrey.error.Error800;
+import earlgrey.types.IType;
 import oracle.jdbc.OraclePreparedStatement;
 
 @DatabaseDriver(type="SQL", name="Oracle")
@@ -31,7 +36,7 @@ public class OracleConnector implements Connector{
 	private ResultSet rset;
 	private String query;
 	private Logging log;
-	private DatabasePool Pool;
+	private ConnectionPool Pool;
 	private int prepared_fields = 1;
 	private int conected = 0;
 	//DECLARAMOS LOS CONSTRUCTORES
@@ -47,22 +52,20 @@ public class OracleConnector implements Connector{
 				Driver driver = (Driver) Class.forName("oracle.jdbc.driver.OracleDriver", true, ResourceMaping.getInstance().getJARClassLoader()).newInstance();
 				DriverManager.registerDriver(new DelegatingDriver(driver));
 				this.con = DriverManager.getConnection(
-				"jdbc:oracle:thin:@"+this.host+":"+this.port+":"+this.db, this.user,
+				"jdbc:oracle:thin:@"+this.host+":"+this.port+"/"+this.db, this.user,
 				this.password);
 				this.stmt = this.con.createStatement();
 			}
 			catch(Exception e){
-				this.Pool.closeConnection(this);
-				System.out.println("Existe un error al conectar con la base de datos - ERROR: 01");
-				System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------");
-				System.out.println("Host --> " + this.host);
-				System.out.println("Port --> " + this.port);
-				System.out.println("Db   --> " + this.db);
-				System.out.println("User --> " + this.user);
-				System.out.println("Pass --> " + this.password);
-				System.out.println("============================================================================================================================================================");
-				e.printStackTrace();
-				System.out.println("------------------------------------------------------------------------------------------------------------------------------------------------------------");
+				try {
+					this.log.Info("Probado Source como SSID.");
+					this.con = DriverManager.getConnection(
+							"jdbc:oracle:thin:@"+this.host+":"+this.port+":"+this.db, this.user,
+							this.password);
+					this.stmt = this.con.createStatement();
+				} catch (SQLException e1) {
+					this.log.Critic(e.getMessage(), Error800.DATABASE_CONNECT_ERROR);
+				}
 			}
 		}
 		else
@@ -150,6 +153,7 @@ public class OracleConnector implements Connector{
 		}
 	}
 	public void close(){
+		//System.out.println("Cerrando conector Oracle");
 		try
 		{
 			this.closeStmt();
@@ -206,14 +210,25 @@ public class OracleConnector implements Connector{
 		try {
 			int timeout = DriverManager.getLoginTimeout();
 			DriverManager.setLoginTimeout(2);
+			this.log.Info("Probado Source como servicio.");
 			connection = DriverManager.getConnection(
-					"jdbc:oracle:thin:@"+this.host+":"+this.port+":"+this.db, this.user,
+					"jdbc:oracle:thin:@"+this.host+":"+this.port+"/"+this.db, this.user,
 					this.password);
 			connection.close();
 			DriverManager.setLoginTimeout(timeout);
 		} catch (SQLException e) {
-			this.log.Critic(e.getMessage(), Error800.DATABASE_CONNECT_ERROR);
-			return false;
+			try {
+				this.log.Info("Probado Source como SSID.");
+				int timeout = DriverManager.getLoginTimeout();
+				DriverManager.setLoginTimeout(2);
+				connection = DriverManager.getConnection(
+						"jdbc:oracle:thin:@"+this.host+":"+this.port+":"+this.db, this.user,
+						this.password);
+				connection.close();
+			} catch (SQLException e1) {
+				this.log.Critic(e.getMessage(), Error800.DATABASE_CONNECT_ERROR);
+				return false;
+			}
 		}
 		if (connection != null) {
 			this.log.Info("Oracle Driver: Conexión exitosa.");
@@ -224,13 +239,17 @@ public class OracleConnector implements Connector{
 		}
 	}
 	// NUEVAS FUNCIONES
-	public OraclePreparedStatement prepare(String query){
+	public OraclePreparedStatement prepare(String query, Field primarykey){
 		 try {
 			this.query = query;
 			this.prepared_fields = 1;
-			System.out.println(query);
-			this.pstm  = (OraclePreparedStatement)this.con.prepareStatement("SELECT * FROM DUAL");
-			System.out.println(query);
+			if(primarykey != null){
+				this.pstm  = (OraclePreparedStatement)this.con.prepareStatement(query, new String[] {primarykey.getName()});
+			}
+			else
+			{
+				this.pstm  = (OraclePreparedStatement)this.con.prepareStatement(query);
+			}
 			return this.pstm;
 		} catch (SQLException e) {
 			System.out.println("IMPOSIBLE GENERAR STATMENT, ERROR DE CONSULTA: "+query+"\n\r"+e.getMessage());
@@ -265,11 +284,11 @@ public class OracleConnector implements Connector{
 		this.port = port;
 	}
 	@Override
-	public void setPool(DatabasePool pool) {
+	public void setPool(ConnectionPool pool) {
 		this.Pool = pool;
 	}
 	@Override
-	public void complete(Hashtable<Field, Object> prepare_fields, ArrayList<Field> arrayList) {
+	public void complete(Hashtable<Field, Object> prepare_fields, ArrayList<Field> arrayList, Hashtable<Field, Object> prepare_match_fields, ArrayList<Field> prepare_match_List) {
 		// TODO Auto-generated method stub
 		for(int i=0;i<arrayList.size();i++){
 			Field campo = arrayList.get(i);
@@ -305,10 +324,215 @@ public class OracleConnector implements Connector{
 					e.printStackTrace();
 				}
 			}
-			else
-			{
-				System.out.println("tipo especial");
+			else if(IType.class.isAssignableFrom(campo.getType())){
+				try {
+					Method inv = campo.getType().getMethod("SQLPrepareField", OraclePreparedStatement.class, Integer.class);
+					inv.invoke(null, this.pstm, this.prepared_fields++);
+				} catch (NoSuchMethodException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SecurityException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
+		for(int i=0;i<prepare_match_List.size();i++){
+			Field campo = prepare_match_List.get(i);
+			if(campo.getType().equals(int.class) || campo.getType().equals(Integer.class)){
+				try {
+					this.pstm.setInt(this.prepared_fields++, (Integer)prepare_match_fields.get(campo));
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else if(campo.getType().equals(float.class) || campo.getType().equals(Float.class)){
+				try {
+					this.pstm.setFloat(this.prepared_fields++, (Float)prepare_match_fields.get(campo));
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else if(campo.getType().equals(double.class) || campo.getType().equals(Double.class)){
+				try {
+					this.pstm.setDouble(this.prepared_fields++, (Double)prepare_match_fields.get(campo));
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else if(campo.getType().equals(String.class)){
+				try {
+					this.pstm.setString(this.prepared_fields++, "%"+(String)prepare_match_fields.get(campo)+"%");
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else if(IType.class.isAssignableFrom(campo.getType())){
+				try {
+					Method inv = campo.getType().getMethod("SQLPrepareField", OraclePreparedStatement.class, Integer.class);
+					inv.invoke(null, this.pstm, this.prepared_fields++);
+				} catch (NoSuchMethodException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SecurityException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	@Override
+	public void startTransaction() {
+		// TODO Auto-generated method stub
+		try {
+			this.con.setAutoCommit(false);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	@Override
+	public boolean finishTransaction() {
+		// TODO Auto-generated method stub
+		try {
+			this.con.commit();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			return false;
+		}
+		return true;
+	}
+	@Override
+	public void rollback() {
+		// TODO Auto-generated method stub
+		try {
+			this.con.rollback();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	@Override
+	public boolean executeUpdate() {
+		try{
+			 pstm.executeUpdate();
+			 return true;
+		}
+		catch(Exception e){
+			System.out.println("Consulta erronea: "+e.getMessage());
+		}
+		return false;
+	}
+	@Override
+	public void closeTransaction() {
+		// TODO Auto-generated method stub
+		try {
+			this.con.setAutoCommit(true);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	@Override
+	public void complete(Hashtable<Field, Object> prepare_fields, ArrayList<Field> arrayList) {
+		// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
+		for(int i=0;i<arrayList.size();i++){
+			Field campo = arrayList.get(i);
+			if(campo.getType().equals(int.class) || campo.getType().equals(Integer.class)){
+				try {
+					this.pstm.setInt(this.prepared_fields++, (Integer)prepare_fields.get(campo));
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else if(campo.getType().equals(float.class) || campo.getType().equals(Float.class)){
+				try {
+					this.pstm.setFloat(this.prepared_fields++, (Float)prepare_fields.get(campo));
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else if(campo.getType().equals(double.class) || campo.getType().equals(Double.class)){
+				try {
+					this.pstm.setDouble(this.prepared_fields++, (Double)prepare_fields.get(campo));
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else if(campo.getType().equals(String.class)){
+				try {
+					this.pstm.setString(this.prepared_fields++, (String)prepare_fields.get(campo));
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else if(IType.class.isAssignableFrom(campo.getType())){
+				try {
+					Method inv = campo.getType().getMethod("SQLPrepareField", OraclePreparedStatement.class, Integer.class);
+					inv.invoke(null, this.pstm, this.prepared_fields++);
+				} catch (NoSuchMethodException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SecurityException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	@Override
+	public int getLastInsertedId() throws SQLException {
+		// TODO Auto-generated method stub
+		ResultSet rs = this.pstm.getGeneratedKeys();
+		if (rs.next()){
+		    // The generated id
+		    return rs.getInt(1);
+		}
+		return -1;
 	}
 }

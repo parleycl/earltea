@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Hashtable;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 
 import earlgrey.annotations.ParamOptional;
@@ -76,6 +78,13 @@ public class HttpActionDef implements Runnable, Process{
 			if(!this.parametros.has(pa_re[i].name())){
 				return false;
 			}
+			if(pa_re[i].type() == int.class && !StringUtils.isNumeric(this.parametros.getString(pa_re[i].name()))){
+				return false;
+			}
+			Pattern redbl=Pattern.compile("[\\x00-\\x20]*[+-]?(((((\\p{Digit}+)(\\.)?((\\p{Digit}+)?)([eE][+-]?(\\p{Digit}+))?)|(\\.((\\p{Digit}+))([eE][+-]?(\\p{Digit}+))?)|(((0[xX](\\p{XDigit}+)(\\.)?)|(0[xX](\\p{XDigit}+)?(\\.)(\\p{XDigit}+)))[pP][+-]?(\\p{Digit}+)))[fFdD]?))[\\x00-\\x20]*");
+			if(pa_re[i].type() == double.class && !redbl.matcher(this.parametros.getString(pa_re[i].name())).matches()){
+				return false;
+			}
 		}
 		return true;
 	}
@@ -91,9 +100,16 @@ public class HttpActionDef implements Runnable, Process{
 		try {
 			metodo.invoke(null, request,response);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
+			StackTraceElement[] stack = e.getCause().getStackTrace();
 			this.log.Critic("Ha existido un error en la llamada del metodo "+metodo.getName(), Error500.METHOD_INVOCATION_ERROR);
+			this.log.Critic("Cause: "+e.getCause().getMessage(), Error500.METHOD_INVOCATION_ERROR);
+			this.log.Critic("Cause: ", Error500.METHOD_INVOCATION_ERROR);
+			this.log.Critic("Localized Message: "+e.getLocalizedMessage(), Error500.METHOD_INVOCATION_ERROR);
+			this.log.Critic("Message:"+e.getMessage(), Error500.METHOD_INVOCATION_ERROR);
+			this.log.Critic("-------------------- STACK --------------------", Error500.METHOD_INVOCATION_ERROR);
+			for(int i=0;i<stack.length;i++){
+				this.log.Critic(stack[i].toString(), Error500.METHOD_INVOCATION_ERROR);
+			}
 		}
 		
 	}

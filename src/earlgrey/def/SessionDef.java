@@ -53,5 +53,10 @@ public class SessionDef {
 	public long SessionDiff(long now){
 		return now - this.last_time;
 	}
-	
+	public boolean isAuth(){
+		if(this.authenticated){
+			return true;
+		}
+		return false;
+	}
 }

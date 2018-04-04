@@ -11,40 +11,24 @@ import earlgrey.database.Connector;
 import earlgrey.database.OracleConnector;
 import earlgrey.database.PostgresConnector;
 import earlgrey.error.Error800;
+import earlgrey.interfaces.PropertiesDepend;
+import earlgrey.interfaces.Process;
 
-@AddPropertieSet(name = "DB_CONFIG", 
-set = { "DB_TYPE",
-		"DB_HOST",
-		"DB_USERNAME", 
-		"DB_PASSWORD", 
-		"DB_SOURCE", 
-		"DB_PORT", 
-		"DB_MAX_POOL"}, 
-defaultTo = { 
-		"Oracle",
-		"172.30.21.172",
-		"GEOCGR",
-		"iOda7Piz",
-		"CGR1",
-		"1541",
-		"5"
-})
-public class DatabasePool {
-	private static DatabasePool instance = null;
+public class ConnectionPool implements Process, PropertiesDepend {
+	private static ConnectionPool instance = null;
 	private Properties prop;
-	private JSONObject config;
+	private PropertieSet config;
 	private ArrayList<Connector> free_conectors = new ArrayList<Connector>();
 	private ArrayList<Connector> connections = new ArrayList<Connector>();
 	private Logging log;
+	private String datasource;
 	private Hashtable<String,Class<?>> drivers;
 	private Connector driver;
 	//CONSTRUCTOR
-	public static synchronized DatabasePool getInstance(){
-		if(instance == null) instance = new DatabasePool();
-		return instance;
-	}
-	public DatabasePool(){
+	public ConnectionPool(String datasource){
 		instance = this;
+		this.datasource = datasource;
+		Engine.getInstance().registerTask(this);
 		this.prop = Properties.getInstance();
 		this.log = new Logging(this.getClass().getName());
 		this.drivers = ResourceMaping.getInstance().getDatabaseDriverTable();
@@ -54,30 +38,34 @@ public class DatabasePool {
 		//LIMPIAMOS LAS CONEXIONES
 		this.clearConnections();
 		// OBTENEMOS LAS NUEVAS VARIABLES
-		this.config = this.prop.getPropertieSet("DB_CONFIG");
+		this.config = this.prop.getPropertieSet(this.datasource);
 		String host = this.config.getString("DB_HOST");
 		String username = this.config.getString("DB_USERNAME");
 		String password = this.config.getString("DB_PASSWORD");
 		String source = this.config.getString("DB_SOURCE");
-		String port = this.config.getString("DB_PORT");
+		String port = this.config.getNumber("DB_PORT");
+		String demand = this.config.getOption("DB_ON_DEMAND");
 		int pool = Integer.valueOf(this.config.getString("DB_MAX_POOL"));
 		try {
-			String type = this.config.getString("DB_TYPE");
+			String type = this.config.getOption("DB_TYPE");
 			if(drivers.containsKey(type)){
 				Class<?> clase = drivers.get(type);
 				Connector driver = (Connector) clase.newInstance();
-				this.log.Info("Cargando Driver "+type);
-				driver.setCredencial(username, password, source, host, port);
-				if(driver.TestConector()){
-					this.driver = driver;
-					this.log.Info("Estableciendo pool de conexión en: "+pool);
-					for(int h=0;h<pool;h++){
-						Connector driver_pool = (Connector) clase.newInstance();
-						driver_pool.setCredencial(username, password, source, host, port);
-						driver_pool.setPool(this);
-						this.free_conectors.add(driver_pool);
+				if(!host.equals("") || !username.equals("") || !password.equals("") || !source.equals("")) {
+					this.log.Info("Cargando Datasource "+this.datasource);
+					this.log.Info("Cargando Driver "+type);
+					driver.setCredencial(username, password, source, host, port);
+					if(driver.TestConector()){
+						this.driver = driver;
+						this.log.Info("Estableciendo pool de conexión en: "+pool);
+						for(int h=0;h<pool;h++){
+							Connector driver_pool = (Connector) clase.newInstance();
+							driver_pool.setCredencial(username, password, source, host, port);
+							driver_pool.setPool(this);
+							this.free_conectors.add(driver_pool);
+						}
+						return;
 					}
-					return;
 				}
 			}
 			// SI NO SE ACOGE A NIGUNO DE LOS DRIVERS ESTABLECIDOS SE INICIA GEOS SIN DRIVER PERSISTENTE.
@@ -130,5 +118,10 @@ public class DatabasePool {
 			}
 		}
 		return cone;
+	}
+	@Override
+	public void propertiesRestart() {
+		// TODO Auto-generated method stub
+		this.makeConnection();
 	}
 }

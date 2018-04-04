@@ -11,4 +11,6 @@ public class Error800 extends ErrorBase{
 	public static int DATABASE_ORACLE_JDBC = 803;
 	@ErrorCode(description="No existe un driver de base datos disponible para efectuar una conexion a base de datos persistente.", code=804)
 	public static int DATABASE_NO_DRIVER = 804;
+	@ErrorCode(description="No existe error en el set de datos sql al intentar leerlo.", code=805)
+	public static int DATABASE_SQL_SET = 805;
 }

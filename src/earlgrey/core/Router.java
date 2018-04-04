@@ -24,7 +24,7 @@ public class Router {
 			if(this.RouteMap.containsKey(ruta[0])){
 				RouteDef rt = this.RouteMap.get(ruta[0]);
 				ruta = ArrayUtils.remove(ruta,0);
-				RouteDef enrutado = rt.route(ruta);
+				RouteDef enrutado = rt.route(ruta, null);
 				return enrutado;
 			}
 			else

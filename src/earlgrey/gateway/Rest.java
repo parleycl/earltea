@@ -28,7 +28,6 @@ public class Rest extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		System.out.println("sds");
 		Gear engine = new Gear(request,response);
 		engine.get(false);
 	
@@ -61,4 +60,14 @@ public class Rest extends HttpServlet {
 		engine.delete(false);
 	}
 
+	@Override
+	protected void doOptions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "*");
+        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+        response.setHeader("Access-Control-Max-Age", "86400");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+		super.doOptions(request, response);
+	}
 }

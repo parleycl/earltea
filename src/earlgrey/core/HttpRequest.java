@@ -1,6 +1,8 @@
 package earlgrey.core;
 
 
+import java.util.Enumeration;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONObject;
@@ -27,6 +29,15 @@ public class HttpRequest implements Request{
 		this.request = request;
 		this.action = httpActionDef;
 		this.session = httpActionDef.getSession();
+		this.readHeaders();
+	}
+	private void readHeaders(){
+		this.header = new JSONObject();
+		Enumeration<String> names = this.request.getAttributeNames();
+		while(names.hasMoreElements()){
+			String key = names.nextElement();
+			this.header.put(key, request.getHeader(key));
+		}
 	}
 	@Override
 	public String getParam(String key) {

@@ -7,31 +7,37 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.ServletRegistration;
 import javax.servlet.annotation.WebListener;
-
+import earlgrey.*;
 import earlgrey.error.Error700;
 import earlgrey.gateway.Rest;
 
 public class Kernel{
 	// LOGGING MAP
-	private Logging log = new Logging(this.getClass().getName());
+	private Logging log;
+	private static Kernel instance = null;
+	public String kernelname;
+	public String rootPackageName;
     Properties properties;
     Communication com;
     ResourceMaping resources;
-    DatabasePool linkpool;
+    DatasourceManager linkpool;
     Engine taskmanager;
     Session session;
     ServletContext context;
     // CONSTRUCTOR DEL KERNEL DE APLICATIVO
-    public Kernel(ServletContext context, String packages) {
+    public Kernel(ServletContext context) {
+    	this.rootPackageName = Thread.currentThread().getStackTrace()[2].getClassName().split("\\.")[0];
+    	instance = this;
+    	this.context = context;
+    	this.kernelname = "kernel_"+this.context.getContextPath().substring(1);
+    	this.log = new Logging(this.getClass().getName());
     	if(this.checkFileSystem()){
-    		this.context = context;
     		this.setAutors();
-    		this.registerServlets(context);
-    		this.resources = new ResourceMaping(packages);
+			this.resources = new ResourceMaping(this.rootPackageName);
     		this.taskmanager = new Engine();
         	this.com = new Communication();
         	this.properties = new Properties();
-        	this.linkpool = new DatabasePool();
+        	this.linkpool = new DatasourceManager();
         	this.session = new Session();
         	this.endLoading();
     	}
@@ -40,27 +46,30 @@ public class Kernel{
     		this.log.Critic("El aplicativo no tiene permisos para escribir en disco, favor corregir.", Error700.FILESYSTEM_WRITE_ERROR);
     	}
     }
+	public static synchronized Kernel getInstance(){
+		return instance;
+	}
     private void setAutors(){
     	this.log.Info("INICIALIZANDO SISTEMA EARLGREY.");
     	this.log.Info("********************************************************");
     	this.log.Info("");
-    	this.log.Info("********************************************************************************");
-    	this.log.Info("*     _______   _______   __      _______    ______   _______  __      __      *");
-    	this.log.Info("*    |   ____| |   __  | |  |    |   ____|  | ___  | |  _____||  |    |  |     *");
-    	this.log.Info("*    |  |      |  |  | | |  |    |  |       | |  | | | |       |  |  |  |      *");
-    	this.log.Info("*    |  |___   |  |__| | |  |    |  |  ___  | |__| | | |____    |  ||  |       *");
-    	this.log.Info("*    |   ___|  |    ___| |  |    |  | |   | |   ___| |  ____|    |    |        *");
-    	this.log.Info("*    |  |      |  |_|    |  |    |  | |_  | | |_|    | |          |  |         *");
-    	this.log.Info("*    |  |____  |  | |_|  |  |___ |  |___| | | | |_|  | |_____     |  |         *");
-    	this.log.Info("*    |_______| |__|  |_| |______||________| |_|  |_| |_______|    |__|         *");
-    	this.log.Info("*                                                                              *");
-    	this.log.Info("*    BACKEND SYSTEM                                         BY: CGR 2017       *");
-    	this.log.Info("*********************************************************************************");
+    	this.log.Info("****************************************************************************************");
+    	this.log.Info("*     _______   ______  _______   __      _______    ______   _______  __      __      *");
+    	this.log.Info("*    |   ____| |  __  | |  __  | |  |    |   ____|  | ___  | |  _____||  |    |  |     *");
+    	this.log.Info("*    |  |      | |  | | | |  | | |  |    |  |       | |  | | | |       |  |  |  |      *");
+    	this.log.Info("*    |  |___   | |__| | | |__| | |  |    |  |  ___  | |__| | | |____    |  ||  |       *");
+    	this.log.Info("*    |   ___|  |  __  | | __  _| |  |    |  | |   | |   ___| |  ____|    |    |        *");
+    	this.log.Info("*    |  |      | |  | | | | |_|  |  |    |  | |_  | | |_|    | |          |  |         *");
+    	this.log.Info("*    |  |____  | |  | | | | |_|  |  |___ |  |___| | | | |_|  | |_____     |  |         *");
+    	this.log.Info("*    |_______| |_|  |_| |_|  |_| |______||________| |_|  |_| |_______|    |__|         *");
+    	this.log.Info("*                                                                                      *");
+    	this.log.Info("*    BACKEND SYSTEM                                                                    *");
+    	this.log.Info("****************************************************************************************");
     	this.log.Info("");
     	this.log.Info("Version : 0.5 Alpha");
-    	this.log.Info("System Architech : Angelo Alejandro Calvo Alfaro");
-    	this.log.Info("Code by : Angelo Alejandro Calvo Alfaro");
-    	this.log.Info("Team Leader : Maria Alejandra Levill Leal");
+    	this.log.Info("System Architect : Angelo Alejandro Calvo Alfaro");
+    	this.log.Info("Code by : Angelo Alejandro Calvo Alfaro, Sebastian Gonzalez Villena");
+    	this.log.Info("");
     	this.log.Info("");
     	this.log.Info("LICENCE : MIT");
     	this.log.Info("Copyright 2017 - Contraloria General de la Republica de Chile");
@@ -90,13 +99,13 @@ public class Kernel{
     public boolean checkFileSystem() {
     	// CHEQUEAMOS Y CREAMOS LAS CARPETAS
     	this.log.Info("Verificando sistema de archivos");
-    	File geos = new File("kernel");
-    	File logs = new File("kernel/logs");
-    	File properties = new File("kernel/properties");
-    	File backups = new File("kernel/backups");
-    	File model = new File("kernel/model");
-    	File controller = new File("kernel/controller");
-    	File policies = new File("kernel/policies");
+    	File geos = new File(this.kernelname);
+    	File logs = new File(this.kernelname+"/logs");
+    	File properties = new File(this.kernelname+"/properties");
+    	File backups = new File(this.kernelname+"/backups");
+    	File model = new File(this.kernelname+"/model");
+    	File controller = new File(this.kernelname+"/controller");
+    	File policies = new File(this.kernelname+"/policies");
     	//CHEQUEAMOS
     	boolean status = true;
     	if(!geos.exists()) status = geos.mkdir();
@@ -107,20 +116,5 @@ public class Kernel{
     	if(status && !controller.exists()) status = controller.mkdir();
     	if(status && !policies.exists()) status = policies.mkdir();
     	return status;
-    }
-    private void registerServlets(ServletContext context){
-    	this.log.Info("Registrando Api");
-    	ServletRegistration.Dynamic rest_api =
-                context.addServlet("api", new Rest());
-
-    	rest_api.addMapping("/api/*");
-    	rest_api.setAsyncSupported(true);
-    	// REGISTRAMOS LA CONSOLA
-    	this.log.Info("Registrando Api Console");
-    	ServletRegistration.Dynamic console_api =
-                context.addServlet("console", new AdminApi());
-
-    	console_api.addMapping("/console/*");
-    	console_api.setAsyncSupported(true);
     }
 }

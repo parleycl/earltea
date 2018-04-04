@@ -25,7 +25,7 @@ public class HttpResponse implements Response{
 		this.httpActionDef = httpActionDef;
 		this.request = request;
 		// BUSCAMOS SI TIENE ORIGEN 
-		String clientOrigin = request.getHeader("origin");
+		String clientOrigin = request.getHeader("Origin");
 		if(clientOrigin != null && !clientOrigin.isEmpty()){
 			response.setHeader("Access-Control-Allow-Origin", clientOrigin);
 	        response.setHeader("Access-Control-Allow-Methods", "*");

@@ -1,5 +1,5 @@
 package earlgrey.interfaces;
 
-public interface ModelTransaction {
+public interface ModelTransactionInterface {
 	public boolean transaction();
 }

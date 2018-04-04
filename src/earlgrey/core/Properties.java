@@ -28,6 +28,7 @@ public class Properties {
 	private File config;
 	private JSONObject config_obj;
 	private JSONObject target;
+	private JSONObject templates_prop;
 	ResourceMaping propertiesMap;
 	//CONSTRUCTOR
 	public static synchronized Properties getInstance(){
@@ -38,10 +39,11 @@ public class Properties {
 		if(instance == null) instance = this;
 		this.log = new Logging(this.getClass().getName());
 		this.propertiesMap = ResourceMaping.getInstance();
+		this.templates_prop = this.getPropertiesTemplates(this.propertiesMap.getPropertieTable());
 		this.setFile();
 	}
 	private void setFile(){
-		this.config = new File("kernel/properties/config.properties");
+		this.config = new File(Kernel.getInstance().kernelname+"/properties/config.properties");
 		// EN CASO DE QUE NO EXISTA DEBE SER CREADO
 		log.Info("Cargando Archivo de configuraciones de properties");
 		try {
@@ -90,6 +92,7 @@ public class Properties {
 		config.put("environment", envi);
 		config.put("routes", new JSONArray());
 		config.put("controllers", new JSONArray());
+		config.put("prop_templates", this.templates_prop);
 		config.put("models", new JSONArray());
 		config.put("comunication", new JSONObject());
 		config.put("policies", new JSONArray());
@@ -104,10 +107,28 @@ public class Properties {
 		this.config_obj = config;
 		this.log.Info("ARCHIVO DE CONFIGURACIÓN CREADO");
 	}
+	private JSONObject getPropertiesTemplates(Hashtable<String,JSONObject> properties){
+		JSONObject config = new JSONObject();
+		Enumeration<String> keys = properties.keys();
+		while(keys.hasMoreElements()){
+			String propName = keys.nextElement();
+			JSONObject prop = properties.get(propName);
+			if(prop.get("type").equals("template")){
+				JSONObject template = prop.getJSONObject("set");
+				JSONArray sets = new JSONArray();
+				sets.put(template);
+				prop.put("sets", sets);
+				prop.put("value", 0);
+				config.put(propName, prop);
+			}
+		}
+		return config;
+	}
 	private JSONObject getTemplate(String envname, Hashtable<String,JSONObject> properties){
 		JSONObject config_master = new JSONObject();
 		config_master.put("DYNAMIC", new JSONObject());
-		config_master.put("GEOS_ENVNAME", envname);
+		config_master.put("TEMPLATES", new JSONObject());
+		config_master.put("EARLGREY_ENVNAME", envname);
 		JSONObject config = new JSONObject();
 		Enumeration<String> keys = properties.keys();
 		while(keys.hasMoreElements()){
@@ -161,7 +182,6 @@ public class Properties {
 				config.put(propName, prop);
 			}
 			else if(prop.get("type").equals("array")){
-				System.out.println(prop.getJSONArray("default"));
 				prop.put("value", prop.getJSONArray("default"));
 				config.put(propName, prop);
 			}
@@ -184,6 +204,7 @@ public class Properties {
 			environments.put(i,env);
 		}
 		prop_save.put("environment", environments);
+		if(!prop_save.has("prop_templates")) prop_save.put("prop_templates", this.templates_prop);
 		this.config_obj = prop_save;
 		this.log.Info("Verificando cambios en archivos de configuraciones");
 		if(hash == prop_save.toString().hashCode()){
@@ -201,7 +222,7 @@ public class Properties {
 	}
 	private JSONObject checkEnv(JSONObject env, Hashtable<String,JSONObject> props){
 		JSONObject conf_global = new JSONObject();
-		conf_global.put("GEOS_ENVNAME", env.getString("GEOS_ENVNAME"));
+		conf_global.put("EARLGREY_ENVNAME", env.getString("EARLGREY_ENVNAME"));
 		if(env.has("DYNAMIC")){
 			conf_global.put("DYNAMIC", env.getJSONObject("DYNAMIC"));
 		}
@@ -257,11 +278,11 @@ public class Properties {
 				}
 				else if(new_prop.get("type").equals("option")){
 					JSONArray old_option = prop.getJSONArray("options");
-					String option = old_option.getString(prop.getInt("default"));
+					String option = old_option.getString(prop.getInt("defaultTo"));
 					for(int g=0; g<new_prop.getJSONArray("options").length(); g++){
 						if(option.equals(new_prop.getJSONArray("options").getString(g))) new_prop.put("value", g);
 					}
-					new_prop.put("default", prop.getInt("default"));
+					new_prop.put("default", prop.getInt("defaultTo"));
 					conf.put(key, new_prop);
 				}
 				else if(new_prop.get("type").equals("array")){
@@ -297,6 +318,49 @@ public class Properties {
 			}
 		}
 		conf_global.put("STATIC", conf);
+		// ITERAMOS LOS TEMPLATES
+		if(this.config_obj.has("prop_templates")){
+			JSONObject conf_temple = new JSONObject();
+			JSONObject temp = env.getJSONObject("TEMPLATES");
+			JSONObject temple = this.config_obj.getJSONObject("prop_templates");
+			Iterator<String> keys_temp = temp.keys();
+			while(keys_temp.hasNext()){
+				String key = keys_temp.next();
+				JSONObject prop = temp.getJSONObject(key);
+				if(temple.has(prop.getString("template"))){
+					// VERIFICAMOS EL SET QUE POSEA TODAS LAS CARACTETISTICAS.
+					JSONArray new_sets = new JSONArray();
+					JSONArray sets = prop.getJSONArray("sets");
+					JSONObject new_prop = temple.getJSONObject(prop.getString("template"));
+					for(int g=0; g<sets.length();g++){
+						JSONObject new_set = new JSONObject();
+						JSONObject old_set = sets.getJSONObject(g);
+						JSONObject set = new_prop.getJSONObject("set");
+						Iterator<String> llaves = set.keys();
+						while(llaves.hasNext()){
+							String keyName = llaves.next();
+							if(old_set.has(keyName)){
+								new_set.put(keyName, old_set.getString(keyName));
+							}
+							else
+							{
+								new_set.put(keyName, set.getString(keyName));
+							}
+						}
+						new_sets.put(new_set);
+					}
+					prop.put("sets", new_sets);
+					if(prop.has("value") && new_sets.length() <= prop.getInt("value")){
+						prop.put("value", 0);
+					}
+					conf_temple.put(key, prop);
+				}
+			}
+			conf_global.put("TEMPLATES", conf_temple);
+		}
+		else {
+			conf_global.put("TEMPLATES", new JSONObject());
+		}
 		return conf_global;
 	}
 	private void saveFile(){
@@ -318,7 +382,7 @@ public class Properties {
 			String linea = br.readLine();
 			if(linea != null){
 				try {
-					File back = new File("kernel/backups/config.properties."+Instant.now());
+					File back = new File(Kernel.getInstance().kernelname+"/backups/config.properties."+Instant.now());
 					FileWriter fichero;
 					fichero = new FileWriter(back);
 					PrintWriter pw = new PrintWriter(fichero);
@@ -343,7 +407,7 @@ public class Properties {
 		JSONArray envs = this.config_obj.getJSONArray("environment");
 		for(int i=0; i< envs.length(); i++){
 			JSONObject env = envs.getJSONObject(i);
-			if(env.getString("GEOS_ENVNAME").equals(prop)){
+			if(env.getString("EARLGREY_ENVNAME").equals(prop)){
 				this.joinProperties(env);
 				this.log.Info("Funcionando en entorno, "+prop);
 				return;
@@ -370,11 +434,11 @@ public class Properties {
 		}
 		return null;
 	}
-	public JSONObject getPropertieSet(String propname){
+	public PropertieSet getPropertieSet(String propname){
 		if(this.target.has(propname)){
 			if(this.target.getJSONObject(propname).getString("type").equals("set")){
-				int selected = this.target.getJSONObject(propname).getInt("default");
-				return this.target.getJSONObject(propname).getJSONArray("sets").getJSONObject(selected);
+				int selected = this.target.getJSONObject(propname).getInt("value");
+				return new PropertieSet(this.target.getJSONObject(propname).getJSONArray("sets").getJSONObject(selected));
 			}
 			else{
 				this.log.Warning("La propertie ("+propname+") especificada no corresponde al tipo llamado. Tipo declarado "+this.target.getJSONObject(propname).getString("type"), Error60.PROPERTIE_TYPE_INCORRECT);
@@ -384,6 +448,77 @@ public class Properties {
 		{
 			this.log.Warning("La propertie ("+propname+")especificada no existe, se envia valor null", Error60.PROPERTIE_NOT_SET);
 			
+		}
+		return null;
+	}
+	public JSONObject createOrSetPropertieTemplate(String template, String name){
+		if(this.config_obj.has("prop_templates")){
+			JSONObject templates = this.config_obj.getJSONObject("prop_templates");
+			if(templates.has(template)){
+				JSONObject temp_obj = templates.getJSONObject(template);
+				JSONObject prop_save = this.config_obj;
+				JSONArray environments = prop_save.getJSONArray("environment");
+				int env_hash = prop_save.toString().hashCode();
+				for(int i=0;i<environments.length();i++){
+					JSONObject env = environments.getJSONObject(i);
+					JSONObject templ = env.getJSONObject("TEMPLATES");
+					if(templ.has(name)){
+						if(templ.getJSONObject(name).getString("template").equals(template)){
+							JSONObject aux = templ.getJSONObject(name);
+							JSONObject new_obj = new JSONObject(temp_obj.toString());
+							JSONObject set= aux.getJSONObject("set");
+							JSONObject new_o = new_obj.getJSONObject("set");
+							Iterator<String> keys_o = new_o.keys();
+							while(keys_o.hasNext()){
+								String key_o = keys_o.next();
+								if(set.has(key_o)) new_o.put(key_o, set.getString(key_o));
+							}
+							aux.put("set", new_o);
+							JSONArray sets = new_obj.getJSONArray("sets");
+							sets.put(0, new_o);
+							aux.put("sets", sets);
+							if(!aux.has("name") || aux.getString("name").equals(new_obj.getString("name"))) aux.put("name", name);
+							if(!aux.has("type") || aux.getString("type").equals(new_obj.getString("type"))) aux.put("type", "set");
+							if(!aux.has("template") || !aux.getString("template").equals(template)) aux.put("template", template);
+							aux.put("value", 0);
+							templ.put(name, aux);
+						}
+						else{
+							templ.put(name, new JSONObject(temp_obj.toString()));
+							JSONObject aux = templ.getJSONObject(name);
+							aux.put("name", name);
+							aux.put("type", "set");
+							aux.put("template", template);
+							templ.put(name, aux);
+						}
+					}
+					else
+					{
+						templ.put(name, new JSONObject(temp_obj.toString()));
+						JSONObject aux = templ.getJSONObject(name);
+						aux.put("name", name);
+						aux.put("type", "set");
+						aux.put("template", template);
+						templ.put(name, aux);
+						this.target.put(name, aux);
+					}
+					env.put("TEMPLATES", templ);
+					environments.put(i,env);
+				}
+				prop_save.put("environment", environments);
+				if(env_hash != prop_save.hashCode()){
+					this.saveFile();
+				}
+				this.config_obj = prop_save;
+			}
+			else
+			{
+				this.log.Warning("No existe el propertie template especificado",Error60.PROPERTIE_SET_TEMPLATE_NOTFOUND);
+			}
+		}
+		else
+		{
+			this.log.Warning("El entorno no tiene configurado adecuadamente los templates sets",Error60.PROPERTIE_SET_TEMPLATE_ERROR);
 		}
 		return null;
 	}
@@ -413,6 +548,12 @@ public class Properties {
 			return null;
 		}
 	}
+	public JSONObject getPropertiesEnv(){
+		JSONObject retorno = new JSONObject();
+		retorno.put("SELECTED", this.config_obj.getString("env_used"));
+		retorno.put("ENV", this.config_obj.getJSONArray("environment"));
+		return retorno;
+	}
 	private void joinProperties(JSONObject env){
 		// CREAMOS EL TARGET
 		this.target = new JSONObject();
@@ -430,5 +571,53 @@ public class Properties {
 			String llave  = din_keys.next();
 			this.target.put(llave, dinamicas.getJSONObject(llave));
 		}
+		// UNIMOS LAS PROPIEDADES TEMPLATE
+		JSONObject template = env.getJSONObject("TEMPLATES");
+		Iterator<String> temp_keys = template.keys();
+		while(temp_keys.hasNext()){
+			String llave  = temp_keys.next();
+			this.target.put(llave, template.getJSONObject(llave));
+		}
+	}
+	public boolean selectEnv(String envi) {
+		JSONArray envs = this.config_obj.getJSONArray("environment");
+		for(int i=0; i< envs.length(); i++){
+			JSONObject env = envs.getJSONObject(i);
+			if(env.getString("EARLGREY_ENVNAME").equals(envi)){
+				this.joinProperties(env);
+				this.config_obj.put("env_used", envi);
+				this.saveFile();
+				Engine.getInstance().restartByProperties();
+				this.log.Info("Funcionando en entorno, "+envi);
+				return true;
+			}
+		}
+		this.log.Critic("No se cargo ningun entorno de propiedades", Error500.PROPERTIES_ENV);
+		return false;
+	}
+	public JSONObject createEnv(String name){
+		this.log.Info("Creando nuevo entorno de properties: "+name);
+		JSONObject env = this.getTemplate(name, this.propertiesMap.getPropertieTable());
+		this.config_obj.getJSONArray("environment").put(env);
+		this.backupFile();
+		this.saveFile();
+		return env;
+	}
+	public void setProp(JSONObject props, String name){
+		this.log.Info("Modificado las properties.");
+		JSONArray propiedades = this.config_obj.getJSONArray("environment");
+		for(int i=0; i<propiedades.length(); i++){
+			if(propiedades.getJSONObject(i).getString("EARLGREY_ENVNAME").equals(name)){
+				propiedades.put(i, props);
+			}
+		}
+		this.joinProperties(props);
+		this.config_obj.put("environment", propiedades);
+		this.backupFile();
+		this.saveFile();
+		this.log.Info("Properties modificadas.");
+	}
+	public void restartProperties(){
+		Engine.getInstance().restartByProperties();
 	}
 }
