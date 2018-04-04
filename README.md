@@ -4,58 +4,54 @@
 A Lightweight Java Services Framework inspired in Nodejs Express, Sails.js &amp; Phalcon PHP for quick develop of apps based in 
 client server architecture. Build apps with frontend frameworks like Angular and Reactjs. Code and build faster and leave the machine's work to machines.
 
-## Requisitos 
+## Requeriments 
 
 TO DO
 
-## Compilación y distribución
+## Compilation and distribution
 
-Para la compilación y distribución del framework se utiliza la herramienta [Apache Ant](http://ant.apache.org/).
+To compile and package this project you need to use Maven [Apache Maven](https://maven.apache.org/).
 
-### Instalar Apache Ant
+### Installing Apache Maven
 
-- Linux
+- Linux Debian Distribution
    
    ```bash
-   $ sudo apt-get install ant
+   $ sudo apt-get install mvn
+   ```
+- Linux Redhat Distribution
+   
+   ```bash
+   $ sudo yum install mvn
    ```
 
-### Uso
+### Compiling and Packaging Earlgrey
 
 ```bash
-$ ant -p
-Buildfile: /home/sgonzalezvi/git/earlgrey/build.xml
-
-Main targets:
-
- clean    Clean up
- compile  Compile the source
- dist     Generate the distribution
-Default target: dist
-
+mvn clean package
 ```
 
-### Compilar
+## Using Earlgrey
 
-```bash
-$ ant compile
-$ ll build
-total 20K
-drwxrwxr-x  3 sgonzalezvi sgonzalezvi 4,0K jul  4 18:28 com
-drwxrwxr-x 15 sgonzalezvi sgonzalezvi 4,0K jul  4 18:28 earlgrey
-drwxrwxr-x  3 sgonzalezvi sgonzalezvi 4,0K jul  4 18:28 javax
-drwxrwxr-x  9 sgonzalezvi sgonzalezvi 4,0K jul  4 18:28 oracle
-drwxrwxr-x  6 sgonzalezvi sgonzalezvi 4,0K jul  4 18:28 org
+To use Earlgrey only you need import the jar to your web project and start the Earlgrey Kernel in a Servlet listener in the contextInitialized event. The Earlgrey System automatically read the project structure and load the Earlgrey structures to implement a lightweight system based on services architecture with an admin console with hot configuration options.
 
+```java
+@WebListener
+public class SO implements ServletContextListener, ServletRequestListener {
+	/**
+     * @see ServletContextListener#contextInitialized(ServletContextEvent)
+     */
+    public void contextInitialized(ServletContextEvent arg0)  { 
+    	  Kernel earlgrey = new Kernel(arg0.getServletContext());
+    }
+}
 ```
 
-### Distribuir
+## Contributors
 
-```bash
-$ ant dist
-$ ll dist 
-total 5,6M
--rw-rw-r-- 1 sgonzalezvi sgonzalezvi 5,6M jul  4 18:28 earlgrey.jar
-```
+Thanks to all beautiful people than make be possible this project
 
-
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+[<img src="https://avatars3.githubusercontent.com/u/806569?s=400&v=4" width="100px;"/><br /><sub><b>Sebastian Gonzalez V.</b></sub>](https://github.com/brutalchrist)<br />[📖](https://github.com/acalvoa/EARLGREY/commits?author=brutalchrist "Documentation") [💻](https://github.com/acalvoa/EARLGREY/commits?author=brutalchrist)
+<!-- ALL-CONTRIBUTORS-LIST:END -->
