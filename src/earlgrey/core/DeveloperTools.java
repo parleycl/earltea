@@ -4,7 +4,6 @@ import earlgrey.annotations.AddPropertie;
 import earlgrey.annotations.AddPropertieOption;
 
 @AddPropertieOption(name = "DEVELOPER_MODE", option = { "true","false" })
-@AddPropertieOption(name = "DEVELOPER_MODE2", option = { "true","false" })
 public class DeveloperTools {
 	public static int flag_counter = 1;
 	public static boolean dev_mode = true;

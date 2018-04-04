@@ -26,13 +26,13 @@ set = { "DB_TYPE",
 		"DB_PORT", 
 		"DB_MAX_POOL"}, 
 defaultTo = { 
-		"Oracle",
-		"172.30.21.174",
-		"GEOCGR",
-		"iOda7Piz",
-		"CGR",
-		"1541",
-		"5"
+		"",
+		"",
+		"",
+		"",
+		"",
+		"",
+		""
 })
 public class DatasourceManager implements Process, PropertiesDepend {
 	private Hashtable<String,ConnectionPool> sources;
