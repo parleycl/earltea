@@ -41,7 +41,7 @@ public class SO implements ServletContextListener, ServletRequestListener {
      * @see ServletContextListener#contextInitialized(ServletContextEvent)
      */
     public void contextInitialized(ServletContextEvent arg0)  { 
-    	  Kernel earlgrey = new Kernel(arg0.getServletContext());
+    	  Ealgrey earlgrey = new Ealgrey(arg0.getServletContext());
     }
 }
 ```

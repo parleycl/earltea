@@ -21,10 +21,10 @@ import org.json.JSONObject;
 
 public class Logging {
 	private String name;
-	private Kernel core;
+	private Earlgrey core;
 	public Logging(String classname){
 		this.name = classname;
-		this.core = Kernel.getInstance();
+		this.core = Earlgrey.getInstance();
 		//this.getError();
 	}
 	public void Info(String message) {
@@ -69,7 +69,7 @@ public class Logging {
 		}
 	}
 	public void loginFileWithCode(String type, String message, int ErrorCode){
-		Kernel core = Kernel.getInstance();
+		Earlgrey core = Earlgrey.getInstance();
 		String logname = core.kernelname+"/logs/logfile_"+LocalDateTime.now().getDayOfMonth()+"."+LocalDateTime.now().getMonthValue()+"."+LocalDateTime.now().getYear();
 		File log = new File(logname);
 		try{
@@ -95,7 +95,7 @@ public class Logging {
 		}
 	}
 	public static File[] getHistory(){
-		Kernel core = Kernel.getInstance();
+		Earlgrey core = Earlgrey.getInstance();
 		String logpath = core.kernelname+"/logs";
 		File[] files = new File(logpath).listFiles(new FilenameFilter() {
 		    public boolean accept(File dir, String name) {
@@ -111,7 +111,7 @@ public class Logging {
 		return files;
 	}
 	public static JSONArray getFile(String name, int from){
-		Kernel core = Kernel.getInstance();
+		Earlgrey core = Earlgrey.getInstance();
 		String logpath = core.kernelname+"/logs/"+name;
 		File log = new File(logpath);
 		JSONArray logtxt = new JSONArray();
