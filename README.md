@@ -53,7 +53,7 @@ Visit [Earlgrey Seed](https://github.com/acalvoa/Ealgrey_seed). to more informat
 
 ## Earlgrey CLI
 
-Use Earlgrey is simple with the common archetype developed
+TO DO
 
 ## Contributors
 
