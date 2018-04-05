@@ -2,6 +2,7 @@ package earlgrey.filters;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Date;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -12,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import earlgrey.core.Logging;
 import earlgrey.error.Error500;
-import oracle.sql.DATE;
 
 public class Apicore {
 	private Logging log;
@@ -25,12 +25,7 @@ public class Apicore {
 		httpResponse.addHeader("Server-Framework", "Ealgrey");
 		httpResponse.setCharacterEncoding("UTF-8");
 		httpResponse.setContentType("text/html;charset=UTF-8");
-		try {
-			httpResponse.setHeader("Date", DATE.getCurrentDate().stringValue());
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		httpResponse.setHeader("Date", (new Date()).toString());
 		String method = httpRequest.getMethod();
 		switch (method) {
 			case "GET":
