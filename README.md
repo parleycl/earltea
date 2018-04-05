@@ -45,11 +45,11 @@ public class SO implements ServletContextListener, ServletRequestListener {
     }
 }
 ```
-## Earlgrey ORM functions.
+## Earlgrey ORM Functions.
 
 Earlgrey implement a lightweight ORM to operate with databases in a common way. This ORM works based on Models definitions in the code write by the apps developers. Earlgrey recognize the models and map them to interact with the controllers and the configuration console. You can define Blueprints Models that implement the CRUD operations in the REST API based only in the model. The ORM provide a powerfull function set to operate with the database, with a custom querys, transaction suport and multi tenancy.
 
-### Datasbase suport
+### Datasbase Suport
 
 * [X] Mysql
 * [X] Oracle
@@ -60,6 +60,10 @@ Earlgrey implement a lightweight ORM to operate with databases in a common way. 
 To DO
 
 ### Blueprint Model
+
+To DO
+
+### ORM Operations
 
 To DO
 
