@@ -55,9 +55,21 @@ Earlgrey implement a lightweight ORM to operate with databases in a common way. 
 * [X] Oracle
 * [X] Postgres
 
+### Model Declaration
 
+To DO
 
-Visit [Earlgrey Seed](https://github.com/acalvoa/Ealgrey_seed). to more information.
+### Blueprint Model
+
+To DO
+
+## Ealgrey Controllers
+
+To DO
+
+## Ealgrey Console
+
+To DO
 
 ## Earlgrey Seed
 
