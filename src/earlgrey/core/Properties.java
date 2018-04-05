@@ -43,7 +43,7 @@ public class Properties {
 		this.setFile();
 	}
 	private void setFile(){
-		this.config = new File(Kernel.getInstance().kernelname+"/properties/config.properties");
+		this.config = new File(Earlgrey.getInstance().kernelname+"/properties/config.properties");
 		// EN CASO DE QUE NO EXISTA DEBE SER CREADO
 		log.Info("Cargando Archivo de configuraciones de properties");
 		try {
@@ -382,7 +382,7 @@ public class Properties {
 			String linea = br.readLine();
 			if(linea != null){
 				try {
-					File back = new File(Kernel.getInstance().kernelname+"/backups/config.properties."+Instant.now());
+					File back = new File(Earlgrey.getInstance().kernelname+"/backups/config.properties."+Instant.now());
 					FileWriter fichero;
 					fichero = new FileWriter(back);
 					PrintWriter pw = new PrintWriter(fichero);

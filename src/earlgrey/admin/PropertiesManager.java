@@ -20,7 +20,7 @@ import earlgrey.core.ControllerCore;
 import earlgrey.core.Engine;
 import earlgrey.core.HttpRequest;
 import earlgrey.core.HttpResponse;
-import earlgrey.core.Kernel;
+import earlgrey.core.Earlgrey;
 import earlgrey.core.ModelCore;
 import earlgrey.core.Properties;
 
