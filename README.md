@@ -55,8 +55,6 @@ Visit [Ealgrey Seed](https://github.com/acalvoa/Ealgrey_seed). to more informati
 
 Use Earlgrey is simple with the common archetype developed
 
-```
-
 ## Contributors
 
 Thanks to all beautiful people than make be possible this project
