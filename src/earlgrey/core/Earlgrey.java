@@ -11,10 +11,10 @@ import earlgrey.*;
 import earlgrey.error.Error700;
 import earlgrey.gateway.Rest;
 
-public class Kernel{
+public class Earlgrey{
 	// LOGGING MAP
 	private Logging log;
-	private static Kernel instance = null;
+	private static Earlgrey instance = null;
 	public String kernelname;
 	public String rootPackageName;
     Properties properties;
@@ -25,7 +25,7 @@ public class Kernel{
     Session session;
     ServletContext context;
     // CONSTRUCTOR DEL KERNEL DE APLICATIVO
-    public Kernel(ServletContext context) {
+    public Earlgrey(ServletContext context) {
     	this.rootPackageName = Thread.currentThread().getStackTrace()[2].getClassName().split("\\.")[0];
     	instance = this;
     	this.context = context;
@@ -46,7 +46,7 @@ public class Kernel{
     		this.log.Critic("El aplicativo no tiene permisos para escribir en disco, favor corregir.", Error700.FILESYSTEM_WRITE_ERROR);
     	}
     }
-	public static synchronized Kernel getInstance(){
+	public static synchronized Earlgrey getInstance(){
 		return instance;
 	}
     private void setAutors(){
