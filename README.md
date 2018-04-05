@@ -45,15 +45,29 @@ public class SO implements ServletContextListener, ServletRequestListener {
     }
 }
 ```
+## Earlgrey ORM functions.
+
+Earlgrey implement a lightweight ORM to operate with databases in a common way. This ORM works based on Models definitions in the code write by the apps developers. Earlgrey recognize the models and map them to interact with the controllers and the configuration console. You can define Blueprints Models that implement the CRUD operations in the REST API based only in the model. The ORM provide a powerfull function set to operate with the database, with a custom querys, transaction suport and multi tenancy.
+
+### Datasbase suport
+
+* [X] Mysql
+* [X] Oracle
+* [X] Postgres
+
+
+
+Visit [Earlgrey Seed](https://github.com/acalvoa/Ealgrey_seed). to more information.
+
 ## Earlgrey Seed
 
 Use Earlgrey is simple with the common archetype developed by us. Only you need code your controller and models to make quickly a strongs API's, based on REST Arquitecture. Earlgrey provide a RESTFull suport, and the posibility to write Blueprints Models to get the CRUD operations with a minimal coding operations. Also you can extend the archetype to build a large projects in java technology with types, custom errors and policies, and a lot of operations in the earlgrey console.
 
-Visit [Earlgrey Seed](https://github.com/acalvoa/Ealgrey_seed). to more information.
+Visit [Earlgrey Seed](https://github.com/acalvoa/Ealgrey_seed) to more information.
 
 ## Earlgrey CLI
 
-TO DO
+Visit [Earlgrey CLI](https://github.com/brutalchrist/earlgrey-cli) to more information.
 
 ## Contributors
 
