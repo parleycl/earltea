@@ -49,7 +49,7 @@ public class SO implements ServletContextListener, ServletRequestListener {
 
 Use Earlgrey is simple with the common archetype developed by us. Only you need code your controller and models to make quickly a strongs API's, based on REST Arquitecture. Earlgrey provide a RESTFull suport, and the posibility to write Blueprints Models to get the CRUD operations with a minimal coding operations. Also you can extend the archetype to build a large projects in java technology with types, custom errors and policies, and a lot of operations in the earlgrey console.
 
-Visit [Ealgrey Seed](https://github.com/acalvoa/Ealgrey_seed). to more information.
+Visit [Earlgrey Seed](https://github.com/acalvoa/Ealgrey_seed). to more information.
 
 ## Earlgrey CLI
 
