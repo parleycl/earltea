@@ -1,0 +1,24 @@
+<div class="sidebar" *ngIf="!hidden">
+	<div class="item" [routerLink]="['dashboard']" [routerLinkActive]="['router-link-active']"><i class="fa fa-tachometer" aria-hidden="true"></i> &nbsp;&nbsp;&nbsp;Dashboard</div>
+	<div class="item" [routerLink]="['logs']" [routerLinkActive]="['router-link-active']"><i class="fa fa-bookmark" aria-hidden="true"></i> &nbsp;&nbsp;&nbsp;Logs</div>
+	<div class="item" [routerLink]="['properties']" [routerLinkActive]="['router-link-active']"><i class="fa fa-sticky-note-o" aria-hidden="true"></i> &nbsp;&nbsp;&nbsp;Properties</div>
+	<div class="item" [routerLink]="['rutas']" [routerLinkActive]="['router-link-active']"><i class="fa fa-share-alt" aria-hidden="true"></i> &nbsp;&nbsp;&nbsp;Rutas</div>
+	<div class="item" [routerLink]="['controladores']" [routerLinkActive]="['router-link-active']"><i class="fa fa-cogs" aria-hidden="true"></i> &nbsp;&nbsp;&nbsp;Controladores</div>
+	<div class="item" [routerLink]="['modelos']" [routerLinkActive]="['router-link-active']"><i class="fa fa-database" aria-hidden="true"></i> &nbsp;&nbsp;&nbsp;Modelos</div>
+	<div class="item" [routerLink]="['servicios']" [routerLinkActive]="['router-link-active']"><i class="fa fa-cube" aria-hidden="true"></i> &nbsp;&nbsp;&nbsp;Servicios</div>
+	<div class="item" [routerLink]="['cronjobs']" [routerLinkActive]="['router-link-active']"><i class="fa fa-clock-o" aria-hidden="true"></i> &nbsp;&nbsp;&nbsp;Cron Jobs</div>
+	<div class="item" [routerLink]="['cluster']" [routerLinkActive]="['router-link-active']"><i class="fa fa-cubes" aria-hidden="true"></i> &nbsp;&nbsp;&nbsp;Cluster</div>
+	<div class="item" [routerLink]="['configuraciones']" [routerLinkActive]="['router-link-active']"><i class="fa fa-cog" aria-hidden="true"></i> &nbsp;&nbsp;&nbsp;Configuraciones</div>
+</div>
+<div class="sidebarmini" *ngIf="hidden">
+	<div class="item" [routerLink]="['dashboard']" [routerLinkActive]="['router-link-active']" placement="right" ngbTooltip="Dashboard"><i class="fa fa-tachometer" aria-hidden="true"></i></div>
+	<div class="item" [routerLink]="['logs']" [routerLinkActive]="['router-link-active']" placement="right" ngbTooltip="Logs"><i class="fa fa-bookmark" aria-hidden="true"></i></div>
+	<div class="item" [routerLink]="['properties']" [routerLinkActive]="['router-link-active']" placement="right" ngbTooltip="Properties"><i class="fa fa-sticky-note-o" aria-hidden="true"></i></div>
+	<div class="item" [routerLink]="['rutas']" [routerLinkActive]="['router-link-active']" placement="right" ngbTooltip="Rutas"><i class="fa fa-share-alt" aria-hidden="true"></i></div>
+	<div class="item" [routerLink]="['controladores']" [routerLinkActive]="['router-link-active']" placement="right" ngbTooltip="Controladores"><i class="fa fa-cogs" aria-hidden="true"></i></div>
+	<div class="item" [routerLink]="['modelos']" [routerLinkActive]="['router-link-active']" placement="right" ngbTooltip="Modelos"><i class="fa fa-database" aria-hidden="true"></i></div>
+	<div class="item" [routerLink]="['servicios']" [routerLinkActive]="['router-link-active']" placement="right" ngbTooltip="Servicios"><i class="fa fa-cube" aria-hidden="true"></i></div>
+	<div class="item" [routerLink]="['cronjobs']" [routerLinkActive]="['router-link-active']" placement="right" ngbTooltip="Cronjobs"><i class="fa fa-clock-o" aria-hidden="true"></i></div>
+	<div class="item" [routerLink]="['cluster']" [routerLinkActive]="['router-link-active']" placement="right" ngbTooltip="Cluster"><i class="fa fa-cubes" aria-hidden="true"></i></div>
+	<div class="item" [routerLink]="['configuraciones']" [routerLinkActive]="['router-link-active']" placement="right" ngbTooltip="Configuraciones"><i class="fa fa-cog" aria-hidden="true"></i></div>
+</div>

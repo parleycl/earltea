@@ -1,0 +1,67 @@
+:host{
+	height:60px;
+}
+.navbar{
+	display: flex;
+	height:100%;
+	width:100%;
+	background: #333;
+	flex-direction:row;
+	.brand{
+		display:flex;
+		flex:1;
+		padding:5px;
+		flex-direction:row;
+		.logo{
+			margin-top:-5px;
+			display:flex;
+			height:45px;
+			width:45px;
+			background-color:white;
+			background-size:contain;
+			background-position: center;
+			background-repeat: no-repeat;
+			border-radius: 50px;
+		}
+		.sidebar{
+			display:flex;
+			color: white;
+			width: 80px;
+			font-size: 2rem;
+			justify-content:center;
+			align-items:center;
+			cursor: pointer;
+		}
+	}
+	.session{
+		display:flex;
+		flex:1;
+		justify-content:flex-end;
+		padding:10px;
+		.button{
+			display:flex;
+			font-size:2rem;
+			color:white;
+			justify-content:center;
+			align-items:center;
+			cursor: pointer;
+		}
+	}
+}
+.session_menu{
+	position:absolute;
+	top: 60px;
+	right:0px;
+	width:150px;
+	height:auto;
+	background: #333;
+	cursor:pointer;
+	color:white;
+	.item{
+		height:40px;
+		padding:10px;
+		&:hover{
+			background-color:#666;
+		}
+	}
+}

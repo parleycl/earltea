@@ -1,0 +1,47 @@
+:host{
+}
+.router-link-active{
+	background:#999;
+}
+.sidebar{
+	display:flex;
+	width:250px;
+	background:#444;
+	height:100%;
+	flex-direction:column;
+	padding-top:20px;
+	.item{
+		display:flex;
+		height: 55px;
+		width:100%;
+		color:white;
+		font-size:1rem;
+		padding:15px 25px;
+		align-items:center;
+		cursor:pointer;
+		&:hover{
+			background:#666;
+		}
+	}
+}
+.sidebarmini{
+	display:flex;
+	width:50px;
+	background:#444;
+	height:100%;
+	flex-direction:column;
+	.item{
+		display:flex;
+		height: 50px;
+		width:100%;
+		color:white;
+		font-size:1rem;
+		padding:15px 25px;
+		align-items:center;
+		cursor:pointer;
+		justify-content:center;
+		&:hover{
+			background:#666;
+		}
+	}
+}
