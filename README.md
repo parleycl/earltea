@@ -32,7 +32,7 @@ mvn clean package
 
 ### Compiling Console
 
-Ealgrey use a admin console to control and configurating the operation of the framework like a subsystem. This console is built in Angular and is inyected in the jar while maven made the packet. To do this posible, We need compile the console, but sometimes only it's necesary the first time when the console no have a changes in his functionallity. To build the Earlgrey with the console use this command.
+Ealgrey use a admin console to control and configurating the operation of the framework like a subsystem. This console is built in Angular using [Angular-seed](https://github.com/mgechev/angular-seed) and is inyected in the jar while maven made the packet. To do this posible, We need compile the console, but sometimes only it's necesary the first time when the console no have a changes in his functionallity. To build the Earlgrey with the console use this command.
 
 ```bash
 mvn clean package -P console
