@@ -30,6 +30,14 @@ To compile and package this project you need to use Maven [Apache Maven](https:/
 mvn clean package
 ```
 
+### Compiling Console
+
+Ealgrey use a admin console to control and configurating the operation of the framework like a subsystem. This console is built in Angular and is inyected in the jar while maven made the packet. To do this posible, We need compile the console, but sometimes only it's necesary the first time when the console no have a changes in his functionallity. To build the Earlgrey with the console use this command.
+
+```bash
+mvn clean package -P console
+```
+
 ## Using Earlgrey
 
 To use Earlgrey only you need import the jar to your web project and start the Earlgrey Kernel in a Servlet listener in the contextInitialized event. The Earlgrey System automatically read the project structure and load the Earlgrey structures to implement a lightweight system based on services architecture with an admin console with hot configuration options.
