@@ -26,7 +26,7 @@
                                 </goals>
                                 <configuration>
                                     <executable>bash</executable>
-                                    <commandlineArgs>compile_frontend.sh</commandlineArgs>
+                                    <commandlineArgs>compile_console.sh</commandlineArgs>
                                 </configuration>
                             </execution>
                         </executions>
