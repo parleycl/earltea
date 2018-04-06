@@ -5,6 +5,36 @@
     <version>0.1</version>
     <name>earlgrey</name>
     <packaging>jar</packaging>
+    <profiles>
+		<profile>
+			<id>console</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.6.0</version>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <executions>
+                            <execution>
+                                <id>Compile frontend</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>bash</executable>
+                                    <commandlineArgs>compile_frontend.sh</commandlineArgs>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
     <build>
         <sourceDirectory>src</sourceDirectory>
         <plugins>
@@ -36,6 +66,23 @@
                 </executions>
             </plugin>
         </plugins>
+        <resources>
+            <resource>
+                <directory>${basedir}/src/resources/console</directory>
+                <targetPath>${basedir}/target/classes/console</targetPath>
+                <includes>                      
+                    <include>**/*.html</include>
+                    <include>**/*.js</include>
+                    <include>**/*.css</include>
+                    <include>**/*.json</include>
+                    <include>**/*.ico</include>
+                    <include>**/*.png</include>
+                    <include>**/*.jpg</include>
+                    <include>**/*.jpg</include>
+                    <include>**/*.svg</include>
+                </includes>
+            </resource>
+        </resources>
     </build>
     <repositories>
         <repository>
