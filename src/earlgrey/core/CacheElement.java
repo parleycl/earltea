@@ -49,12 +49,13 @@ public class CacheElement {
 	     { 
 	         public void run()  
 	         { 
+	        	 System.out.println("Cache Auto kill");
 	        	 self.origin.cleanCache(Utils.MD5(self.path));
 	         } 
 	     }; 
 	     // Creamos el timmer
 	     Timer timer = new Timer(); 
 	     // Activamos el timmer para el autokill del cache
-	     timer.scheduleAtFixedRate(timerTask, 0, this.time);
+	     timer.schedule(timerTask, this.time*1000);
 	}
 }
