@@ -49,7 +49,6 @@ public class CacheElement {
 	     { 
 	         public void run()  
 	         { 
-	        	 System.out.println("Cache Auto kill");
 	        	 self.origin.cleanCache(Utils.MD5(self.path));
 	         } 
 	     }; 

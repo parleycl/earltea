@@ -105,7 +105,6 @@ public class HttpActionDef implements Runnable, Process{
 		Method metodo = this.route.metodo;
 		this.session.ping(metodo);
 		if(metodo.isAnnotationPresent(Cache.class)){
-			System.out.println("Cache");
 			CacheCore cache = CacheCore.getInstance();
 			if(cache.hasCache(this.request.getRequestURI())) {
 				CacheElement element = cache.getCache(this.request.getRequestURI());
@@ -116,7 +115,6 @@ public class HttpActionDef implements Runnable, Process{
 			}
 		}
 		if(metodo.isAnnotationPresent(UserCache.class)){
-			System.out.println("UserCache");
 			if(this.session.hasCache(this.request.getRequestURI())) {
 				CacheElement element = this.session.getCache(this.request.getRequestURI());
 				this.processCache(element, response);
