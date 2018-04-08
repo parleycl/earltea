@@ -8,4 +8,4 @@
 ## Submitting bug reports
 
 * Please detail the affected browser(s) and operating system(s)
-* Please be sure to state which version of node **and** npm you're using
+* Please be sure to state which version of java and maven you using.
