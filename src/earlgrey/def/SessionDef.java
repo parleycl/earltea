@@ -7,11 +7,15 @@ import java.util.Hashtable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import earlgrey.core.CacheElement;
+import earlgrey.utils.Utils;
 import oracle.sql.DATE;
 
 public class SessionDef {
 	// IP DEL USUARIO
 	private String IP;
+	// CACHE TABLE
+	private Hashtable<String,CacheElement> cachetable;
 	// ID DE SESSION
 	private String ID;
 	// VARIABLES DE AUTENTIFICACION
@@ -33,10 +37,11 @@ public class SessionDef {
 	// DECLARAMOS LOS METODOS Y CONSTRUCTORES
 	public SessionDef(String iD) {
 		super();
-		ID = iD;
+		this.ID = iD;
 		this.init_time =  Instant.now().getEpochSecond();
 		this.history = new JSONArray();
 		this.variables = new Hashtable<String,Object>();
+		this.cachetable = new Hashtable<String,CacheElement>();
 	}
 	//DECLARAMOS EL METODO QUE OTORGA LA AUTENTIFICACION
 	public void setAuth(String user, String[] roles){
@@ -73,6 +78,23 @@ public class SessionDef {
 	}
 	public boolean isAdmin(){
 		if(this.admin){
+			return true;
+		}
+		return false;
+	}
+	public void setCache(String key, String content, int time, int type) {
+		this.cachetable.put(Utils.MD5(key), new CacheElement(key, content, time, type));
+	}
+	
+	public CacheElement getCache(String key) {
+		if(this.cachetable.contains(key)) {
+			return this.cachetable.get(key);
+		}
+		return null;
+	}
+	
+	public boolean hasCache(String key) {
+		if(this.cachetable.contains(key)) {
 			return true;
 		}
 		return false;

@@ -35,9 +35,17 @@ public class Logging {
 		Logger.getLogger(getClass().getName()).log(Level.CONFIG, message);
 		this.loginFile("CONFIG", message);
 	}
+	public void Warning(String message) {
+		Logger.getLogger(getClass().getName()).log(Level.WARNING, message);
+		this.loginFile("WARNING", message);
+	}
 	public void Warning(String message, int warning) {
 		Logger.getLogger(getClass().getName()).log(Level.WARNING, message);
 		this.loginFile("WARNING", message);
+	}
+	public void Critic(String message) {
+		Logger.getLogger(getClass().getName()).log(Level.SEVERE, message);
+		this.loginFile("CRITIC", message);
 	}
 	public void Critic(String message, int error) {
 		Logger.getLogger(getClass().getName()).log(Level.SEVERE, message);
