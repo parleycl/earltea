@@ -12,6 +12,7 @@ import earlgrey.annotations.Console;
 import earlgrey.annotations.Controller;
 import earlgrey.annotations.ControllerAction;
 import earlgrey.annotations.GET;
+import earlgrey.annotations.POST;
 import earlgrey.annotations.ParamRequire;
 import earlgrey.annotations.Policie;
 import earlgrey.annotations.Route;
@@ -43,7 +44,7 @@ public class LogsConsole extends ControllerCore{
 	@Route(route = "/getlog")
 	@ParamRequire(name = "from", type = double.class)
 	@ParamRequire(name = "file", type = String.class)
-	@GET
+	@POST
 	public static void getFile(HttpRequest req, HttpResponse res){
 		Logging log = new Logging("Logs");
 		JSONArray lineas = Logging.getFile(req.getParam("file"), Integer.valueOf(req.getParam("from")));

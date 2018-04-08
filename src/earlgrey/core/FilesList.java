@@ -2,7 +2,7 @@ package earlgrey.core;
 
 public class FilesList {
 	// Core files
-	public static FilePackage Core = new FilePackage("earlgrey.core", new String[]{"AdminApi", "CacheCore", "Communication", "ConnectionPool", "ConsoleCore", "ControllerCore", "Cronjob", "DatasourceManager",
+	public static FilePackage Core = new FilePackage("earlgrey.core", new String[]{"CacheCore", "Communication", "ConnectionPool", "ControllerCore", "DatasourceManager",
 			"Engine", "Gear", "HttpRequest", "HttpResponse", "Earlgrey", "Logging", "ModelCore", "Packet", "Persistence", "Properties", "ResourceMaping", "Router", 
 			"Session"});
 	

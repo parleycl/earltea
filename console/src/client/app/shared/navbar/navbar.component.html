@@ -1,0 +1,12 @@
+<div class="navbar">
+	<div class="brand">
+		<div class="logo" [style.background-image]="getLogo()"></div>
+		<div class="sidebar" (click)="togleSidebar()"><i class="fa fa-bars" aria-hidden="true"></i></div>
+	</div>
+	<div class="session">
+		<div class="button" (click)="togleMenu()"><i class="fa fa-users" aria-hidden="true"></i></div>
+	</div>
+</div>
+<div class="session_menu" *ngIf="menu" (mouseout)="togleMenu()">
+	<div class="item"><i class="fa fa-window-close-o" aria-hidden="true"></i>&nbsp;&nbsp;Cerrar Sesión</div>
+</div>

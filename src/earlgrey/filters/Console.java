@@ -19,7 +19,7 @@ import oracle.sql.DATE;
 /**
  * Servlet Filter implementation class Angular
  */
-@WebFilter("/admin/console/*")
+@WebFilter("/console/*")
 public class Console extends Apicore implements Filter { 
 	/**
 	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
@@ -41,8 +41,39 @@ public class Console extends Apicore implements Filter {
 		
 	}
 	protected void GET(HttpServletRequest request, HttpServletResponse response){
-		Gear engine = new Gear(request,response);
-		engine.get(true);
+		if(request.getRequestURI().endsWith("/console")) {
+			try {
+				response.sendRedirect(request.getRequestURI().concat("/"));
+				return;
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		String filereq = request.getRequestURI().replace(request.getServletContext().getContextPath()+"/console", "");
+		if(filereq.startsWith("/")) filereq = filereq.substring(1);
+		if(!filereq.matches(".*[.]js|.*[.]png|.*[.]jpg|.*[.]svg|.*[.]ico|.*[.]css") || filereq.equals("")){
+			filereq = "index.html";
+		}
+		InputStream file = request.getServletContext().getClassLoader().getResourceAsStream("console/"+filereq);
+		try {
+			if(file != null){
+				int content;
+				while ((content = file.read()) != -1) {
+					// convert to char and display it
+					response.getWriter().print((char) content);
+				}
+				
+				response.getWriter().flush();
+				file.close();
+			}
+			else
+			{
+				response.setStatus(404);
+			}
+		} catch (IOException e) {
+			response.setStatus(500);
+		}
 	}
 	protected void POST(HttpServletRequest request, HttpServletResponse response){
 		Gear engine = new Gear(request,response);

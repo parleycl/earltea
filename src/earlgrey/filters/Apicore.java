@@ -23,6 +23,7 @@ public class Apicore {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		httpResponse.addHeader("Server-Framework", "Ealgrey");
+		httpResponse.setHeader("Connection", "Keep-alive");
 		httpResponse.setCharacterEncoding("UTF-8");
 		httpResponse.setContentType("text/html;charset=UTF-8");
 		httpResponse.setHeader("Date", (new Date()).toString());
