@@ -9,68 +9,34 @@ import { LogsComponent } from './logs/logs.component';
 import { ModelosComponent } from './modelos/modelos.component';
 import { PropertiesComponent } from './properties/properties.component';
 import { RutasComponent } from './rutas/rutas.component';
-import { ServiciosComponent } from './servicios/servicios.component';
 import { LoginComponent } from './login/login.component';
+import { IndexComponent } from './index/index.component';
 
 export const FeaturesRoutes: Route[] = [
-  {
-    path: '',
-    pathMatch: 'full',
-    redirectTo: 'dashboard',
-    canActivate: [GuardService],
+	{
+		path: '',
+		pathMatch: 'full',
+		redirectTo: 'dashboard'
+	},
+	{
+		path: '',
+		component: IndexComponent,
+		children: [
+			{ path: 'dashboard', component: HomeComponent },
+      { path: 'cluster', component: ClusterComponent },
+      { path: 'config', component: ConfiguracionesComponent },
+      { path: 'controllers', component: ControladoresComponent },
+      { path: 'cronjobs', component: CronjobsComponent },
+      { path: 'logs', component: LogsComponent },
+      { path: 'models', component: ModelosComponent },
+      { path: 'properties', component: PropertiesComponent },
+      { path: 'routes', component: RutasComponent }
+		],
+		//ROUTER CHILDREN LIMIT (NOT REMOVE - CLI COMPONENT)
+		canActivate: [GuardService],
   },
   {
     path: 'login',
     component: LoginComponent
-  },
-  {
-    path: 'dashboard',
-    component: HomeComponent,
-    canActivate: [GuardService],
-  },
-  {
-    path: 'cluster',
-    component: ClusterComponent,
-    canActivate: [GuardService],
-  },
-  {
-    path: 'configuraciones',
-    component: ConfiguracionesComponent,
-    canActivate: [GuardService],
-  },
-  {
-    path: 'controladores',
-    component: ControladoresComponent,
-    canActivate: [GuardService],
-  },
-  {
-    path: 'cronjobs',
-    component: CronjobsComponent,
-    canActivate: [GuardService],
-  },
-  {
-    path: 'logs',
-    component: LogsComponent,
-    canActivate: [GuardService],
-  },
-  {
-    path: 'modelos',
-    component: ModelosComponent,
-    canActivate: [GuardService],
-  },
-  {
-    path: 'properties',
-    component: PropertiesComponent,
-    canActivate: [GuardService],
-  },
-  {
-    path: 'rutas',
-    component: RutasComponent,
-    canActivate: [GuardService],
-  },
-  {
-    path: 'servicios',
-    component: ServiciosComponent,
-    canActivate: [GuardService],
   }
 ];

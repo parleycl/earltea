@@ -1,0 +1,11 @@
+.alerts{
+    position: absolute;
+    bottom:0px;
+    right:0px;
+    widows: 25%;
+    height:50px;
+    z-index:9999;
+    .alert{
+    	margin-bottom:0px;
+    }
+}

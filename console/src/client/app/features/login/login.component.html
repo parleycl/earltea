@@ -1,1 +1,10 @@
-Login Component works!
+<div class="box_login">
+    <div class="logo" [style.background-image]="getLogo()"></div>
+    <div class="form">
+        <form (submit)="login($event, user.value, password.value)">
+            <input type="text" name="username" placeholder="Username" #user required/>
+            <input type="password" name="password" placeholder="Password" #password required/>
+            <button class="btn btn-danger btn-login">Login</button>
+        </form>
+    </div>
+</div>

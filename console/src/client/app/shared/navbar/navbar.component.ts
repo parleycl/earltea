@@ -1,6 +1,8 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Config } from '../../shared/config/env.config';
+import { UserService } from '../../services/user/user.service';
+import { Router } from '@angular/router';
 /**
  * This class represents the main application component.
  */
@@ -14,7 +16,7 @@ export class NavbarComponent {
   private api:string;
 	private menu:boolean = false;
 	@Output() sidebar = new EventEmitter();
-  	constructor(private sanitizer: DomSanitizer) {
+  	constructor(private sanitizer: DomSanitizer, private user: UserService, private router: Router) {
       this.api = window.location.pathname;
 			this.api = this.api.substring(0,this.api.indexOf("console/"))
 			if(Config.ENV == 'DEV'){
@@ -31,5 +33,9 @@ export class NavbarComponent {
 		}
 		private getLogo(){
 			return this.sanitizer.bypassSecurityTrustStyle("url("+this.api+'assets/images/logo.jpg'+")");
+		}
+		private logout() {
+			this.user.logout();
+			this.router.navigate(['/login']);
 		}
 }

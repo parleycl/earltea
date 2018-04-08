@@ -12,11 +12,9 @@ import './operators';
   styleUrls: ['app.component.css'],
 })
 export class AppComponent {
-	private sidebar:boolean = false;
+	
   	constructor() {
     	console.log('Environment config', Config);
   	}
-  	hideSiderbar(){
-  		this.sidebar = !this.sidebar;
-  	}
+  	
 }

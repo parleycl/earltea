@@ -8,5 +8,5 @@
 	</div>
 </div>
 <div class="session_menu" *ngIf="menu" (mouseout)="togleMenu()">
-	<div class="item"><i class="fa fa-window-close-o" aria-hidden="true"></i>&nbsp;&nbsp;Cerrar Sesión</div>
+	<div class="item" (click)="logout()"><i class="fa fa-window-close-o" aria-hidden="true"></i>&nbsp;&nbsp;Cerrar Sesión</div>
 </div>

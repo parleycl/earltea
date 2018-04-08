@@ -4,6 +4,7 @@ import { Http, Response, Headers } from '@angular/http';
 import { Router } from '@angular/router';
 import { LoadingService } from '../loading/loading.service';
 import 'rxjs/add/operator/map';
+import { Observable } from 'rxjs/Observable';
 
 @Injectable()
 export class RestService {
@@ -39,7 +40,9 @@ export class RestService {
 			let response = res.json();
 			this.loading.hide(this);
 			return response;
-		});
+		}).catch(
+			res => Observable.throw(this.loading.hide(this))
+		);
 	}
 	public postSilent(data:any, uri:string) {
 		let body:string = '';
@@ -88,7 +91,6 @@ export class RestService {
 	public get(uri:string) {
 		let header = this.createHeaders();
 		this.loading.show(this);
-		console.log(this.api+"admin/console/"+uri)
 		return this.http.get(this.api+"admin/console/"+uri, {
 	      	headers: header,
 	      	withCredentials: true

@@ -52,7 +52,8 @@ public class SessionDef implements Cacheable{
 		this.roles = roles;
 	}
 	//DECLARAMOS EL METODO QUE OTORGA LA AUTENTIFICACION
-	public void setAdmin(){
+	public void setAdmin(String user){
+		this.user = user;
 		this.admin = true;
 	}
 	// PING para registrar sucesos
@@ -101,8 +102,20 @@ public class SessionDef implements Cacheable{
 		}
 		return false;
 	}
+	
 	@Override
 	public void cleanCache(String key) {
 		this.cachetable.remove(key);
+	}
+	
+	public String getUser(){
+		return this.user;
+	}
+	
+	public void killUser(){
+		this.user = null;
+		this.authenticated = false;
+		this.admin = false;
+		this.roles = null;
 	}
 }
