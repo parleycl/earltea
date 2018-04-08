@@ -18,6 +18,7 @@ import earlgrey.core.ControllerCore;
 import earlgrey.core.HttpRequest;
 import earlgrey.core.HttpResponse;
 import earlgrey.core.ModelCore;
+import earlgrey.def.SessionDef;
 
 @Console(description = "Controlador para manejar los usuarios del admin panel.", name = "Users", version = 1)
 @Route(route = "/admins")
@@ -43,6 +44,8 @@ public class UserConsole extends ControllerCore{
 	@Route(route = "/login")
 	@GET
 	public static void Login(HttpRequest req, HttpResponse res){
+		SessionDef session = req.getSession();
+		session.setAdmin();
 		JSONObject informes = new JSONObject();
 		informes.put("USERS", 0);
 		res.json(informes);
@@ -54,7 +57,7 @@ public class UserConsole extends ControllerCore{
 	@GET
 	public static void Status(HttpRequest req, HttpResponse res){
 		JSONObject informes = new JSONObject();
-		informes.put("USERS", 0);
+		informes.put("USERS", req.getSession().isAdmin());
 		res.json(informes);
 		return;
 	}
