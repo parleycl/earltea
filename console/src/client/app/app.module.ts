@@ -12,6 +12,7 @@ import { FeaturesModule } from './features/features.module';
 import { PipesModule } from './pipes/pipes.module';
 
 declare var BASE_LOCATION_HREF:any;
+
 @NgModule({
   imports: [BrowserModule, HttpModule, NgbModule.forRoot(), AppRoutingModule, SharedModule.forRoot(),ServicesModule, FeaturesModule, PipesModule],
   declarations: [AppComponent],

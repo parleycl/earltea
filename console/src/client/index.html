@@ -27,18 +27,25 @@
     ga('create', '<%= GOOGLE_ANALYTICS_ID %>', 'auto');
     ga('send', 'pageview');
   </script>
-
-  <script>
-  // Fixes undefined module function in SystemJS bundle
-  function module() {}
-  </script>
+  <!-- Fix the context lost -->
   <script>
     var BASE_LOCATION_HREF;
     (function (url){
       var path = window.location.pathname;
       path = path.substring(0,path.indexOf(url));
-      BASE_LOCATION_HREF = path+url+"/";
+      if(window.location.pathname.indexOf(url) > -1){
+        BASE_LOCATION_HREF = path+url+"/";
+      }
+      else
+      {
+        BASE_LOCATION_HREF = "/";
+      }
     })("/console");
+  </script>
+
+  <script>
+  // Fixes undefined module function in SystemJS bundle
+  function module() {}
   </script>
 
   <!-- shims:js -->

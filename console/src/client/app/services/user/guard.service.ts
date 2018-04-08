@@ -7,6 +7,6 @@ export class GuardService implements CanActivate {
   constructor(private user: UserService) {}
 
   canActivate() {
-    return true;
+    return this.user.isLoggedReady();
   }
 }

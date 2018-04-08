@@ -20,7 +20,7 @@ import earlgrey.core.HttpResponse;
 import earlgrey.core.ModelCore;
 
 @Console(description = "Controlador para manejar los usuarios del admin panel.", name = "Users", version = 1)
-@Route(route = "/users")
+@Route(route = "/admins")
 @CORS
 public class UserConsole extends ControllerCore{
 	//CONTROLADOR DE PRUEBA PARA EFECTUAR DESARROLLO DE LA PLATAFORMA.

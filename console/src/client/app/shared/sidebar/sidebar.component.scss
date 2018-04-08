@@ -22,6 +22,9 @@
 		&:hover{
 			background:#666;
 		}
+		span{
+			margin-left: 10px;
+		}
 	}
 }
 .sidebarmini{
@@ -42,6 +45,9 @@
 		justify-content:center;
 		&:hover{
 			background:#666;
+		}
+		span{
+			margin-left: 10px;
 		}
 	}
 }

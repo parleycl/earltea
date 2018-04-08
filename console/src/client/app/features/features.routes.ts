@@ -10,62 +10,67 @@ import { ModelosComponent } from './modelos/modelos.component';
 import { PropertiesComponent } from './properties/properties.component';
 import { RutasComponent } from './rutas/rutas.component';
 import { ServiciosComponent } from './servicios/servicios.component';
+import { LoginComponent } from './login/login.component';
 
 export const FeaturesRoutes: Route[] = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'dashboard'
-    // canActivate: [GuardService],
+    redirectTo: 'dashboard',
+    canActivate: [GuardService],
+  },
+  {
+    path: 'login',
+    component: LoginComponent
   },
   {
     path: 'dashboard',
     component: HomeComponent,
-    // canActivate: [GuardService],
+    canActivate: [GuardService],
   },
   {
     path: 'cluster',
     component: ClusterComponent,
-    // canActivate: [GuardService],
+    canActivate: [GuardService],
   },
   {
     path: 'configuraciones',
     component: ConfiguracionesComponent,
-    // canActivate: [GuardService],
+    canActivate: [GuardService],
   },
   {
     path: 'controladores',
     component: ControladoresComponent,
-    // canActivate: [GuardService],
+    canActivate: [GuardService],
   },
   {
     path: 'cronjobs',
     component: CronjobsComponent,
-    // canActivate: [GuardService],
+    canActivate: [GuardService],
   },
   {
     path: 'logs',
     component: LogsComponent,
-    // canActivate: [GuardService],
+    canActivate: [GuardService],
   },
   {
     path: 'modelos',
     component: ModelosComponent,
-    // canActivate: [GuardService],
+    canActivate: [GuardService],
   },
   {
     path: 'properties',
     component: PropertiesComponent,
-    // canActivate: [GuardService],
+    canActivate: [GuardService],
   },
   {
     path: 'rutas',
     component: RutasComponent,
-    // canActivate: [GuardService],
+    canActivate: [GuardService],
   },
   {
     path: 'servicios',
     component: ServiciosComponent,
-    // canActivate: [GuardService],
+    canActivate: [GuardService],
   }
 ];

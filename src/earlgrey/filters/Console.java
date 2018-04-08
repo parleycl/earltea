@@ -41,6 +41,15 @@ public class Console extends Apicore implements Filter {
 		
 	}
 	protected void GET(HttpServletRequest request, HttpServletResponse response){
+		if(request.getRequestURI().endsWith("/console")) {
+			try {
+				response.sendRedirect(request.getRequestURI().concat("/"));
+				return;
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		String filereq = request.getRequestURI().replace(request.getServletContext().getContextPath()+"/console", "");
 		if(filereq.startsWith("/")) filereq = filereq.substring(1);
 		if(!filereq.matches(".*[.]js|.*[.]png|.*[.]jpg|.*[.]svg|.*[.]ico|.*[.]css") || filereq.equals("")){

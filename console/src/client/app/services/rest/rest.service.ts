@@ -15,8 +15,11 @@ export class RestService {
 		this.http = http;
 		this.api = window.location.pathname;
 		this.api = this.api.substring(0,this.api.indexOf("console/"))
-		// this.api = window.location.protocol+"//"+window.location.host+this.api;
-		this.api = 'http://localhost:8080'+this.api;
+		if(Config.ENV == 'DEV'){
+			this.api = Config.API+this.api;
+		} else {
+			this.api = window.location.protocol+"//"+window.location.host+this.api;
+		}		
 	}
 	public post(data:any, uri:string) {
 		let body:string = '';
@@ -85,6 +88,7 @@ export class RestService {
 	public get(uri:string) {
 		let header = this.createHeaders();
 		this.loading.show(this);
+		console.log(this.api+"admin/console/"+uri)
 		return this.http.get(this.api+"admin/console/"+uri, {
 	      	headers: header,
 	      	withCredentials: true

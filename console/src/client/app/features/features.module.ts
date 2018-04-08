@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { ClusterComponent } from './cluster/cluster.component';
+import { LoginComponent } from './login/login.component';
 import { ConfiguracionesComponent } from './configuraciones/configuraciones.component';
 import { ControladoresComponent } from './controladores/controladores.component';
 import { CronjobsComponent } from './cronjobs/cronjobs.component';
@@ -22,10 +23,12 @@ import { PipesModule } from '../pipes/pipes.module';
   imports: [CommonModule, RouterModule,NgbModule, PipesModule,FormsModule],
   declarations: [HomeComponent,
   ClusterComponent,ConfiguracionesComponent,ControladoresComponent,CronjobsComponent,
-  LogsComponent, ModelosComponent, PropertiesComponent, RutasComponent, ServiciosComponent],
+  LogsComponent, ModelosComponent, PropertiesComponent, RutasComponent, ServiciosComponent,
+  LoginComponent],
   exports: [CommonModule, FormsModule, RouterModule, HomeComponent,
   ClusterComponent,ConfiguracionesComponent,ControladoresComponent,CronjobsComponent,
-  LogsComponent, ModelosComponent, PropertiesComponent, RutasComponent, ServiciosComponent]
+  LogsComponent, ModelosComponent, PropertiesComponent, RutasComponent, ServiciosComponent,
+  LoginComponent]
 })
 export class FeaturesModule {
 }
