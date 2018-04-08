@@ -81,7 +81,26 @@ To DO
 
 ## Ealgrey Console
 
-To DO
+To admin Earlgrey, you only need a web browser. Earlgrey provide a Admin interface to config the main posibilities. In this console you can config the properties, controllers, models, routes, view the logs, config the custer configuration and everything you needs to generate a great app.
+
+To access to the console only put in your web browser the next url.
+
+```bash
+[http/https]://[HOST]:[PORT]/CONTEXT/console/
+```
+
+For example, if you need access to the console with a www.test.com domain in the 8080 port, with the tessapp context, without a ssl connection, the url should be. 
+
+```bash
+http://www.test.com:8080/testapp/console/
+```
+
+If your app run on the 80 port, you can skip the port. An example should be.
+
+```bash
+http://www.test.com/testapp/console/
+```
+
 
 ## Earlgrey Seed
 
