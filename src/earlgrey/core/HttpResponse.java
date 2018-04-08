@@ -48,7 +48,6 @@ public class HttpResponse implements Response{
 		try {
 			String xml = XML.toString(obj,"response");
 			xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"+xml;
-			System.out.println(xml);
 			this.response.getWriter().println(xml);
 		} catch (IOException e) {
 			this.log.Critic("No se ha podido escribir el buffer web http para la respuesta xml", Error500.HTTP_RENDER_ERROR);
@@ -64,7 +63,6 @@ public class HttpResponse implements Response{
 		try {
 			String xml = XML.toString(obj,"response");
 			xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"+xml;
-			System.out.println(xml);
 			this.response.getWriter().println(xml);
 		} catch (IOException e) {
 			this.log.Critic("No se ha podido escribir el buffer web http para la respuesta xml", Error500.HTTP_RENDER_ERROR);
