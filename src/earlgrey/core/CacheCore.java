@@ -1,9 +1,13 @@
 package earlgrey.core;
 
 import java.util.Hashtable;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import earlgrey.interfaces.Cacheable;
 import earlgrey.utils.Utils;
 
-public class CacheCore {
+public class CacheCore implements Cacheable{
 	public static final int CACHE_JSON = 1;
 	public static final int CACHE_XML = 1;
 	public static final int CACHE_TEXT = 1;
@@ -23,7 +27,7 @@ public class CacheCore {
 		return instance;
 	}
 	public void setCache(String key, String content, int time, int type) {
-		this.cachetable.put(Utils.MD5(key), new CacheElement(key, content, time, type));
+		this.cachetable.put(Utils.MD5(key), new CacheElement(this, key, content, time, type));
 	}
 	
 	public CacheElement getCache(String key) {
@@ -51,4 +55,10 @@ public class CacheCore {
 	public Hashtable<String,CacheElement> getSummary(){
 		return this.cachetable;
 	}
+
+	@Override
+	public void cleanCache(String key) {
+		this.cachetable.remove(key);
+	}
+	
 }

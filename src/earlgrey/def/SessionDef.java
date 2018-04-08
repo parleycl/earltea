@@ -2,16 +2,18 @@ package earlgrey.def;
 
 import java.lang.reflect.Method;
 import java.time.Instant;
+import java.util.Date;
 import java.util.Hashtable;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import earlgrey.core.CacheElement;
+import earlgrey.interfaces.Cacheable;
 import earlgrey.utils.Utils;
 import oracle.sql.DATE;
 
-public class SessionDef {
+public class SessionDef implements Cacheable{
 	// IP DEL USUARIO
 	private String IP;
 	// CACHE TABLE
@@ -58,8 +60,8 @@ public class SessionDef {
 		this.last_time =  Instant.now().getEpochSecond();
 		this.history.put(action.getName());
 	}
-	public long SessionDiff(long now){
-		return now - this.last_time;
+	public long SessionDiff(){
+		return (new Date()).getTime()/1000 - this.last_time;
 	}
 	public void setSessionVar(String key, Object value){
 		this.variables.put(key, value);
@@ -83,7 +85,7 @@ public class SessionDef {
 		return false;
 	}
 	public void setCache(String key, String content, int time, int type) {
-		this.cachetable.put(Utils.MD5(key), new CacheElement(key, content, time, type));
+		this.cachetable.put(Utils.MD5(key), new CacheElement(this, key, content, time, type));
 	}
 	
 	public CacheElement getCache(String key) {
@@ -98,5 +100,9 @@ public class SessionDef {
 			return true;
 		}
 		return false;
+	}
+	@Override
+	public void cleanCache(String key) {
+		this.cachetable.remove(key);
 	}
 }

@@ -1,11 +1,13 @@
 package earlgrey.core;
 
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import earlgrey.annotations.AddPropertie;
 import earlgrey.def.SessionDef;
+import earlgrey.interfaces.Cacheable;
 @AddPropertie(defaultTo = "1800000", name = "SESSION_TIME")
 public class Session {
 	// LOG
@@ -40,9 +42,20 @@ public class Session {
 	}
 	// PROCESO QUE EJECUTAR EL CLEANER
 	private void sessionCleaner(){
-		this.log.Info("Limpiando sesiones residuales.");
-		
+		Enumeration<String> keys = this.sessions.keys();
+		int counter = 0;
+		while(keys.hasMoreElements()) {
+			String key = keys.nextElement();
+			if(this.sessions.get(key).SessionDiff() > this.timer_time) {
+				this.sessions.remove(key);
+				counter++;
+			}
+		}
+		if(counter > 0) {
+			this.log.Info("Se han limpiado "+counter+" sesiones residuales.");
+		}
 	}
+	
 	private void startTimer(){
 		Session self = this;
 		TimerTask timerTask = new TimerTask() 
