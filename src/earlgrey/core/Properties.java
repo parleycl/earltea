@@ -97,8 +97,8 @@ public class Properties {
 		config.put("comunication", new JSONObject());
 		config.put("policies", new JSONArray());
 		//config.put("propertie_map", db_template);
-		JSONObject users = (new JSONObject()).put("USERNAME", "ADMIN").put("PASSWORD", "ADMIN");
-		config.put("console",(new JSONObject()).put("users", (new JSONArray()).put(users)));
+		JSONArray users = (new JSONArray()).put((new JSONObject()).put("USERNAME", "admin").put("PASSWORD", "earlgrey"));
+		config.put("console",(new JSONObject()).put("users", users));
 		FileWriter fichero = new FileWriter(this.config,true);
 		PrintWriter pw = new PrintWriter(fichero);
 		pw.println(config.toString());
@@ -619,5 +619,9 @@ public class Properties {
 	}
 	public void restartProperties(){
 		Engine.getInstance().restartByProperties();
+	}
+	
+	public JSONArray getConsoleUsers() {
+		return this.config_obj.getJSONObject("console").getJSONArray("users");
 	}
 }

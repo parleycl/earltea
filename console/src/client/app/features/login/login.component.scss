@@ -1,0 +1,37 @@
+:host {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
+.box_login {
+    height: 500px;
+    width: 400px;
+    display: flex;
+    padding: 20px;
+    flex-direction: column;
+    .logo {
+        height: 150px;
+        background-color:white;
+        background-size:contain;
+        background-position: center;
+        background-repeat: no-repeat;
+        margin-bottom: 30px;
+    }
+    form {
+        input {
+            margin-bottom: 15px;
+            height: 45px;
+            width: 100%;
+            border: 1px solid #666; 
+        }
+        .btn-login{
+            margin-top: 20px;
+            width: 100%;
+            height: 45px;
+        }
+    }
+}

@@ -1,0 +1,6 @@
+<sd-navbar (sidebar)="hideSiderbar($event)"></sd-navbar>
+<div class="content">
+	<sd-sidebar [hidden]="sidebar"></sd-sidebar>
+	<router-outlet></router-outlet>
+</div>
+<sd-footer></sd-footer>

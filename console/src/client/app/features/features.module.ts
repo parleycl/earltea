@@ -11,24 +11,25 @@ import { CronjobsComponent } from './cronjobs/cronjobs.component';
 import { LogsComponent } from './logs/logs.component';
 import { ModelosComponent } from './modelos/modelos.component';
 import { PropertiesComponent } from './properties/properties.component';
+import { IndexComponent } from './index/index.component';
 import { RutasComponent } from './rutas/rutas.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { ServiciosComponent } from './servicios/servicios.component';
 import { PipesModule } from '../pipes/pipes.module';
+import { SharedModule } from '../shared/shared.module';
 /**
  * Do not specify providers for modules that might be imported by a lazy loaded module.
  */
 
 @NgModule({
-  imports: [CommonModule, RouterModule,NgbModule, PipesModule,FormsModule],
+  imports: [CommonModule, RouterModule,NgbModule, PipesModule, FormsModule, SharedModule],
   declarations: [HomeComponent,
   ClusterComponent,ConfiguracionesComponent,ControladoresComponent,CronjobsComponent,
-  LogsComponent, ModelosComponent, PropertiesComponent, RutasComponent, ServiciosComponent,
-  LoginComponent],
+  LogsComponent, ModelosComponent, PropertiesComponent, RutasComponent, LoginComponent, 
+  IndexComponent],
   exports: [CommonModule, FormsModule, RouterModule, HomeComponent,
   ClusterComponent,ConfiguracionesComponent,ControladoresComponent,CronjobsComponent,
-  LogsComponent, ModelosComponent, PropertiesComponent, RutasComponent, ServiciosComponent,
-  LoginComponent]
+  LogsComponent, ModelosComponent, PropertiesComponent, RutasComponent, LoginComponent, 
+  IndexComponent]
 })
 export class FeaturesModule {
 }

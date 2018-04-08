@@ -1,0 +1,14 @@
+<div class="alerts">
+	<div class="alert alert-success" role="alert" *ngIf="view=='success'">
+	  <strong>Realizado!</strong> {{ message }}
+	</div>
+	<div class="alert alert-info" role="alert" *ngIf="view=='info'">
+	  <strong>Información!</strong> {{ message }}
+	</div>
+	<div class="alert alert-warning" role="alert" *ngIf="view=='warning'">
+	  <strong>Alerta!</strong> {{ message }}
+	</div>
+	<div class="alert alert-danger" role="alert" *ngIf="view=='danger'">
+	  <strong>Error!</strong> {{ message }}
+	</div>
+</div>
