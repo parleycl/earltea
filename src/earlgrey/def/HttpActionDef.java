@@ -12,8 +12,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 
+import earlgrey.annotations.AddPropertie;
+import earlgrey.annotations.Cache;
 import earlgrey.annotations.ParamOptional;
 import earlgrey.annotations.ParamRequire;
+import earlgrey.annotations.UserCache;
+import earlgrey.core.CacheCore;
+import earlgrey.core.CacheElement;
 import earlgrey.core.Gear;
 import earlgrey.core.HttpRequest;
 import earlgrey.core.HttpResponse;
@@ -33,6 +38,8 @@ public class HttpActionDef implements Runnable, Process{
 	private Gear motor;
 	// ID DEL ACTION / HASH
 	private int ID;
+	// CACHE
+	private boolean cache = false;
 	// OBJETO DE RUTA
 	private RouteDef route;
 	// LOGGING
@@ -97,6 +104,27 @@ public class HttpActionDef implements Runnable, Process{
 		HttpResponse response = new HttpResponse(this.response, this.request, this);
 		Method metodo = this.route.metodo;
 		this.session.ping(metodo);
+		if(metodo.isAnnotationPresent(Cache.class)){
+			System.out.println("Cache");
+			CacheCore cache = CacheCore.getInstance();
+			if(cache.hasCache(this.request.getRequestURI())) {
+				CacheElement element = cache.getCache(this.request.getRequestURI());
+				this.processCache(element, response);
+				return;
+			} else {
+				this.cache = true;
+			}
+		}
+		if(metodo.isAnnotationPresent(UserCache.class)){
+			System.out.println("UserCache");
+			if(this.session.hasCache(this.request.getRequestURI())) {
+				CacheElement element = this.session.getCache(this.request.getRequestURI());
+				this.processCache(element, response);
+				return;
+			} else {
+				this.cache = true;
+			}
+		}
 		try {
 			metodo.invoke(null, request,response);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
@@ -113,6 +141,25 @@ public class HttpActionDef implements Runnable, Process{
 		}
 		
 	}
+	private void processCache(CacheElement element, HttpResponse response){
+		this.response.setCharacterEncoding("UTF-8");
+		this.response.setStatus(HttpServletResponse.SC_OK);
+		if(element.getType() == CacheCore.CACHE_JSON){
+			this.response.setContentType("application/json");
+		} else if(element.getType() == CacheCore.CACHE_XML) {
+			this.response.setContentType("application/xml");
+			
+		} else if(element.getType() == CacheCore.CACHE_TEXT) {
+			this.response.setContentType("text/plain");
+		}
+		try {
+			this.response.getWriter().println(element.getContent());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.finalice();
+	}
 	// METODO PARA PROCESAR CON METODO ASOACIADO
 	// METODO DE LLAMADA PARA RETIRAR EL ACTION DEL TASKLIST
 	public void finalice(){
@@ -123,5 +170,18 @@ public class HttpActionDef implements Runnable, Process{
 	}
 	public SessionDef getSession(){
 		return this.session;
+	}
+	public void checkCache(String content, int type){
+		if(this.cache){
+			Method metodo = this.route.metodo;
+			if(metodo.isAnnotationPresent(Cache.class)){
+				Cache cache_annotation = metodo.getAnnotation(Cache.class);
+				CacheCore cache = CacheCore.getInstance();
+				cache.setCache(this.request.getRequestURI(), content, cache_annotation.time(), type);
+			} else if(metodo.isAnnotationPresent(UserCache.class)) {
+				Cache cache_annotation = metodo.getAnnotation(Cache.class);
+				this.session.setCache(this.request.getRequestURI(), content, cache_annotation.time(), type);
+			}
+		}
 	}
 }
