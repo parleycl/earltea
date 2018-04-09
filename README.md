@@ -207,7 +207,7 @@ To DO
 
 To admin Earlgrey, you only need a web browser. Earlgrey provide a Admin interface to config the main posibilities. In this console you can config the properties, controllers, models, routes, view the logs, config the custer configuration and everything you needs to generate a great app.
 
-To access to the console only put in your web browser the next url.
+To access to the console only put in your web browser the next url. if your first time the username is admin and the password is earlgrey.
 
 ```bash
 [http/https]://[HOST]:[PORT]/CONTEXT/console/
