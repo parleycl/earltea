@@ -144,7 +144,7 @@ The next HTTP method are supported in Earlgrey. If your application container no
 
 Ealrgrey support cache for the controller actions in two levels, The cache can be general using the @Cache Annotation or by User using the @UserCache annotation. The general cache is a global cache for all users, while the UserCache is a cache for each user that make petitions to system, normally with diferentns results by user. Both ways define the lifetime of cache; If the lifetime are cero, Earlgrey automatically remove the register of cache memory. If the cache is not set, in the first request of client made, the cache will the take the result of petition and save into the memory. the next petitions take the result of the cache memory, enhancing the speed of response.  
 
-The way to use the cache are the nextfor global cache and user cache.
+The way to use the cache are the next for global cache.
 
 ```java
 @Controller(description = "A test of Controller", name = "HelloWorld", version = 1)
@@ -162,6 +162,7 @@ public class HelloWorld extends ControllerBase {
     }
 }
 ```
+The way to use the cache are the next for user cache.
 
 ```java
 @Controller(description = "A test of Controller", name = "HelloWorld", version = 1)
