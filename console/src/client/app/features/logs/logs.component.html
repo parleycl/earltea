@@ -1,0 +1,26 @@
+<div class="logs">
+	<div class="card list">
+	  <div class="card-header card-inverse card-success header">Logs</div>
+	  <div class="card-block nopadding">
+	  	<table class="table table-striped">
+			<tr class ="item" *ngFor="let log of list">
+			    <td (click)="call_file(log)">{{ log | logfile }}</td>
+			</tr>
+	   	</table>
+	  </div>
+	</div>
+	<div class="card body">
+	  <div class="card-header card-inverse card-success header">Registro: {{ filename | logfile }}</div>
+	  <div class="card-block content" #logcontent >
+	    <div class="line" *ngFor="let line of file">
+	    	<div class="type">
+	    		<div class="label info" *ngIf="line.type == 'INFO'">INFO</div>
+	    		<div class="label config" *ngIf="line.type == 'CONFIG'">CONFIG</div>
+	    		<div class="label warning" *ngIf="line.type == 'WARNING'">WARNING</div>
+	    		<div class="label critic" *ngIf="line.type == 'CRITIC'">CRITIC</div>
+	    	</div>
+	    	<div class="line_content" [innerHtml]="break_spaces(line.message)"></div>
+	    </div>
+	  </div>
+	</div>
+</div>

@@ -1,0 +1,75 @@
+:host{
+	width:100%;
+	background:white;
+}
+.logs{
+	display: flex;
+	width:100%;
+	height:100%;
+	padding:10px;
+	.list{
+		width: 13%;
+		.header{
+			display:flex;
+			flex-direction:row;
+			color: white;
+		}
+		.item{
+			display:flex;
+			width: 100%;
+			align-items:center;
+			cursor:pointer;
+		}
+	}
+	.body{
+		margin-left:20px;
+		width: 87%;
+		.header{
+			display:flex;
+			flex-direction:row;
+			color: white;
+		}
+		.content{
+			overflow: scroll;
+			overflow-x: hidden;
+			height: 100%;
+			padding: 20px 10px;
+			.line{
+				width:100%;
+				display:flex;
+				margin-bottom:3px;
+				.type{
+					color: #FFF;
+					display:flex;
+					flex-direction:row;
+					.label{
+						padding:5px;
+						justify-content:center;
+						align-items:center;
+						font-size: 0.7rem;
+					}
+					.info{
+						background: #00C0D8;
+					}
+					.config{
+						background: #00B352;
+					}
+					.warning{
+						background: #F2CE39;
+					}
+					.critic{
+						background: #D40000;
+					}
+				}
+				.line_content{
+					display:flex;
+					width:80px;
+					margin-left:5px;
+					align-content:center;
+					align-items:center;
+					font-family: "Courier New", Courier, monospace;
+				}
+			}
+		}
+	}
+}
