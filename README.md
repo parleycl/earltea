@@ -1,14 +1,10 @@
 # Earlgrey
 
-[![Watch on GitHub][github-watch-badge]][github-watch]
-[![Star on GitHub][github-star-badge]][github-star]
-[![Tweet][twitter-badge]][twitter]
-
 ![tea love](https://raw.githubusercontent.com/acalvoa/EARLGREY/extra/resources/Earl_Grey.jpg)
 
 A Lightweight Java Services Framework inspired in Nodejs Express, Sails.js &amp; Phalcon PHP and Loopback for quick develop of apps based in client server architecture. Build apps with frontend frameworks like Angular and Reactjs. Code and build faster and leave the machine's work to machines.
 
-## Requeriments 
+## Why Earlgrey? 
 
 TO DO
 
@@ -130,3 +126,5 @@ Thanks to all beautiful people than make be possible this project
 ## LICENSE
 
 MIT
+
+[license-badge]: https://img.shields.io/npm/l/all-contributors.svg?style=flat-square
