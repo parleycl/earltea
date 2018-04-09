@@ -78,7 +78,76 @@ To DO
 
 ## Ealgrey Controllers
 
-To DO
+Write a controllers and API endpoints it's really easy with Earlgrey. Only you need put the controller class in a package you choose, extends the ControllerBase class. Aditional you must add the "Controller" annotation. Earlgrey System automatically recognize the controllers and map them to use in the app. To declare an Controller you need put the description, name and versión of this controller. An example of this can be.
+
+```java
+@Controller(description = "A test of Controller", name = "HelloWorld", version = 1)
+public class HelloWorld extends ControllerBase {
+	/**
+     * The controller actions are code here
+     */
+}
+```
+
+The controllers have an options to extend his behaviors like Routes, Cache, UserCache, Policies, Properties, etc. If you wan't to define a context route for this endpoint only you need to use the annotation @Route like this.
+
+```java
+@Controller(description = "A test of Controller", name = "HelloWorld", version = 1)
+@Route(route = "/hello")
+public class HelloWorld extends ControllerBase {
+	/**
+     * The controller actions are code here
+     */
+}
+```
+
+### Controller actions and routing.
+
+In this case, the controllers Actions are the way to write endpoint actions or anything you needs. To define a controller action you need declare a @ControllerAction annotation in a public static method defined into controller. Earlgrey automatically recognize the action and map them. This method receive two parameters to handle any http request and response. An example of this can be.
+
+```java
+@Controller(description = "A test of Controller", name = "HelloWorld", version = 1)
+@Route(route = "/hello")
+public class HelloWorld extends ControllerBase {
+    
+    @ControllerAction(description = "A test action to write hello world", name = "Test", version = 1)
+    public static void test(HttpRequest req, HttpResponse res) {
+        System.out.println("Hello world");
+        return;
+    }
+}
+```
+
+#### Route a Controller Action
+
+You can add diferents options to define and endpoint. All RESTFull operations are soported, and you can use like an annotation. Also you can define a Route for this endpoint with @Route annotation like the controllers. The actions support multiple HTTP methods declaration, but it's not recomended following the semantic API guidelines. An example of this can be.
+
+```java
+@Controller(description = "A test of Controller", name = "HelloWorld", version = 1)
+@Route(route = "/hello")
+public class HelloWorld extends ControllerBase {
+    
+    @ControllerAction(description = "A test action to write hello world", name = "Test", version = 1)
+    @Route(route = "/world")
+    @GET
+    public static void test(HttpRequest req, HttpResponse res) {
+        System.out.println("Hello world");
+        res.ok();
+        return;
+    }
+}
+```
+
+#### Restfull methods soported
+
+- [X] POST (@POST)
+- [X] PUT (@PUT)
+- [X] GET (@GET)
+- [X] PATCH (@PATCH)
+- [X] DELETE (@DELETE)
+- [X] OPTIONS (@OPTIONS)
+
+
 
 ## Ealgrey Console
 

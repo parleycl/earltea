@@ -44,6 +44,30 @@ export class RestService {
 			res => Observable.throw(this.loading.hide(this))
 		);
 	}
+
+	public patch(data:any, uri:string) {
+		let body:string = '';
+		this.loading.show(this);
+		for(let key in data){
+			if(data[key] == 0 || (data[key] != null && data[key] != '')){
+				if(typeof data[key] == 'object') data[key] = JSON.stringify(data[key]);
+				body += key+`=${data[key]}&`;
+			}
+		}
+		body = body.substring(0,(body.length-1));
+		let header = this.createHeaders();
+		return this.http.patch(this.api+"admin/console/"+uri, body, {
+	      	headers: header,
+	      	withCredentials: true
+	    }).map((res:Response) => {
+			let response = res.json();
+			this.loading.hide(this);
+			return response;
+		}).catch(
+			res => Observable.throw(this.loading.hide(this))
+		);
+	}
+
 	public postSilent(data:any, uri:string) {
 		let body:string = '';
 		for(let key in data){
