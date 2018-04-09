@@ -66,13 +66,13 @@ public class Earlgrey{
     	this.log.Info("*    BACKEND SYSTEM                                                                    *");
     	this.log.Info("****************************************************************************************");
     	this.log.Info("");
-    	this.log.Info("Version : 0.5 Alpha");
-    	this.log.Info("System Architect : Angelo Alejandro Calvo Alfaro");
+    	this.log.Info("Version : 0.23");
+    	this.log.Info("Design by : Angelo Alejandro Calvo Alfaro");
     	this.log.Info("Code by : Angelo Alejandro Calvo Alfaro, Sebastian Gonzalez Villena");
     	this.log.Info("");
     	this.log.Info("");
     	this.log.Info("LICENCE : MIT");
-    	this.log.Info("Copyright 2017 - Contraloria General de la Republica de Chile");
+    	this.log.Info("Copyright 2018 - Angelo Alejandro Calvo Alfaro");
     	this.log.Info("Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 'Software'), to deal in the");
     	this.log.Info("Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, ");
     	this.log.Info("and to permit persons to whom the Software is furnished to do so, subject to the following conditions:");
