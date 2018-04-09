@@ -129,7 +129,7 @@ For the test controller action the url is defined by.
 [http/https]://[HOST]:[PORT]/CONTEXT/api/hello/world
 ```
 
-#### Restfull methods soported
+#### Restful methods soported
 
 The next HTTP method are supported in Earlgrey. If your application container not support a method, not problem buddy, Earlgrey bypass the application server and bring support to your app to use this method following the RESTful guidelines defined in [Restfull Cookbook](http://restcookbook.com)
 
