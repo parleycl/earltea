@@ -1,7 +1,10 @@
 package earlgrey.filters;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URLConnection;
 import java.sql.SQLException;
 
 import javax.servlet.Filter;
@@ -56,23 +59,38 @@ public class Console extends Apicore implements Filter {
 			filereq = "index.html";
 		}
 		InputStream file = request.getServletContext().getClassLoader().getResourceAsStream("console/"+filereq);
-		try {
-			if(file != null){
-				int content;
-				while ((content = file.read()) != -1) {
-					// convert to char and display it
-					response.getWriter().print((char) content);
+		if(filereq.matches(".*[.]png|.*[.]jpg|.*[.]svg|.*[.]ico|.*[.]jpge")){
+			try{
+				BufferedInputStream bis = new BufferedInputStream(file);
+				byte[] bytes = new byte[bis.available()];
+		        response.setContentType(URLConnection.guessContentTypeFromName(filereq));
+		        OutputStream os = response.getOutputStream();
+		        bis.read(bytes);
+		        os.write(bytes);
+			} 
+			catch(IOException e){
+				response.setStatus(500);
+			}   
+		} else {
+			try {
+				if(file != null){
+					int content;
+					while ((content = file.read()) != -1) {
+						// convert to char and display it
+						response.getWriter().print((char) content);
+					}
+					String mimeType = URLConnection.guessContentTypeFromName(filereq);
+					if(mimeType != null) response.setContentType(mimeType);
+					response.getWriter().flush();
+					file.close();
 				}
-				
-				response.getWriter().flush();
-				file.close();
+				else
+				{
+					response.setStatus(404);
+				}
+			} catch (IOException e) {
+				response.setStatus(500);
 			}
-			else
-			{
-				response.setStatus(404);
-			}
-		} catch (IOException e) {
-			response.setStatus(500);
 		}
 	}
 	protected void POST(HttpServletRequest request, HttpServletResponse response){
