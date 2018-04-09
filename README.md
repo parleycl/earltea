@@ -54,27 +54,6 @@ public class SO implements ServletContextListener, ServletRequestListener {
     }
 }
 ```
-## Earlgrey ORM Functions.
-
-Earlgrey implement a lightweight ORM to operate with databases in a common way. This ORM works based on Models definitions in the code write by the apps developers. Earlgrey recognize the models and map them to interact with the controllers and the configuration console. You can define Blueprints Models that implement the CRUD operations in the REST API based only in the model. The ORM provide a powerfull function set to operate with the database, with a custom querys, transaction suport and multi tenancy.
-
-### Datasbase Suport
-
-* [X] Mysql
-* [X] Oracle
-* [X] Postgres
-
-### Model Declaration
-
-To DO
-
-### Blueprint Model
-
-To DO
-
-### ORM Operations
-
-To DO
 
 ## Ealgrey Controllers
 
@@ -120,7 +99,7 @@ public class HelloWorld extends ControllerBase {
 
 #### Route a Controller Action
 
-You can add diferents options to define and endpoint. All RESTFull operations are soported, and you can use like an annotation. Also you can define a Route for this endpoint with @Route annotation like the controllers. The actions support multiple HTTP methods declaration, but it's not recomended following the semantic API guidelines. An example of this can be.
+You can add diferents options to define and endpoint. All RESTFul operations are soported, and you can use like an annotation. Also you can define a Route for this endpoint with @Route annotation like the controllers. The actions support multiple HTTP methods declaration, but it's not recomended following the semantic API guidelines. An example of this can be.
 
 ```java
 @Controller(description = "A test of Controller", name = "HelloWorld", version = 1)
@@ -138,7 +117,21 @@ public class HelloWorld extends ControllerBase {
 }
 ```
 
+This definitiion make automatically an endpoint, following the next definition.
+
+```bash
+[http/https]://[HOST]:[PORT]/CONTEXT/api/[CONTEXT ENDPOINT]/[ACTION ROUTE]
+```
+
+For the test controller action the url is defined by.
+
+```bash
+[http/https]://[HOST]:[PORT]/CONTEXT/api/hello/world
+```
+
 #### Restfull methods soported
+
+The next HTTP method are supported in Earlgrey. If your application container not support a method, not problem buddy, Earlgrey bypass the application server and bring support to your app to use this method following the RESTful guidelines defined in [Restfull Cookbook](http://restcookbook.com)
 
 - [X] POST (@POST)
 - [X] PUT (@PUT)
@@ -147,7 +140,67 @@ public class HelloWorld extends ControllerBase {
 - [X] DELETE (@DELETE)
 - [X] OPTIONS (@OPTIONS)
 
+#### Cache Support
 
+Ealrgrey support cache for the controller actions in two levels, The cache can be general using the @Cache Annotation or by User using the @UserCache annotation. The general cache is a global cache for all users, while the UserCache is a cache for each user that make petitions to system, normally with diferentns results by user. Both ways define the lifetime of cache; If the lifetime are cero, Earlgrey automatically remove the register of cache memory. If the cache is not set, in the first request of client made, the cache will the take the result of petition and save into the memory. the next petitions take the result of the cache memory, enhancing the speed of response.  
+
+The way to use the cache are the nextfor global cache and user cache.
+
+```java
+@Controller(description = "A test of Controller", name = "HelloWorld", version = 1)
+@Route(route = "/hello")
+public class HelloWorld extends ControllerBase {
+    
+    @ControllerAction(description = "A test action to write hello world", name = "Test", version = 1)
+    @Route(route = "/world")
+    @GET
+    @Cache(time = 3600) // Time in seconds
+    public static void test(HttpRequest req, HttpResponse res) {
+        System.out.println("Hello world");
+        res.ok();
+        return;
+    }
+}
+```
+
+```java
+@Controller(description = "A test of Controller", name = "HelloWorld", version = 1)
+@Route(route = "/hello")
+public class HelloWorld extends ControllerBase {
+    
+    @ControllerAction(description = "A test action to write hello world", name = "Test", version = 1)
+    @Route(route = "/world")
+    @GET
+    @UserCache(time = 3600) // Time in seconds
+    public static void test(HttpRequest req, HttpResponse res) {
+        System.out.println("Hello world");
+        res.ok();
+        return;
+    }
+}
+```
+
+## Earlgrey ORM Functions.
+
+Earlgrey implement a lightweight ORM to operate with databases in a common way. This ORM works based on Models definitions in the code write by the apps developers. Earlgrey recognize the models and map them to interact with the controllers and the configuration console. You can define Blueprints Models that implement the CRUD operations in the REST API based only in the model. The ORM provide a powerfull function set to operate with the database, with a custom querys, transaction suport and multi tenancy.
+
+### Datasbase Suport
+
+* [X] Mysql
+* [X] Oracle
+* [X] Postgres
+
+### Model Declaration
+
+To DO
+
+### Blueprint Model
+
+To DO
+
+### ORM Operations
+
+To DO
 
 ## Ealgrey Console
 
