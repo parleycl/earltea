@@ -269,10 +269,10 @@ Thanks to all beautiful people than make be possible this project
 |:----:|:----:|:----:|
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
+**Made with ♥ in Chile by all us.**
+
 ## LICENSE
 
 MIT
-
-**Made with ♥ in Chile by all us.**
 
 [license-badge]: https://img.shields.io/npm/l/all-contributors.svg?style=flat-square
