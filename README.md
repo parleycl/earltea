@@ -16,7 +16,7 @@ Earlgrey is designed thinking in the simplicity. Each feature was born from need
 Each feature was design with love thinking in the coding simplicity, we want you write less code to make great results with and friendly and beatifull coding form.
 
 The framework propose two principles used to make his possible. 
-- The first it's **"One Framework"**, no matter what you use to deploy your app, the same code works in all them. if you use a app container like JBOSS, Tomcat, Weblogic, GlassFish, it's ok you can use anyone with the same code. If you decide use the server embeded in earlgrey, you can use with the same code.
+- The first is **"One Framework"**, no matter what you use to deploy your app, the same code works in all them. if you use a app container like JBOSS, Tomcat, Weblogic, GlassFish, it's ok you can use anyone with the same code. If you decide use the server embeded in earlgrey, you can use with the same code.
 
 - The second is **"LTMWTM"** or **"Let the machine's work to machines"**. We are obsessed with write less code, bringing part of responsibility to machine, executing automatically multiple tasks, that assist to developer in the deveping work. A lot of functions of mapping and reflection of the code provide a great admin console, when the developer can configure and extend the functions of app, with realtime functions, Hot reloading properties, etc. Also Earlgrey core provide a lot of functions to write faster API's with Database interations, using "Models with blueprints", providing a function similar to "Loopback" of IBM, using a Model oriented architecture.
 
