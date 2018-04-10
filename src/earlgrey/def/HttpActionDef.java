@@ -42,17 +42,20 @@ public class HttpActionDef implements Runnable, Process{
 	private boolean cache = false;
 	// OBJETO DE RUTA
 	private RouteDef route;
+	// OBJETO DE RUTA
+	private ActionDef action;
 	// LOGGING
 	private Logging log = new Logging(this.getClass().getName());
 	
 	// DECLARAMOS LOS CONSTRUCTORES
-	public HttpActionDef(RouteDef route, HttpServletRequest request, HttpServletResponse response, 
+	public HttpActionDef(ActionDef action, HttpServletRequest request, HttpServletResponse response, 
 			JSONObject parametros, Gear motor){
 		this.request = request;
 		this.response = response;
 		this.parametros = parametros;
 		this.motor = motor;
-		this.route = route;
+		this.route = action.getRoute();
+		this.action = action;
 		this.session = Session.getInstance().getSession(request.getSession().getId());
 	}
 	@Override
@@ -73,14 +76,14 @@ public class HttpActionDef implements Runnable, Process{
 	}
 	private boolean checkAllParams() {
 		// BUSCAMOS PARAMETROS OPCIONALES Y LOS AGREGAMOS SI HACE FALTA
-		ParamOptional[] pa_op = this.route.metodo.getAnnotationsByType(ParamOptional.class);
+		ParamOptional[] pa_op = this.action.metodo.getAnnotationsByType(ParamOptional.class);
 		for(int i=0; i<pa_op.length; i++){
 			if(!this.parametros.has(pa_op[i].name())){
 				this.parametros.put(pa_op[i].name(), pa_op[i].defaultsTo());
 			}
 		}
 		// BUSCAMOS PARAMETROS REQUERIDOS
-		ParamRequire[] pa_re = this.route.metodo.getAnnotationsByType(ParamRequire.class);
+		ParamRequire[] pa_re = this.action.metodo.getAnnotationsByType(ParamRequire.class);
 		for(int i=0; i<pa_re.length; i++){
 			if(!this.parametros.has(pa_re[i].name())){
 				return false;
@@ -102,7 +105,7 @@ public class HttpActionDef implements Runnable, Process{
 		// ESTE ES EL NUCLEO DE LAS PETICIONES SE CREA UN NUEVO OBJETO REQUEST Y UN OBJETO RESPONSE
 		HttpRequest request = new HttpRequest(this.parametros, this.request, this);
 		HttpResponse response = new HttpResponse(this.response, this.request, this);
-		Method metodo = this.route.metodo;
+		Method metodo = this.action.metodo;
 		this.session.ping(metodo);
 		if(metodo.isAnnotationPresent(Cache.class)){
 			CacheCore cache = CacheCore.getInstance();
@@ -171,7 +174,7 @@ public class HttpActionDef implements Runnable, Process{
 	}
 	public void checkCache(String content, int type){
 		if(this.cache){
-			Method metodo = this.route.metodo;
+			Method metodo = this.action.metodo;
 			if(metodo.isAnnotationPresent(Cache.class)){
 				Cache cache_annotation = metodo.getAnnotation(Cache.class);
 				CacheCore cache = CacheCore.getInstance();

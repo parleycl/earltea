@@ -4,6 +4,7 @@ import java.util.Hashtable;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import earlgrey.def.ActionDef;
 import earlgrey.def.RouteDef;
 
 public class Router {
@@ -17,14 +18,14 @@ public class Router {
 		this.RouteMap = resource.getRouteMap();
 		this.RouteTable = resource.getRouteTable();
 	}
-	public RouteDef route(String path){
+	public ActionDef route(String path, int httpMethod){
 		
 		String[] ruta = path.split("/");
 		if(ruta.length > 0){
 			if(this.RouteMap.containsKey(ruta[0])){
 				RouteDef rt = this.RouteMap.get(ruta[0]);
 				ruta = ArrayUtils.remove(ruta,0);
-				RouteDef enrutado = rt.route(ruta, null);
+				ActionDef enrutado = rt.route(ruta, httpMethod, null);
 				return enrutado;
 			}
 			else

@@ -1,64 +1,59 @@
 package earlgrey.def;
 
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import earlgrey.core.Gear;
+import org.json.JSONObject;
 
-public class ActionDef implements Runnable{
-	// DECLARAMOS LAS PROPIEDADES DE LA PETICION
-	private HttpServletRequest request; 
-	private HttpServletResponse response;
-	// DECLARAMOS LOS PARAMETROS
-	private Hashtable<String,String> parametros;
-	// DECLARAMOS LOS MOTORES
-	private Gear motor;
-	// ID DEL ACTION / HASH
-	private String Hash;
-	// OBJETO DE RUTA
-	private RouteDef route;
-	
-	// DECLARAMOS LOS CONSTRUCTORES
-	public ActionDef(String Hash, RouteDef route, HttpServletRequest request, HttpServletResponse response, 
-			Hashtable<String,String> parametros, Gear motor){
-		this.request = request;
-		this.response = response;
-		this.parametros = parametros;
-		this.motor = motor;
+import earlgrey.core.Gear;
+import earlgrey.core.ModelCore;
+
+public class ActionDef implements Cloneable{
+	// DECLARAMOS LAS CONSTANTES
+	protected Class<?> controlador;
+	protected Method metodo;
+	private int httpAction; 
+	public ArrayList<String> ParamRequire;
+	public Hashtable<String,String> ParamOptional;
+	public JSONObject Params;
+	protected boolean EndPoint;
+	public Class<?> policie;
+	public boolean ModelRest = false;
+	public Class<ModelCore> Model;
+	private RouteDef route; 
+	// CONSTRUCTOR
+	public ActionDef(int httpAction, RouteDef route, Class<?> clase, Method metodo){
+		this.controlador = clase;
+		this.metodo = metodo;
+		this.httpAction = httpAction;
 		this.route = route;
 	}
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		this.execute();
+	public ActionDef(int httpAction, RouteDef route, Class<?> clase){
+		this.controlador = clase;
+		this.httpAction = httpAction;
+		this.route = route;
 	}
-	// DECLARAMOS EL METODO DE EJECUCIÓN
-	private void execute() {
-		//VERIFICAMOS QUE EL PATH TENGA UN METODO ASOCIADO, DE LO CONTRARIO ES GENERICO.
-		if(this.route.getMetodo() != null){
-			
-		}
-		else
-		{
-			
-		}
-		this.finalice();
+	// METODO PARA OBTENER EL METODO ENRUTADO
+	public Method getMetodo() {
+		return metodo;
 	}
-	// METODO PARA PROCESAR SIN METODO ASOCIADO
-	private boolean without_method(){
-		return false;
+	public void setParams(JSONObject params){
+		this.Params = params;
 	}
-	// METODO PARA PROCESAR CON METODO ASOCIADO
-	private boolean with_method(){
-		return false;
+	public JSONObject getParams(){
+		return this.Params;
 	}
-	// METODO PARA PROCESAR CON METODO ASOACIADO
-	// METODO DE LLAMADA PARA RETIRAR EL ACTION DEL TASKLIST
-	private void finalice(){
-		if(this.motor != null){
-	//		this.motor.finalice(this.Hash);
-		}
+	protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+	public boolean getEndpoint(){
+		return this.EndPoint;
+	}
+	public RouteDef getRoute(){
+		return this.route;
 	}
 }

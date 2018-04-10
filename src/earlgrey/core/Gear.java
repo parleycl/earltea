@@ -14,7 +14,9 @@ import org.json.JSONObject;
 
 import earlgrey.core.Logging;
 import earlgrey.core.Router;
+import earlgrey.def.ActionDef;
 import earlgrey.def.HttpActionDef;
+import earlgrey.def.HttpMethods;
 import earlgrey.def.RouteDef;
 
 public class Gear {
@@ -22,7 +24,7 @@ public class Gear {
 	HttpServletRequest request;
 	HttpServletResponse response;
 	private Logging log;
-	public String verbose;
+	public int verbose;
 	private int ID;
 	private String SESSION_ID;
 	// DEFINIMOS EL CONSTRUCTOR
@@ -32,60 +34,78 @@ public class Gear {
 		this.SESSION_ID = request.getSession().getId();
 	}
 	public void get(boolean console) {
-		this.verbose = "GET";
+		this.verbose = HttpMethods.GET;
 		if(console){
-			this.digest_console("GET");
+			this.digest_console(HttpMethods.GET);
 		}
 		else{
-			this.digest("GET");
+			this.digest(HttpMethods.GET);
 		}
 	}
 	public void post(boolean console) {
-		this.verbose = "POST";
+		this.verbose = HttpMethods.POST;
 		if(console){
-			this.digest_console("POST");
+			this.digest_console(HttpMethods.POST);
 		}
 		else{
-			this.digest("POST");
+			this.digest(HttpMethods.POST);
 		}
 	}
 	public void put(boolean console) {
-		this.verbose = "PUT";
+		this.verbose = HttpMethods.PUT;
 		if(console){
-			this.digest_console("PUT");
+			this.digest_console(HttpMethods.PUT);
 		}
 		else{
-			this.digest("PUT");
+			this.digest(HttpMethods.PUT);
 		}
 	}
 	public void delete(boolean console) {
-		this.verbose = "DELETE";
+		this.verbose = HttpMethods.DELETE;
 		if(console){
-			this.digest_console("DELETE");
+			this.digest_console(HttpMethods.DELETE);
 		}
 		else{
-			this.digest("DELETE");
+			this.digest(HttpMethods.DELETE);
 		}
 	}
 	public void patch(boolean console) {
-		this.verbose = "PATCH";
+		this.verbose = HttpMethods.PATCH;
 		if(console){
-			this.digest_console("PATCH");
+			this.digest_console(HttpMethods.PATCH);
 		}
 		else{
-			this.digest("PATCH");
+			this.digest(HttpMethods.PATCH);
 		}
 	}
 	public void options(boolean console) {
-		this.verbose = "DELETE";
+		this.verbose = HttpMethods.OPTIONS;
 		if(console){
-			this.digest_console("DELETE");
+			this.digest_console(HttpMethods.OPTIONS);
 		}
 		else{
-			this.digest("DELETE");
+			this.digest(HttpMethods.OPTIONS);
 		}
 	}
-	private void digest_console(String verbose){
+	public void purge(boolean console) {
+		this.verbose = HttpMethods.PURGE;
+		if(console){
+			this.digest_console(HttpMethods.PURGE);
+		}
+		else{
+			this.digest(HttpMethods.PURGE);
+		}
+	}
+	public void head(boolean console) {
+		this.verbose = HttpMethods.HEAD;
+		if(console){
+			this.digest_console(HttpMethods.HEAD);
+		}
+		else{
+			this.digest(HttpMethods.HEAD);
+		}
+	}
+	private void digest_console(int verbose){
 		Enumeration<String> param = this.request.getParameterNames();
 		String uri = this.request.getRequestURI();
 		// VERIFICAMOS QUE SEA UNA QUERY VALIDA
@@ -102,7 +122,7 @@ public class Gear {
 		JSONObject params = this.extract_params();
 		
 		Router router = new Router();
-		RouteDef action = router.route(route);
+		ActionDef action = router.route(route, verbose);
 		if(action == null){
 			this.response.setStatus(HttpServletResponse.SC_NOT_FOUND);
 			return;
@@ -119,7 +139,7 @@ public class Gear {
 			this.doAction(action, params);
 		}
 	}
-	private void digest(String verbose){
+	private void digest(int verbose){
 		String uri = this.request.getRequestURI();
 		// VERIFICAMOS QUE SEA UNA QUERY VALIDA
 		// EN CASO CONTRARIIO RETORNAMOS UN ERROR 404
@@ -135,7 +155,7 @@ public class Gear {
 		JSONObject params = this.extract_params();
 		
 		Router router = new Router();
-		RouteDef action = router.route(route);
+		ActionDef action = router.route(route, verbose);
 		//DECIDIMOS LA ACTION
 		if(action == null){
 			this.response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -184,84 +204,17 @@ public class Gear {
 		}
 		return params;
 	}
-	private void doAction(RouteDef route, JSONObject params){
+	private void doAction(ActionDef actionDef, JSONObject params){
 		Engine engine = Engine.getInstance();
-		switch(verbose){
-			case "POST":
-				if(route.POST){
-					HttpActionDef action = new HttpActionDef(route, this.request, this.response, params, this);
-					this.ID = engine.registerTask(action);
-					action.set_id(this.ID);
-					action.run();
-				}
-				else
-				{
-					this.response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-				}
-				break;
-			case "GET":
-				if(route.GET){
-					HttpActionDef action = new HttpActionDef(route, this.request, this.response, params, this);
-					this.ID = engine.registerTask(action);
-					action.set_id(this.ID);
-					action.run();
-				}
-				else
-				{
-					this.response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-				}
-				break;
-			case "DELETE":
-				if(route.DELETE){
-					HttpActionDef action = new HttpActionDef(route, this.request, this.response, params, this);
-					this.ID = engine.registerTask(action);
-					action.set_id(this.ID);
-					action.run();
-				}
-				else
-				{
-					this.response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-				}
-				break;
-			case "PUT":
-				if(route.PUT){
-					HttpActionDef action = new HttpActionDef(route, this.request, this.response, params, this);
-					this.ID = engine.registerTask(action);
-					action.set_id(this.ID);
-					action.run();
-				}
-				else
-				{
-					this.response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-				}
-				break;
-			case "PATCH":
-				if(route.PATCH){
-					HttpActionDef action = new HttpActionDef(route, this.request, this.response, params, this);
-					this.ID = engine.registerTask(action);
-					action.set_id(this.ID);
-					action.run();
-				}
-				else
-				{
-					this.response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-				}
-				break;
-			case "OPTIONS":
-				if(route.OPTIONS){
-					HttpActionDef action = new HttpActionDef(route, this.request, this.response, params, this);
-					this.ID = engine.registerTask(action);
-					action.set_id(this.ID);
-					action.run();
-				}
-				else
-				{
-					this.response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-				}
-				break;
-			default:
-				this.response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-				break;
+		if(actionDef.getRoute().hasHttpMethod(this.verbose)){
+			HttpActionDef action = new HttpActionDef(actionDef, this.request, this.response, params, this);
+			this.ID = engine.registerTask(action);
+			action.set_id(this.ID);
+			action.run();
+		}
+		else
+		{
+			this.response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 		}
 		
 	}
