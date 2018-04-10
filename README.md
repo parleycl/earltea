@@ -61,7 +61,7 @@ To use Earlgrey only you need import the jar to your web project and start the E
 
 ```java
 @WebListener
-public class SO implements ServletContextListener, ServletRequestListener {
+public class Testapp implements ServletContextListener, ServletRequestListener {
 	/**
      * @see ServletContextListener#contextInitialized(ServletContextEvent)
      */
