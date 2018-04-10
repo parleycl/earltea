@@ -20,41 +20,15 @@ import earlgrey.interfaces.PolicieCore;
 
 public class RouteDef implements Cloneable {
 	protected String path;
-	protected Class<?> controlador;
-	protected Method metodo;
-	public ArrayList<String> ParamRequire;
-	public Hashtable<String,String> ParamOptional;
+	private Hashtable<Integer,ActionDef> actions = new Hashtable<Integer,ActionDef>();
 	protected ArrayList<String> ParamByUri;
-	public JSONObject Params;
-	protected boolean EndPoint;
-	public Class<?> policie;
-	public boolean CACHE;
-	public boolean POST;
-	public boolean GET;
-	public boolean PUT;
-	public boolean DELETE;
-	public boolean PATCH;
 	public boolean CORS;
-	public boolean OPTIONS;
-	public boolean ModelRest = false;
-	public Class<ModelCore> Model;
 	protected Logging log = new Logging(this.getClass().getName());
 	// CARGAMOS LA TABLA DE RUTAS
 	private Hashtable<String,RouteDef> RouteTable = new Hashtable<String,RouteDef>();
 	//DEFINIMOS LOS CONSTRUCTORES
-	public RouteDef(String path, Class<?> controlador){
-		this.path = path;
-		this.controlador = controlador;
-		this.ParamByUri = new ArrayList<String>();
-	}
 	public RouteDef(String path){
 		this.path = path;
-		this.ParamByUri = new ArrayList<String>();
-	}
-	public RouteDef(String path, Class<?> controlador, Method metodo){
-		this.path = path;
-		this.controlador = controlador;
-		this.metodo = metodo;
 		this.ParamByUri = new ArrayList<String>();
 	}
 	//PROCESAMIENTO DE RUTA
@@ -65,12 +39,9 @@ public class RouteDef implements Cloneable {
 	public Hashtable<String,String> getParameters(){
 		return null;
 	}
-	// METODO PARA OBTENER EL METODO ENRUTADO
-	public Method getMetodo() {
-		return metodo;
-	}
+	
 	//hacemos el metodo para digest de routes
-	public RouteDef digest_route(String[] route, Class<?> clase){
+	public RouteDef digest_route(String[] route){
 		if(route.length > 0){
 			while(route.length > 0){
 				if(route[0].startsWith(":")){
@@ -80,13 +51,13 @@ public class RouteDef implements Cloneable {
 					if(RouteTable.containsKey(key)){
 						RouteDef router = this.RouteTable.get(key);
 						route = ArrayUtils.remove(route,0);
-						return router.digest_route(route,clase);
+						return router.digest_route(route);
 					}
 					else {
 						RouteDef router = new RouteDef(key);
 						this.RouteTable.put(key, router);
 						route = ArrayUtils.remove(route,0);
-						return router.digest_route(route, clase);
+						return router.digest_route(route);
 					}
 				}
 				else
@@ -94,13 +65,13 @@ public class RouteDef implements Cloneable {
 					if(RouteTable.containsKey(route[0])){
 						RouteDef router = this.RouteTable.get(route[0]);
 						route = ArrayUtils.remove(route,0);
-						return router.digest_route(route,clase);
+						return router.digest_route(route);
 					}
 					else {
 						RouteDef router = new RouteDef(route[0]);
 						this.RouteTable.put(route[0], router);
 						route = ArrayUtils.remove(route,0);
-						return router.digest_route(route, clase);
+						return router.digest_route(route);
 					}
 				}
 			}
@@ -108,64 +79,25 @@ public class RouteDef implements Cloneable {
 		}
 		else
 		{
-			this.controlador = clase;
-			this.EndPoint = true;
 			return this;
 		}
 	}
-	public RouteDef digest_route(String[] route, Class<?> clase, Method metodo) {
-		if(route.length > 0){
-			while(route.length > 0){
-				if(route[0].startsWith(":")){
-					String param = route[0].substring(1, (route[0].length()));
-					String key = "{"+param+"}";
-					this.ParamByUri.add(key);
-					if(RouteTable.containsKey(key)){
-						RouteDef router = this.RouteTable.get(key);
-						route = ArrayUtils.remove(route,0);
-						return router.digest_route(route,clase, metodo);
-					}
-					else {
-						RouteDef router = new RouteDef(key);
-						this.RouteTable.put(key, router);
-						route = ArrayUtils.remove(route,0);
-						return router.digest_route(route, clase, metodo);
-					}
-				}
-				else
-				{
-					if(RouteTable.containsKey(route[0])){
-						RouteDef router = this.RouteTable.get(route[0]);
-						route = ArrayUtils.remove(route,0);
-						return router.digest_route(route,clase, metodo);
-					}
-					else {
-						RouteDef router = new RouteDef(route[0]);
-						this.RouteTable.put(route[0], router);
-						route = ArrayUtils.remove(route,0);
-						return router.digest_route(route, clase, metodo);
-					}
-				}
-			}
-			return this;
-		}
-		else
-		{
-			this.controlador = clase;
-			this.metodo = metodo;
-			return this;
-		}
+	// Creamos la action para añadir el verbo http
+	public ActionDef createAction(int httpAction, Class<?> clase, Method metodo) {
+		ActionDef action = new ActionDef(httpAction, this, clase, metodo);
+		if(this.actions.containsKey(httpAction)) this.log.Warning("The last route with "+HttpMethods.toString(httpAction)+" method was duplicate. The core set the controller "+clase.getSuperclass().getName()+" with the action "+metodo.getName()+" in this route.");
+		this.actions.put(httpAction, action);
+		return action;
 	}
-	public void setParams(JSONObject params){
-		this.Params = params;
+	
+	public ActionDef createAction(int httpAction, Class<?> clase) {
+		ActionDef action = new ActionDef(httpAction, this, clase);
+		if(this.actions.containsKey(httpAction)) this.log.Warning("The last route with "+HttpMethods.toString(httpAction)+" method was duplicate. The core set the controller "+clase.getSuperclass().getName()+" in this route.");
+		this.actions.put(httpAction, action);
+		return action;
 	}
-	public JSONObject getParams(){
-		return this.Params;
-	}
-	protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
-	public RouteDef route(String[] route, JSONObject params){		
+	
+	public ActionDef route(String[] route, int httpMethod, JSONObject params){		
 		if(params == null) params = new JSONObject();
 		Method metodo = null;
 		int param_counter = 0;
@@ -174,33 +106,38 @@ public class RouteDef implements Cloneable {
 				if(RouteTable.containsKey(route[0])){
 					RouteDef router = this.RouteTable.get(route[0]);
 					route = ArrayUtils.remove(route,0);
-					return router.route(route, params);
+					return router.route(route, httpMethod, params);
 				}
 				else {
 					// BUSCAMOS UN METODO DENTRO DE LA CLASE EN CASO DE SER UN ENDPOINT
 					// SOLO SI ES EL ULTIMO PARAMETRO DE LLAMADA
-					if(this.EndPoint && route.length == 1){
-						Method[] met = this.controlador.getDeclaredMethods();
-						for(int k=0; k<met.length;k++){
-							if(met[k].getName().equals(route[0])){
-								metodo = met[k];
+					if(this.actions.containsKey(httpMethod)){
+						ActionDef action = this.actions.get(httpMethod);
+						if(action.EndPoint && route.length == 1){
+							Method[] met = action.controlador.getDeclaredMethods();
+							for(int k=0; k<met.length;k++){
+								if(met[k].getName().equals(route[0])){
+									metodo = met[k];
+								}
+							}
+							if(metodo != null) {
+								route = ArrayUtils.remove(route,0);
+								continue;
 							}
 						}
-						if(metodo != null) {
+						// EN CASO CONTRARIO INTENTAMOS SABER SI SON PARAMETROS
+						if(this.ParamByUri.size() > param_counter){
+							String pam = this.ParamByUri.get(param_counter++);
+							params.put(pam.substring(1,pam.length()-1), route[0]);
+							RouteDef router = this.RouteTable.get(pam);
 							route = ArrayUtils.remove(route,0);
-							continue;
+							return router.route(route, httpMethod, params);
 						}
-					}
-					// EN CASO CONTRARIO INTENTAMOS SABER SI SON PARAMETROS
-					if(this.ParamByUri.size() > param_counter){
-						String pam = this.ParamByUri.get(param_counter++);
-						params.put(pam.substring(1,pam.length()-1), route[0]);
-						RouteDef router = this.RouteTable.get(pam);
-						route = ArrayUtils.remove(route,0);
-						return router.route(route, params);
-					}
-					else
-					{
+						else
+						{
+							return null;
+						}
+					} else {
 						return null;
 					}
 				}
@@ -209,8 +146,9 @@ public class RouteDef implements Cloneable {
 		// EN CASO QUE LA RUTA ENCAJE EN ALGUNA DE LAS PETICIONES ENVIAMOS LA RUTA
 		// SI ES UN MODELO REST DE IGUAL FORMA SE EFECTUA LA LLAMADA
 		try {
-			if((this.controlador != null && metodo != null) || (this.controlador != null && this.metodo != null) || (this.ModelRest && this.Model != null)){
-				RouteDef rt = (RouteDef)this.clone();
+			ActionDef action = this.actions.get(httpMethod);
+			if((action.controlador != null && metodo != null) || (action.controlador != null && action.metodo != null) || (action.ModelRest && action.Model != null)){
+				ActionDef rt = (ActionDef)action.clone();
 				if(metodo != null) rt.metodo = metodo;
 				rt.setParams(params);
 				return rt;
@@ -223,7 +161,8 @@ public class RouteDef implements Cloneable {
 		}
 		return null;
 	}
-	public boolean getEndpoint(){
-		return this.EndPoint;
+	
+	public boolean hasHttpMethod(int method){
+		return this.actions.containsKey(method);
 	}
 }

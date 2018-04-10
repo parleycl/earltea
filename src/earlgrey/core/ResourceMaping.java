@@ -49,7 +49,9 @@ import earlgrey.annotations.PUT;
 import earlgrey.annotations.Policie;
 import earlgrey.annotations.Route;
 import earlgrey.database.Connector;
+import earlgrey.def.ActionDef;
 import earlgrey.def.ErrorDef;
+import earlgrey.def.HttpMethods;
 import earlgrey.def.ModelRest;
 import earlgrey.def.RouteDef;
 import earlgrey.error.Error500;
@@ -221,26 +223,25 @@ public class ResourceMaping {
 										if(ruta_uri_action.startsWith("/")) ruta_uri_action = ruta_uri_action.substring(1);
 										ruta_uri = ruta_uri + "/" + ruta_uri_action;
 									}
-									RouteDef router = this.MapRoute(ruta_uri, cls, metodos[g]);
+									RouteDef router = this.MapRoute(ruta_uri);
+									ActionDef actionHttp; 
 									if(metodos[g].getAnnotation(DELETE.class) != null) {
 										this.log.Info("Enrutando Controller Action: DELETE "+ruta_uri);
-										router.DELETE = true;
-									}
-									if(metodos[g].getAnnotation(GET.class) != null) {
+										actionHttp = router.createAction(HttpMethods.DELETE, cls, metodos[g]);
+									} else if(metodos[g].getAnnotation(GET.class) != null) {
 										this.log.Info("Enrutando Controller Action: GET "+ruta_uri);
-										router.GET = true;
-									}
-									if(metodos[g].getAnnotation(POST.class) != null) {
+										actionHttp = router.createAction(HttpMethods.GET, cls, metodos[g]);
+									} else if(metodos[g].getAnnotation(POST.class) != null) {
 										this.log.Info("Enrutando Controller Action: POST "+ruta_uri);
-										router.POST = true;
-									}
-									if(metodos[g].getAnnotation(PUT.class) != null) {
+										actionHttp = router.createAction(HttpMethods.POST, cls, metodos[g]);
+									} else if(metodos[g].getAnnotation(PUT.class) != null) {
 										this.log.Info("Enrutando Controller Action: PUT "+ruta_uri);
-										router.PUT = true;
-									}
-									if(metodos[g].getAnnotation(PATCH.class) != null) {
+										actionHttp = router.createAction(HttpMethods.PUT, cls, metodos[g]);
+									} else if(metodos[g].getAnnotation(PATCH.class) != null) {
 										this.log.Info("Enrutando Controller Action: PATCH "+ruta_uri);
-										router.PATCH = true;
+										actionHttp = router.createAction(HttpMethods.PATCH, cls, metodos[g]);
+									} else {
+										actionHttp = router.createAction(HttpMethods.UNKNOW, cls, metodos[g]);
 									}
 									if(cls.getAnnotation(CORS.class) != null) router.CORS = true;
 									//BUSCAMOS POLICIES
@@ -248,7 +249,7 @@ public class ResourceMaping {
 									if(policie != null){
 										Class<?> policie_class = this.PolicieTable.get(policie.name());
 										if(policie_class != null){
-											router.policie = policie_class;
+											actionHttp.policie = policie_class;
 										}
 										else{
 											this.log.Warning("Policie especificada ("+policie.name()+") no existe en el registro de policies.", Error500.POLICIE_NOT_LOADED);
@@ -272,42 +273,20 @@ public class ResourceMaping {
 		log.Info("Mapeo de Controladores: Proceso Finalizado");
 	}
 	// MAPEAMOS UNA RUTA
-	private RouteDef MapRoute(String ruta, Class<?> clase){
-		this.RouteTable.put(ruta, (new RouteDef(ruta,clase)));
+	private RouteDef MapRoute(String ruta){
+		if(!this.RouteTable.containsKey(ruta)) this.RouteTable.put(ruta, (new RouteDef(ruta)));
 		String[] rutas = ruta.split("/");
 		if(rutas.length > 0){
 			if(RouteMap.containsKey(rutas[0])){
 				RouteDef router = this.RouteMap.get(rutas[0]);
 				rutas = ArrayUtils.remove(rutas,0);
-				return router.digest_route(rutas,clase);
+				return router.digest_route(rutas);
 			}
 			else {
 				RouteDef router = new RouteDef(rutas[0]);
 				this.RouteMap.put(rutas[0], router);
 				rutas = ArrayUtils.remove(rutas,0);
-				return router.digest_route(rutas, clase);
-			}
-		}
-		else
-		{
-			log.Info("Ruta "+ruta+" incorrecta. Favor corregir");
-			return null;
-		}
-	}
-	private RouteDef MapRoute(String ruta, Class<?> clase, Method metodo){
-		this.RouteTable.put(ruta, (new RouteDef(ruta,clase,metodo)));
-		String[] rutas = ruta.split("/");
-		if(rutas.length > 0){
-			if(RouteMap.containsKey(rutas[0])){
-				RouteDef router = this.RouteMap.get(rutas[0]);
-				rutas = ArrayUtils.remove(rutas,0);
-				return router.digest_route(rutas,clase, metodo);
-			}
-			else {
-				RouteDef router = new RouteDef(rutas[0]);
-				this.RouteMap.put(rutas[0], router);
-				rutas = ArrayUtils.remove(rutas,0);
-				return router.digest_route(rutas, clase, metodo);
+				return router.digest_route(rutas);
 			}
 		}
 		else
@@ -556,25 +535,34 @@ public class ResourceMaping {
 						if(blueprints != null){
 							Route route = cls.getAnnotation(Route.class);
 							if(route != null){
-								this.log.Info("Enrutando Modelo RESTFULL: "+route.route());
+								this.log.Info("Enrutando Modelo RESTFUL: "+route.route());
 								String ruta_uri = route.route().trim();
 								if(ruta_uri.endsWith("/")) ruta_uri = ruta_uri.substring(0, (ruta_uri.length()-1));
 								if(ruta_uri.startsWith("/")) ruta_uri = ruta_uri.substring(1);
-								RouteDef router = this.MapRoute(ruta_uri, ModelRest.class);
-								router.ModelRest = true;
-								router.DELETE = true;
-								router.GET = true;
-								router.POST = true;
-								router.PUT = true;
-								router.PATCH = true;
+								RouteDef router = this.MapRoute(ruta_uri);
+								ActionDef actionHttp[] = new ActionDef[6];
+								actionHttp[0] = router.createAction(HttpMethods.DELETE, ModelRest.class);
+								actionHttp[1] = router.createAction(HttpMethods.GET, ModelRest.class);
+								actionHttp[2] = router.createAction(HttpMethods.POST, ModelRest.class);
+								actionHttp[3] = router.createAction(HttpMethods.PUT, ModelRest.class);
+								actionHttp[4] = router.createAction(HttpMethods.PATCH, ModelRest.class);
+								actionHttp[5] = router.createAction(HttpMethods.OPTIONS, ModelRest.class);
+								// Set all actions like model rest
+								for(int g=0; g< actionHttp.length; g++){
+									actionHttp[g].ModelRest = true;
+									actionHttp[g].Model = (Class<ModelCore> ) cls;
+								}
+								// Set CORS in petition
 								if(cls.getAnnotation(CORS.class) != null) router.CORS = true;
-								router.Model = (Class<ModelCore> ) cls;
+								
 								//BUSCAMOS POLICIES
 								Policie policie = cls.getAnnotation(Policie.class);
 								if(policie != null){
 									Class<?> policie_class = this.PolicieTable.get(policie.name());
 									if(policie_class != null){
-										router.policie = policie_class;
+										for(int g=0; g< actionHttp.length; g++){
+											actionHttp[g].policie = policie_class;
+										}
 									}
 									else{
 										this.log.Warning("Policie especificada ("+policie.name()+") no existe en el registro de policies.", Error500.POLICIE_NOT_LOADED);
@@ -666,26 +654,25 @@ public class ResourceMaping {
 										if(ruta_uri_action.startsWith("/")) ruta_uri_action = ruta_uri_action.substring(1);
 										ruta_uri = ruta_uri + "/" + ruta_uri_action;
 									}
-									RouteDef router = this.MapRoute(ruta_uri, cls, metodos[g]);
+									RouteDef router = this.MapRoute(ruta_uri);
+									ActionDef actionHttp; 
 									if(metodos[g].getAnnotation(DELETE.class) != null) {
 										this.log.Info("Enrutando Controller Action: DELETE "+ruta_uri);
-										router.DELETE = true;
-									}
-									if(metodos[g].getAnnotation(GET.class) != null) {
+										actionHttp = router.createAction(HttpMethods.DELETE, cls, metodos[g]);
+									} else if(metodos[g].getAnnotation(GET.class) != null) {
 										this.log.Info("Enrutando Controller Action: GET "+ruta_uri);
-										router.GET = true;
-									}
-									if(metodos[g].getAnnotation(POST.class) != null) {
+										actionHttp = router.createAction(HttpMethods.GET, cls, metodos[g]);
+									} else if(metodos[g].getAnnotation(POST.class) != null) {
 										this.log.Info("Enrutando Controller Action: POST "+ruta_uri);
-										router.POST = true;
-									}
-									if(metodos[g].getAnnotation(PUT.class) != null) {
+										actionHttp = router.createAction(HttpMethods.POST, cls, metodos[g]);
+									} else if(metodos[g].getAnnotation(PUT.class) != null) {
 										this.log.Info("Enrutando Controller Action: PUT "+ruta_uri);
-										router.PUT = true;
-									}
-									if(metodos[g].getAnnotation(PATCH.class) != null) {
+										actionHttp = router.createAction(HttpMethods.PUT, cls, metodos[g]);
+									} else if(metodos[g].getAnnotation(PATCH.class) != null) {
 										this.log.Info("Enrutando Controller Action: PATCH "+ruta_uri);
-										router.PATCH = true;
+										actionHttp = router.createAction(HttpMethods.PATCH, cls, metodos[g]);
+									} else {
+										actionHttp = router.createAction(HttpMethods.UNKNOW, cls, metodos[g]);
 									}
 									if(cls.getAnnotation(CORS.class) != null) router.CORS = true;
 									//BUSCAMOS POLICIES
@@ -693,7 +680,7 @@ public class ResourceMaping {
 									if(policie != null){
 										Class<?> policie_class = this.PolicieTable.get(policie.name());
 										if(policie_class != null){
-											router.policie = policie_class;
+											actionHttp.policie = policie_class;
 										}
 										else{
 											this.log.Warning("Policie especificada ("+policie.name()+") no existe en el registro de policies.", Error500.POLICIE_NOT_LOADED);

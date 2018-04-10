@@ -1,5 +1,6 @@
 ## Changelog
 
+### [Bugfix: Fix the overwrite of http action when the http method are same ](https://github.com/acalvoa/earlgrey/pull/32) (10/04/2018)
 ### [Bugfix: Properties Bugfix call API ](https://github.com/acalvoa/earlgrey/pull/28) (09/04/2018)
 ### [Bugfix: Compiling console lacking module ](https://github.com/acalvoa/earlgrey/pull/26) (09/04/2018)
 ### [Feature: Login Screen](https://github.com/acalvoa/earlgrey/pull/17) (08/04/2018)
