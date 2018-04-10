@@ -2,11 +2,27 @@
 
 ![tea love](https://raw.githubusercontent.com/acalvoa/EARLGREY/master/console/src/client/assets/images/logo.jpg)
 
-A Lightweight Java Services Framework inspired in Nodejs Express, Sails.js &amp; Phalcon PHP and Loopback for quick develop of apps based in client server architecture. Build apps with frontend frameworks like Angular and Reactjs. Code and build faster and leave the machine's work to machines.
+A Lightweight Java Services Framework inspired in Nodejs Express, Sails.js &amp; Phalcon PHP and Loopback for quick develop of apps based in client server architecture. Build apps with frontend frameworks like Angular, React and Vue.js. Code and build faster and leave the machine's work to machines.
 
 ## Why Earlgrey? 
 
-TO DO
+One day, Earlgrey born of the need to develop code and apps in java quickly. The java language and their frameworks, needs a lot of time and dependencies to make a little aplication that provide a RESTful API. In adition sometimes the dependencies generate conflicts and other own problems of apps container, make JAVA in not a great solution for quicks apps, smalls or hackaton sessions, or any project that you needs with agile coding, where you need a develop enviroment in less 5 minutes with real results, without a great knowllege about the language.
+
+Also, the low standardization of coding rules and multiple styles using by the java developers to make web apps, in a large project maybe can generate a great problem, if don't have  a structure where a good practice of coding are apply.
+
+Earlgrey is proposed like a solution to enhanced the developer experience making apps thats use the services architecture and the client-server architecture. With Earlgrey, you can develop an Restful API in less 5 minutes with a lot of posibilities embed in the framework like ORM, Cache, Sessions, Hot Configuratios, Admin Console, Realtime logs in a web platform, etc.
+
+Earlgrey is designed thinking in the simplicity. Each feature was born from needs of a group of developers, that needed write quickly apps in java language with a strong base that allow deploy this apps in a apps container without matter which.
+Each feature was design with love thinking in the coding simplicity, we want you write less code to make great results with and friendly and beatifull coding form.
+
+The framework propose two principles used to make his possible. 
+- The first it's **"One Framework"**, no matter what you use to deploy your app, the same code works in all them. if you use a app container like JBOSS, Tomcat, Weblogic, GlassFish, it's ok you can use anyone with the same code. If you decide use the server embeded in earlgrey, you can use with the same code.
+
+- The second is **"LTMWTM"** or **"Let the machine's work to machines"**. We are obsessed with write less code, bringing part of responsibility to machine, executing automatically multiple tasks, that assist to developer in the deveping work. A lot of functions of mapping and reflection of the code provide a great admin console, when the developer can configure and extend the functions of app, with realtime functions, Hot reloading properties, etc. Also Earlgrey core provide a lot of functions to write faster API's with Database interations, using "Models with blueprints", providing a function similar to "Loopback" of IBM, using a Model oriented architecture.
+
+Earlgrey is good to use in any type of proyect, but it's perfect to use in any small or quick project oriented to services. Earlgrey it's a great solution to use in adition with Angular, React or Vue.js when you need a API to communicate Backend with Frontend. It's a secret but Earlgrey originally was made to use with apps build in Angular and React, when we need the frontend and backend in only one "WAR or EAR" packet.
+
+Try Earlgrey, and be part of new JAVA revolution.
 
 ## Compilation and distribution
 
@@ -39,7 +55,7 @@ Ealgrey use a admin console to control and configurating the operation of the fr
 mvn clean package -P console
 ```
 
-## Using Earlgrey
+## Get Started
 
 To use Earlgrey only you need import the jar to your web project and start the Earlgrey Kernel in a Servlet listener in the contextInitialized event. The Earlgrey System automatically read the project structure and load the Earlgrey structures to implement a lightweight system based on services architecture with an admin console with hot configuration options.
 
@@ -249,12 +265,14 @@ Thanks to all beautiful people than make be possible this project
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore -->
-| [<img src="https://avatars3.githubusercontent.com/u/806569?s=400&v=4" width="100px;"/><br /><sub><b>Sebastian Gonzalez V.</b></sub>](https://github.com/brutalchrist)<br />[📖](https://github.com/acalvoa/EARLGREY/commits?author=brutalchrist "Documentation") [💻](https://github.com/acalvoa/EARLGREY/commits?author=brutalchrist) | [<img src="https://avatars3.githubusercontent.com/u/20507724?s=460&v=4" width="100px;"/><br /><sub><b>Pablo Jeldres</b></sub>](https://github.com/pjeldres)<br />[🐛](https://github.com/acalvoa/earlgrey/issues/created_by/pjeldres "Bug reports") |
-|:----:|:----:|
+| [<img src="https://avatars3.githubusercontent.com/u/806569?s=400&v=4" width="100px;"/><br /><sub><b>Sebastian Gonzalez V.</b></sub>](https://github.com/brutalchrist)<br />[📖](https://github.com/acalvoa/EARLGREY/commits?author=brutalchrist "Documentation") [💻](https://github.com/acalvoa/EARLGREY/commits?author=brutalchrist) | [<img src="https://avatars3.githubusercontent.com/u/20507724?s=460&v=4" width="100px;"/><br /><sub><b>Pablo Jeldres</b></sub>](https://github.com/pjeldres)<br />[🐛](https://github.com/acalvoa/earlgrey/issues/created_by/pjeldres "Bug reports") | [<img src="https://avatars0.githubusercontent.com/u/31521040?s=460&v=4" width="100px;"/><br /><sub><b>David Silva</b></sub>](https://github.com/dsilvap)<br />[🐛](https://github.com/acalvoa/earlgrey/issues/created_by/dsilvap "Bug reports") |
+|:----:|:----:|:----:|
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 ## LICENSE
 
 MIT
+
+**Made with ♥ in Chile by Chileans.**
 
 [license-badge]: https://img.shields.io/npm/l/all-contributors.svg?style=flat-square
