@@ -17,25 +17,6 @@ import earlgrey.error.Error800;
 import earlgrey.interfaces.PropertiesDepend;
 import earlgrey.interfaces.Process;
 
-@AddPropertieSetTemplate(name = "DB_CONFIG", 
-set = { "DB_TYPE",
-		"DB_HOST",
-		"DB_USERNAME", 
-		"DB_PASSWORD", 
-		"DB_SOURCE", 
-		"DB_PORT", 
-		"DB_MAX_POOL",
-		"DB_ON_DEMAND"}, 
-defaultTo = { 
-		"[OPTION]||ORACLE/MYSQL/POSTGRES||ORACLE",
-		"[STRING]('')",
-		"[STRING]('')",
-		"[STRING]('')",
-		"[STRING]('')",
-		"[STRING]('')",
-		"[STRING]('')",
-		"[OPTION]||YES/NO||NO"
-})
 public class DatasourceManager implements Process, PropertiesDepend {
 	private Hashtable<String,ConnectionPool> sources;
 	private static DatasourceManager instance = null;

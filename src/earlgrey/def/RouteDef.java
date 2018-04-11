@@ -85,14 +85,14 @@ public class RouteDef implements Cloneable {
 	// Creamos la action para añadir el verbo http
 	public ActionDef createAction(int httpAction, Class<?> clase, Method metodo) {
 		ActionDef action = new ActionDef(httpAction, this, clase, metodo);
-		if(this.actions.containsKey(httpAction)) this.log.Warning("The last route with "+HttpMethods.toString(httpAction)+" method was duplicate. The core set the controller "+clase.getSuperclass().getName()+" with the action "+metodo.getName()+" in this route.");
+		if(this.actions.containsKey(httpAction)) this.log.Warning("The last route with "+HttpMethod.toString(httpAction)+" method was duplicate. The core set the controller "+clase.getSuperclass().getName()+" with the action "+metodo.getName()+" in this route.");
 		this.actions.put(httpAction, action);
 		return action;
 	}
 	
 	public ActionDef createAction(int httpAction, Class<?> clase) {
 		ActionDef action = new ActionDef(httpAction, this, clase);
-		if(this.actions.containsKey(httpAction)) this.log.Warning("The last route with "+HttpMethods.toString(httpAction)+" method was duplicate. The core set the controller "+clase.getSuperclass().getName()+" in this route.");
+		if(this.actions.containsKey(httpAction)) this.log.Warning("The last route with "+HttpMethod.toString(httpAction)+" method was duplicate. The core set the controller "+clase.getSuperclass().getName()+" in this route.");
 		this.actions.put(httpAction, action);
 		return action;
 	}

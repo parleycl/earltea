@@ -16,7 +16,7 @@ import earlgrey.core.Logging;
 import earlgrey.core.Router;
 import earlgrey.def.ActionDef;
 import earlgrey.def.HttpActionDef;
-import earlgrey.def.HttpMethods;
+import earlgrey.def.HttpMethod;
 import earlgrey.def.RouteDef;
 
 public class Gear {
@@ -34,75 +34,75 @@ public class Gear {
 		this.SESSION_ID = request.getSession().getId();
 	}
 	public void get(boolean console) {
-		this.verbose = HttpMethods.GET;
+		this.verbose = HttpMethod.GET;
 		if(console){
-			this.digest_console(HttpMethods.GET);
+			this.digest_console(HttpMethod.GET);
 		}
 		else{
-			this.digest(HttpMethods.GET);
+			this.digest(HttpMethod.GET);
 		}
 	}
 	public void post(boolean console) {
-		this.verbose = HttpMethods.POST;
+		this.verbose = HttpMethod.POST;
 		if(console){
-			this.digest_console(HttpMethods.POST);
+			this.digest_console(HttpMethod.POST);
 		}
 		else{
-			this.digest(HttpMethods.POST);
+			this.digest(HttpMethod.POST);
 		}
 	}
 	public void put(boolean console) {
-		this.verbose = HttpMethods.PUT;
+		this.verbose = HttpMethod.PUT;
 		if(console){
-			this.digest_console(HttpMethods.PUT);
+			this.digest_console(HttpMethod.PUT);
 		}
 		else{
-			this.digest(HttpMethods.PUT);
+			this.digest(HttpMethod.PUT);
 		}
 	}
 	public void delete(boolean console) {
-		this.verbose = HttpMethods.DELETE;
+		this.verbose = HttpMethod.DELETE;
 		if(console){
-			this.digest_console(HttpMethods.DELETE);
+			this.digest_console(HttpMethod.DELETE);
 		}
 		else{
-			this.digest(HttpMethods.DELETE);
+			this.digest(HttpMethod.DELETE);
 		}
 	}
 	public void patch(boolean console) {
-		this.verbose = HttpMethods.PATCH;
+		this.verbose = HttpMethod.PATCH;
 		if(console){
-			this.digest_console(HttpMethods.PATCH);
+			this.digest_console(HttpMethod.PATCH);
 		}
 		else{
-			this.digest(HttpMethods.PATCH);
+			this.digest(HttpMethod.PATCH);
 		}
 	}
 	public void options(boolean console) {
-		this.verbose = HttpMethods.OPTIONS;
+		this.verbose = HttpMethod.OPTIONS;
 		if(console){
-			this.digest_console(HttpMethods.OPTIONS);
+			this.digest_console(HttpMethod.OPTIONS);
 		}
 		else{
-			this.digest(HttpMethods.OPTIONS);
+			this.digest(HttpMethod.OPTIONS);
 		}
 	}
 	public void purge(boolean console) {
-		this.verbose = HttpMethods.PURGE;
+		this.verbose = HttpMethod.PURGE;
 		if(console){
-			this.digest_console(HttpMethods.PURGE);
+			this.digest_console(HttpMethod.PURGE);
 		}
 		else{
-			this.digest(HttpMethods.PURGE);
+			this.digest(HttpMethod.PURGE);
 		}
 	}
 	public void head(boolean console) {
-		this.verbose = HttpMethods.HEAD;
+		this.verbose = HttpMethod.HEAD;
 		if(console){
-			this.digest_console(HttpMethods.HEAD);
+			this.digest_console(HttpMethod.HEAD);
 		}
 		else{
-			this.digest(HttpMethods.HEAD);
+			this.digest(HttpMethod.HEAD);
 		}
 	}
 	private void digest_console(int verbose){

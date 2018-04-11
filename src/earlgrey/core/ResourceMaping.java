@@ -51,7 +51,7 @@ import earlgrey.annotations.Route;
 import earlgrey.database.Connector;
 import earlgrey.def.ActionDef;
 import earlgrey.def.ErrorDef;
-import earlgrey.def.HttpMethods;
+import earlgrey.def.HttpMethod;
 import earlgrey.def.ModelRest;
 import earlgrey.def.RouteDef;
 import earlgrey.error.Error500;
@@ -227,21 +227,21 @@ public class ResourceMaping {
 									ActionDef actionHttp; 
 									if(metodos[g].getAnnotation(DELETE.class) != null) {
 										this.log.Info("Enrutando Controller Action: DELETE "+ruta_uri);
-										actionHttp = router.createAction(HttpMethods.DELETE, cls, metodos[g]);
+										actionHttp = router.createAction(HttpMethod.DELETE, cls, metodos[g]);
 									} else if(metodos[g].getAnnotation(GET.class) != null) {
 										this.log.Info("Enrutando Controller Action: GET "+ruta_uri);
-										actionHttp = router.createAction(HttpMethods.GET, cls, metodos[g]);
+										actionHttp = router.createAction(HttpMethod.GET, cls, metodos[g]);
 									} else if(metodos[g].getAnnotation(POST.class) != null) {
 										this.log.Info("Enrutando Controller Action: POST "+ruta_uri);
-										actionHttp = router.createAction(HttpMethods.POST, cls, metodos[g]);
+										actionHttp = router.createAction(HttpMethod.POST, cls, metodos[g]);
 									} else if(metodos[g].getAnnotation(PUT.class) != null) {
 										this.log.Info("Enrutando Controller Action: PUT "+ruta_uri);
-										actionHttp = router.createAction(HttpMethods.PUT, cls, metodos[g]);
+										actionHttp = router.createAction(HttpMethod.PUT, cls, metodos[g]);
 									} else if(metodos[g].getAnnotation(PATCH.class) != null) {
 										this.log.Info("Enrutando Controller Action: PATCH "+ruta_uri);
-										actionHttp = router.createAction(HttpMethods.PATCH, cls, metodos[g]);
+										actionHttp = router.createAction(HttpMethod.PATCH, cls, metodos[g]);
 									} else {
-										actionHttp = router.createAction(HttpMethods.UNKNOW, cls, metodos[g]);
+										actionHttp = router.createAction(HttpMethod.UNKNOW, cls, metodos[g]);
 									}
 									if(cls.getAnnotation(CORS.class) != null) router.CORS = true;
 									//BUSCAMOS POLICIES
@@ -541,12 +541,12 @@ public class ResourceMaping {
 								if(ruta_uri.startsWith("/")) ruta_uri = ruta_uri.substring(1);
 								RouteDef router = this.MapRoute(ruta_uri);
 								ActionDef actionHttp[] = new ActionDef[6];
-								actionHttp[0] = router.createAction(HttpMethods.DELETE, ModelRest.class);
-								actionHttp[1] = router.createAction(HttpMethods.GET, ModelRest.class);
-								actionHttp[2] = router.createAction(HttpMethods.POST, ModelRest.class);
-								actionHttp[3] = router.createAction(HttpMethods.PUT, ModelRest.class);
-								actionHttp[4] = router.createAction(HttpMethods.PATCH, ModelRest.class);
-								actionHttp[5] = router.createAction(HttpMethods.OPTIONS, ModelRest.class);
+								actionHttp[0] = router.createAction(HttpMethod.DELETE, ModelRest.class);
+								actionHttp[1] = router.createAction(HttpMethod.GET, ModelRest.class);
+								actionHttp[2] = router.createAction(HttpMethod.POST, ModelRest.class);
+								actionHttp[3] = router.createAction(HttpMethod.PUT, ModelRest.class);
+								actionHttp[4] = router.createAction(HttpMethod.PATCH, ModelRest.class);
+								actionHttp[5] = router.createAction(HttpMethod.OPTIONS, ModelRest.class);
 								// Set all actions like model rest
 								for(int g=0; g< actionHttp.length; g++){
 									actionHttp[g].ModelRest = true;
@@ -658,21 +658,21 @@ public class ResourceMaping {
 									ActionDef actionHttp; 
 									if(metodos[g].getAnnotation(DELETE.class) != null) {
 										this.log.Info("Enrutando Controller Action: DELETE "+ruta_uri);
-										actionHttp = router.createAction(HttpMethods.DELETE, cls, metodos[g]);
+										actionHttp = router.createAction(HttpMethod.DELETE, cls, metodos[g]);
 									} else if(metodos[g].getAnnotation(GET.class) != null) {
 										this.log.Info("Enrutando Controller Action: GET "+ruta_uri);
-										actionHttp = router.createAction(HttpMethods.GET, cls, metodos[g]);
+										actionHttp = router.createAction(HttpMethod.GET, cls, metodos[g]);
 									} else if(metodos[g].getAnnotation(POST.class) != null) {
 										this.log.Info("Enrutando Controller Action: POST "+ruta_uri);
-										actionHttp = router.createAction(HttpMethods.POST, cls, metodos[g]);
+										actionHttp = router.createAction(HttpMethod.POST, cls, metodos[g]);
 									} else if(metodos[g].getAnnotation(PUT.class) != null) {
 										this.log.Info("Enrutando Controller Action: PUT "+ruta_uri);
-										actionHttp = router.createAction(HttpMethods.PUT, cls, metodos[g]);
+										actionHttp = router.createAction(HttpMethod.PUT, cls, metodos[g]);
 									} else if(metodos[g].getAnnotation(PATCH.class) != null) {
 										this.log.Info("Enrutando Controller Action: PATCH "+ruta_uri);
-										actionHttp = router.createAction(HttpMethods.PATCH, cls, metodos[g]);
+										actionHttp = router.createAction(HttpMethod.PATCH, cls, metodos[g]);
 									} else {
-										actionHttp = router.createAction(HttpMethods.UNKNOW, cls, metodos[g]);
+										actionHttp = router.createAction(HttpMethod.UNKNOW, cls, metodos[g]);
 									}
 									if(cls.getAnnotation(CORS.class) != null) router.CORS = true;
 									//BUSCAMOS POLICIES
