@@ -3,6 +3,7 @@ package earlgrey.core;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 
 import org.json.JSONObject;
 
@@ -30,17 +31,14 @@ public class DatasourceManager implements Process, PropertiesDepend {
 	public DatasourceManager(){
 		instance = this;
 		this.log = new Logging(this.getClass().getName());
-		this.log.Info("Inciando Datasource Manager");
+		this.log.Info("Datasource Manager initializing");
 		this.sources = new Hashtable<String,ConnectionPool>();
 		Engine.getInstance().registerTask(this);
 		this.prop = Properties.getInstance();
 		this.makeDataSources();
 	}
 	private void makeDataSources(){
-		/*CREAMOS EL DATASOURCE POR DEFECTO*/
-		//this.registerConnection("DEFAULTDB");
-		//this.sources.put("DEFAULTDB", new ConnectionPool("DEFAULTDB"));
-		/*ITERAMOS EL RESTO DE LOS ELEMENTOS*/
+		/* Iterate the models finding datasources. */
 		Hashtable<String, Class<?>> model = ResourceMaping.getInstance().getModelTable();
 		Enumeration<String> keys = model.keys();
 		while(keys.hasMoreElements()){
@@ -56,7 +54,7 @@ public class DatasourceManager implements Process, PropertiesDepend {
 	private void registerConnection(String datasource){
 		// CREAMOS EL DATASOURCE POR DEFECTO
 		// PARA ESTO CREAMOS EL SET DE PROPERTIES QUE LO MANEJA
-		this.prop.createOrSetPropertieTemplate("DB_CONFIG", datasource);
+		this.prop.createOrSetDatasource(datasource);
 	}
 	public ConnectionPool getConnection(String datasource){
 		return this.sources.get(datasource);
@@ -64,5 +62,9 @@ public class DatasourceManager implements Process, PropertiesDepend {
 	@Override
 	public void propertiesRestart() {
 		// TODO Auto-generated method stub
+		Enumeration<String> pools = this.sources.keys();
+		while(pools.hasMoreElements()) {
+			this.sources.get(pools.nextElement()).restart();
+		}
 	}
 }

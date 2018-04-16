@@ -5,20 +5,26 @@ import java.util.Hashtable;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.json.JSONObject;
+
+import earlgrey.annotations.AddConfig;
 import earlgrey.annotations.AddPropertie;
+import earlgrey.def.Datasource;
 import earlgrey.def.SessionDef;
 import earlgrey.interfaces.Cacheable;
-@AddPropertie(defaultTo = "1800000", name = "SESSION_TIME")
+import earlgrey.utils.JWT;
+@AddConfig(defaultTo = "1800000", name = "SESSION_TIME", earlgrey_name = "Session time expiration")
 public class Session {
 	// LOG
 	Logging log = new Logging(this.getClass().getName());
 	//ADMINISTRADOR DE SESIONES
 	private Hashtable<String,SessionDef> sessions = new Hashtable<String,SessionDef>();
 	private int timer_time;
+	private Datasource tenant;
 	private static Session instance;
 	//CONSTRUCTOR
 	public Session(){
-		this.timer_time = Integer.valueOf(Properties.getInstance().getPropertie("SESSION_TIME"));
+		this.timer_time = Integer.valueOf(Properties.getInstance().getConfig("SESSION_TIME"));
 		this.startTimer();
 		instance = this;
 	}
@@ -70,5 +76,14 @@ public class Session {
 	     // ACTIVAMOS EL SESSION WATCHDOG
 	     timer.scheduleAtFixedRate(timerTask, 0, this.timer_time);
 	     this.log.Info("Session Watchdog - Activado");
+	}
+	
+	public String setTenant(Datasource datasource){
+		this.tenant = datasource;
+		return JWT.getJWT(new JSONObject());
+	}
+	
+	public void wakeupTenant(String jwt){
+		this.tenant = new Datasource(JWT.getJWTPayload(jwt));
 	}
 }
