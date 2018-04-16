@@ -187,6 +187,7 @@ public class Properties {
 			}
 		}
 		config_master.put("STATIC", config);
+		config_master.put("DATASOURCES", new JSONArray());
 		return config_master;
 	}
 	private String[] search_annotation(){
