@@ -5,7 +5,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import earlgrey.interfaces.Cacheable;
-import earlgrey.utils.Utils;
+import earlgrey.utils.Hash;
 
 public class CacheCore implements Cacheable{
 	public static final int CACHE_JSON = 1;
@@ -27,18 +27,18 @@ public class CacheCore implements Cacheable{
 		return instance;
 	}
 	public void setCache(String key, String content, int time, int type) {
-		this.cachetable.put(Utils.MD5(key), new CacheElement(this, key, content, time, type));
+		this.cachetable.put(Hash.MD5(key), new CacheElement(this, key, content, time, type));
 	}
 	
 	public CacheElement getCache(String key) {
-		if(this.cachetable.contains(Utils.MD5(key))) {
-			return this.cachetable.get(Utils.MD5(key));
+		if(this.cachetable.contains(Hash.MD5(key))) {
+			return this.cachetable.get(Hash.MD5(key));
 		}
 		return null;
 	}
 	
 	public boolean hasCache(String key) {
-		if(this.cachetable.contains(Utils.MD5(key))) {
+		if(this.cachetable.contains(Hash.MD5(key))) {
 			return true;
 		}
 		return false;

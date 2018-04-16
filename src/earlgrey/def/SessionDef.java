@@ -10,7 +10,7 @@ import org.json.JSONObject;
 
 import earlgrey.core.CacheElement;
 import earlgrey.interfaces.Cacheable;
-import earlgrey.utils.Utils;
+import earlgrey.utils.Hash;
 import oracle.sql.DATE;
 
 public class SessionDef implements Cacheable{
@@ -86,7 +86,7 @@ public class SessionDef implements Cacheable{
 		return false;
 	}
 	public void setCache(String key, String content, int time, int type) {
-		this.cachetable.put(Utils.MD5(key), new CacheElement(this, key, content, time, type));
+		this.cachetable.put(Hash.MD5(key), new CacheElement(this, key, content, time, type));
 	}
 	
 	public CacheElement getCache(String key) {
