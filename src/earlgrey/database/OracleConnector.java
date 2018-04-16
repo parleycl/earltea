@@ -15,6 +15,10 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.sql.DataSource;
+
 import org.json.JSONException;
 
 import earlgrey.annotations.DatabaseDriver;
@@ -22,15 +26,17 @@ import earlgrey.core.ConnectionPool;
 import earlgrey.core.Logging;
 import earlgrey.core.ModelCore;
 import earlgrey.core.ResourceMaping;
+import earlgrey.def.Database;
 import earlgrey.error.Error800;
 import earlgrey.types.IType;
 import oracle.jdbc.OraclePreparedStatement;
 
-@DatabaseDriver(type="SQL", name="Oracle")
+@DatabaseDriver(type="SQL", name="Oracle", id = Database.ORACLE)
 public class OracleConnector implements Connector{
 	//DECLARAMOS LAS VARIABLES DE BASE DE DATOS
 	private Connection con;
-	private String user = null, password = null, db = null, host = null, port = null;
+	private String user = null, password = null, db = null, host = null;
+    private Integer port = null;
 	private Statement stmt;
 	private OraclePreparedStatement pstm;
 	private ResultSet rset;
@@ -39,12 +45,24 @@ public class OracleConnector implements Connector{
 	private ConnectionPool Pool;
 	private int prepared_fields = 1;
 	private int conected = 0;
+	private boolean on_demand = false;
+	private boolean datasource_connection = false;
+	private String datasource;
 	//DECLARAMOS LOS CONSTRUCTORES
 	public OracleConnector(){
 		this.log = new Logging(this.getClass().getName());
 	}
+	
+	public void connect() {
+		if(datasource_connection) {
+			this.datasourceConnect();
+		} else {
+			this.manualConnect();
+		}
+	}
+	
 	//METODO DE CONECCION -  DEVUELVE EL CONECTOR
-	public void connect(){
+	public void manualConnect(){
 		if(this.host != null || this.port != null || this.user != null || this.password != null)
 		{
 			try{
@@ -73,6 +91,26 @@ public class OracleConnector implements Connector{
 			System.out.println("Faltan datos para iniciar una conección con la DB Oracle. ERROR 02");
 		}
 	}
+	
+	@Override
+	public void datasourceConnect(){
+		if(this.datasource_connection) {
+			try{
+				Context ctx = new InitialContext();
+				DataSource ds=(DataSource)ctx.lookup(this.datasource);
+				 
+				
+				this.con= (Connection)ds.getConnection();  
+				this.stmt = this.con.createStatement();
+			} catch(Exception e){
+				this.log.Critic(e.getMessage(), Error800.DATABASE_CONNECT_ERROR);
+			}
+
+		} else {
+			System.out.println("this Connection is not defined like a datasource connection.");
+		}
+	}
+	
 	public ResultSet query(String query){
 		try{
 			 this.rset = stmt.executeQuery(query);
@@ -275,7 +313,7 @@ public class OracleConnector implements Connector{
 		}
 	}
 	@Override
-	public void setCredencial(String user, String password, String db, String host, String port) {
+	public void setCredencial(String user, String password, String db, String host, int port) {
 		// TODO Auto-generated method stub
 		this.user = user;
 		this.password = password;
@@ -527,12 +565,36 @@ public class OracleConnector implements Connector{
 	}
 	@Override
 	public int getLastInsertedId() throws SQLException {
-		// TODO Auto-generated method stub
 		ResultSet rs = this.pstm.getGeneratedKeys();
 		if (rs.next()){
 		    // The generated id
 		    return rs.getInt(1);
 		}
 		return -1;
+	}
+	
+	@Override
+	public void setDemand(boolean demand) {
+		this.on_demand = demand;
+	}
+	
+	@Override
+	public void setDatasource(String datasource) {
+		this.datasource_connection = true;
+		this.datasource = datasource;
+	}
+	
+	@Override
+	public void checkConnection() {
+		if(this.con == null){
+			this.connect();
+		}
+	}
+	
+	@Override
+	public void checkCloseConnection() {
+		if(this.on_demand){
+			this.close();
+		}
 	}
 }

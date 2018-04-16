@@ -7,4 +7,18 @@ public class Database {
 	public static final int POSTGRES = 4;
 	public static final int SQLITE = 5;
 	public static final int MONGO = 6;
+	
+	private static final String[] databases = {
+			"UNKNOW",
+			"DISK",
+			"ORACLE",
+			"MYSQL",
+			"POSTGRES",
+			"SQLITE",
+			"MONGO"	
+	};
+	
+	public static String toString(int type){
+		return databases[type];
+	}
 }

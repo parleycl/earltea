@@ -3,11 +3,7 @@ package earlgrey.core;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.lang.annotation.Annotation;
-import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -15,19 +11,18 @@ import java.net.URLClassLoader;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
-import org.jboss.vfs.*;
-
-import javax.servlet.ServletContext;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.jboss.vfs.VirtualFile;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import earlgrey.annotations.AddConfig;
+import earlgrey.annotations.AddConfigArray;
+import earlgrey.annotations.AddConfigOption;
+import earlgrey.annotations.AddConfigSet;
+import earlgrey.annotations.AddConfigSetTemplate;
 import earlgrey.annotations.AddPropertie;
 import earlgrey.annotations.AddPropertieArray;
 import earlgrey.annotations.AddPropertieOption;
@@ -80,12 +75,14 @@ public class ResourceMaping {
 	private Hashtable<String,Class<?>> ControllerTable = new Hashtable<String,Class<?>>();
 	// CARGAMOS LA TABLA DE PROPERTIES
 	private Hashtable<String,JSONObject> PropertieTable = new Hashtable<String,JSONObject>();
+	// CARGAMOS LA TABLA DE PROPERTIES
+	private Hashtable<String,JSONObject> ConfigTable = new Hashtable<String,JSONObject>();
 	// CARGAMOS LA TABLA DE
 	private Hashtable<String,Class<?>> ConsoleTable = new Hashtable<String,Class<?>>();
 	// CARGAMOS LOS CODIGOS DE ERROR
 	private Hashtable<String,Class<?>> PolicieTable = new Hashtable<String,Class<?>>();
 	// CARGAMOS LOS DRIVERS DE BASE DE DATOS
-	private Hashtable<String,Class<?>> databaseDriverTable = new Hashtable<String,Class<?>>();
+	private Hashtable<Integer,Class<?>> databaseDriverTable = new Hashtable<Integer,Class<?>>();
 	// LOGGING MAP
 	private Logging log = new Logging(this.getClass().getName());
 	//CONSTRUCTOR
@@ -100,6 +97,7 @@ public class ResourceMaping {
 		this.MapPackages(packages);
 		this.loadJAR();
 		this.MapClases();
+		this.MapConfig();
 		this.MapProperties();
 		this.MapPolicies();
 		this.MapConsole();
@@ -116,6 +114,7 @@ public class ResourceMaping {
 		this.MapPackages();
 		this.loadJAR();
 		this.MapClases();
+		this.MapConfig();
 		this.MapProperties();
 		this.MapPolicies();
 		this.MapConsole();
@@ -132,7 +131,7 @@ public class ResourceMaping {
 	}
 	// MAPEO DE LOS ERRORES
 	private void MapError(){
-		log.Info("Mapeo de Errores: Iniciando mapeo de errores");
+		log.Info("Error Mapping: Initializing error mapping");
 		String packageName = "earlgrey.error";
 		// Find classes implementing ICommand.
 		for (int i=0; i< this.files.size(); i++) {
@@ -153,7 +152,7 @@ public class ResourceMaping {
 			}
 		}
 		//INFORMAMOS
-		log.Info("Mapeo de Errores: Proceso concluido con exito");
+		log.Info("Error Mapping: Process successful");
 	}
 	// MAPEO DE LOS CONTROLADOES
 	private void MapControllers(){
@@ -406,7 +405,7 @@ public class ResourceMaping {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		log.Info("Mapeo de Clases: Mapeo Finalizado");
+		log.Info("Class Mapping: Process Successful");
 	}
 	public String searchClass(String clase){
 		for(int i=0;i<this.clases.size();i++){
@@ -417,8 +416,7 @@ public class ResourceMaping {
 		return null;
 	}
 	public void MapProperties(){
-		log.Info("Mapeo de Properties: Buscando Propertie"
-				+ "s declaradas");
+		log.Info("Properties Mapping: Finding declared properties.");
 		for(int i=0;i<this.clases.size();i++){
 			String className = this.clases.get(i).replaceAll(".class$", "");
 			try {
@@ -427,7 +425,7 @@ public class ResourceMaping {
 				AddPropertie properties[] = cls.getAnnotationsByType(AddPropertie.class);
 				if(properties.length > 0){
 					for(int l=0;l<properties.length;l++){
-						this.log.Info("Mapeando Properties: "+properties[l].name());
+						this.log.Info("Mapping Propertie: "+properties[l].name());
 						JSONObject prop = new JSONObject();
 						prop.put("type", "single");
 						prop.put("name", properties[l].name());
@@ -439,7 +437,7 @@ public class ResourceMaping {
 				AddPropertieSet propertiesSet[] = cls.getAnnotationsByType(AddPropertieSet.class);
 				if(propertiesSet.length > 0){
 					for(int l=0;l<propertiesSet.length;l++){
-						this.log.Info("Mapeando Propertie Set: "+propertiesSet[l].name());
+						this.log.Info("Mapping Propertie Set: "+propertiesSet[l].name());
 						JSONObject prop = new JSONObject();
 						prop.put("type", "set");
 						prop.put("name", propertiesSet[l].name());
@@ -459,7 +457,7 @@ public class ResourceMaping {
 				AddPropertieOption propertiesOption[] = cls.getAnnotationsByType(AddPropertieOption.class);
 				if(propertiesOption.length > 0){
 					for(int l=0;l<propertiesOption.length;l++){
-						this.log.Info("Mapeando Propertie Option: "+propertiesOption[l].name());
+						this.log.Info("Mapping Propertie Option: "+propertiesOption[l].name());
 						JSONObject prop = new JSONObject();
 						prop.put("type", "option");
 						prop.put("name", propertiesOption[l].name());
@@ -477,7 +475,7 @@ public class ResourceMaping {
 				AddPropertieArray propertiesArray[] = cls.getAnnotationsByType(AddPropertieArray.class);
 				if(propertiesArray.length > 0){
 					for(int l=0;l<propertiesArray.length;l++){
-						this.log.Info("Mapeando Propertie Array: "+propertiesArray[l].name());
+						this.log.Info("Mapping Propertie Array: "+propertiesArray[l].name());
 						JSONObject prop = new JSONObject();
 						prop.put("type", "array");
 						prop.put("name", propertiesArray[l].name());
@@ -489,7 +487,7 @@ public class ResourceMaping {
 				AddPropertieSetTemplate propertiesTemplate[] = cls.getAnnotationsByType(AddPropertieSetTemplate.class);
 				if(propertiesTemplate.length > 0){
 					for(int l=0;l<propertiesTemplate.length;l++){
-						this.log.Info("Mapeando Propertie Template: "+propertiesTemplate[l].name());
+						this.log.Info("Mapping Propertie Template: "+propertiesTemplate[l].name());
 						JSONObject prop = new JSONObject();
 						prop.put("type", "template");
 						prop.put("name", propertiesTemplate[l].name());
@@ -512,9 +510,111 @@ public class ResourceMaping {
 			}
 		}
 		//INFORMAMOS
-		log.Info("Mapeo de Properties: Proceso Finalizado");
+		log.Info("Properties Mapping: Process successful");
 	}
-	@SuppressWarnings("unchecked")
+	
+	public void MapConfig(){
+		log.Info("Config Mapping: Finding declared configs");
+		for(int i=0;i<this.clases.size();i++){
+			String className = this.clases.get(i).replaceAll(".class$", "");
+			try {
+				Class<?> cls = Thread.currentThread().getContextClassLoader().loadClass(className);
+				// BUSCAMOS PROPERTIES
+				AddConfig properties[] = cls.getAnnotationsByType(AddConfig.class);
+				if(properties.length > 0){
+					for(int l=0;l<properties.length;l++){
+						this.log.Info("Mapping config: "+properties[l].name());
+						JSONObject prop = new JSONObject();
+						prop.put("type", "single");
+						prop.put("name", properties[l].name());
+						prop.put("earlgrey_name", properties[l].earlgrey_name());
+						prop.put("default", properties[l].defaultTo());
+						this.ConfigTable.put(properties[l].name(), prop);
+					}
+				}
+				// BUSCAMOS PROPERTIES
+				AddConfigSet propertiesSet[] = cls.getAnnotationsByType(AddConfigSet.class);
+				if(propertiesSet.length > 0){
+					for(int l=0;l<propertiesSet.length;l++){
+						this.log.Info("Mapping config: "+propertiesSet[l].name());
+						JSONObject prop = new JSONObject();
+						prop.put("type", "set");
+						prop.put("earlgrey_name", propertiesSet[l].earlgrey_name());
+						String[] set = propertiesSet[l].set();
+						String[] value = propertiesSet[l].defaultTo();
+						JSONObject setObj = new JSONObject();
+						for(int g=0;g<set.length;g++){
+							String def = "";
+							if(value.length > g) def = value[g];
+							setObj.put(set[g], def);
+						}
+						prop.put("set", setObj);
+						this.ConfigTable.put(propertiesSet[l].name(), prop);
+					}
+				}
+				// BUSCAMOS PROPERTIES
+				AddConfigOption propertiesOption[] = cls.getAnnotationsByType(AddConfigOption.class);
+				if(propertiesOption.length > 0){
+					for(int l=0;l<propertiesOption.length;l++){
+						this.log.Info("Mapping config: "+propertiesOption[l].name());
+						JSONObject prop = new JSONObject();
+						prop.put("type", "option");
+						prop.put("name", propertiesOption[l].name());
+						prop.put("earlgrey_name", propertiesOption[l].earlgrey_name());
+						String[] options = propertiesOption[l].option();
+						JSONArray option = new JSONArray();
+						for(int g=0;g<options.length;g++){
+							option.put(options[g]);
+						}
+						prop.put("options", options);
+						prop.put("default", propertiesOption[l].defaultTo());
+						this.ConfigTable.put(propertiesOption[l].name(), prop);
+					}
+				}
+				// BUSCAMOS PROPERTIES
+				AddConfigArray propertiesArray[] = cls.getAnnotationsByType(AddConfigArray.class);
+				if(propertiesArray.length > 0){
+					for(int l=0;l<propertiesArray.length;l++){
+						this.log.Info("Mapping config: "+propertiesArray[l].name());
+						JSONObject prop = new JSONObject();
+						prop.put("type", "array");
+						prop.put("name", propertiesArray[l].name());
+						prop.put("earlgrey_name", propertiesArray[l].earlgrey_name());
+						prop.put("default", new JSONArray(Arrays.asList(propertiesArray[l].defaultTo())));
+						this.PropertieTable.put(propertiesArray[l].name(), prop);
+					}
+				}
+				// BUSCAMOS PROPERTIES TEMPLATES
+				AddConfigSetTemplate propertiesTemplate[] = cls.getAnnotationsByType(AddConfigSetTemplate.class);
+				if(propertiesTemplate.length > 0){
+					for(int l=0;l<propertiesTemplate.length;l++){
+						this.log.Info("Mapping config: "+propertiesTemplate[l].name());
+						JSONObject prop = new JSONObject();
+						prop.put("type", "template");
+						prop.put("name", propertiesTemplate[l].name());
+						prop.put("earlgrey_name", propertiesTemplate[l].earlgrey_name());
+						String[] set = propertiesTemplate[l].set();
+						String[] value = propertiesTemplate[l].defaultTo();
+						JSONObject setObj = new JSONObject();
+						for(int g=0;g<set.length;g++){
+							String def = "";
+							if(value.length > g) def = value[g];
+							setObj.put(set[g], def);
+						}
+						prop.put("set", setObj);
+						this.PropertieTable.put(propertiesTemplate[l].name(), prop);
+					}
+				}
+			}
+			catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		//INFORMAMOS
+		log.Info("Config Mapping: Process successful");
+	}
+	
 	public void MapModels(){
 		log.Info("Mapeo de Modelos: Buscando Modelos de datos declarados");
 		for(int i=0;i<this.clases.size();i++){
@@ -715,7 +815,7 @@ public class ResourceMaping {
 					DatabaseDriver database = cls.getAnnotation(DatabaseDriver.class);
 					if(database != null){
 						log.Info("Mapeando driver: "+database.name());
-						this.databaseDriverTable.put(database.name(), cls);
+						this.databaseDriverTable.put(database.id(), cls);
 					}
 				}
 			} catch (ClassNotFoundException e) {
@@ -836,13 +936,16 @@ public class ResourceMaping {
 	public Hashtable<String, JSONObject> getPropertieTable() {
 		return PropertieTable;
 	}
+	public Hashtable<String, JSONObject> getConfigTable() {
+		return ConfigTable;
+	}
 	public Hashtable<String, Class<?>> getConsoleTable() {
 		return ConsoleTable;
 	}
 	public Hashtable<String, Class<?>> getPolicieTable() {
 		return PolicieTable;
 	}
-	public Hashtable<String, Class<?>> getDatabaseDriverTable() {
+	public Hashtable<Integer, Class<?>> getDatabaseDriverTable() {
 		return databaseDriverTable;
 	}
 }
