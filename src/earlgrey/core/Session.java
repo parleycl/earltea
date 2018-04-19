@@ -58,7 +58,7 @@ public class Session {
 			}
 		}
 		if(counter > 0) {
-			this.log.Info("Se han limpiado "+counter+" sesiones residuales.");
+			this.log.Info(counter+" sessions has been cleaned.");
 		}
 	}
 	
@@ -75,7 +75,7 @@ public class Session {
 	     Timer timer = new Timer(); 
 	     // ACTIVAMOS EL SESSION WATCHDOG
 	     timer.scheduleAtFixedRate(timerTask, 0, this.timer_time);
-	     this.log.Info("Session Watchdog - Activado");
+	     this.log.Info("Session Watchdog - Online");
 	}
 	
 	public String setTenant(Datasource datasource){

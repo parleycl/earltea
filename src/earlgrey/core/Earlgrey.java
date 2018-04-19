@@ -43,14 +43,14 @@ public class Earlgrey{
     	}
     	else
     	{
-    		this.log.Critic("El aplicativo no tiene permisos para escribir en disco, favor corregir.", Error700.FILESYSTEM_WRITE_ERROR);
+    		this.log.Critic("The app don't have permision to write in disk, please fix and try again.", Error700.FILESYSTEM_WRITE_ERROR);
     	}
     }
 	public static synchronized Earlgrey getInstance(){
 		return instance;
 	}
     private void setAutors(){
-    	this.log.Info("INICIALIZANDO SISTEMA EARLGREY.");
+    	this.log.Info("INICIALIZING EARLGREY SYSTEM.");
     	this.log.Info("********************************************************");
     	this.log.Info("");
     	this.log.Info("****************************************************************************************");
@@ -85,20 +85,20 @@ public class Earlgrey{
     	this.log.Info("");
     	this.log.Info("********************************************************");
     	this.log.Info("");
-    	this.log.Info("EJECUTANDO TAREAS.");
+    	this.log.Info("Execute tasks.");
     	this.log.Info("********************************************************");
     }
     private void endLoading(){
     	this.log.Info("");
     	this.log.Info("********************************************************");
-    	this.log.Info("SISTEMA EARLGREY INICIALIZADO.");
+    	this.log.Info("Earlgrey System Inicialized.");
     	this.log.Info("********************************************************");
-    	this.log.Info("ESPERANDO PETICIONES");
+    	this.log.Info("Waiting Requests");
     	this.log.Info("********************************************************");
     }
     public boolean checkFileSystem() {
     	// CHEQUEAMOS Y CREAMOS LAS CARPETAS
-    	this.log.Info("Verificando sistema de archivos");
+    	this.log.Info("Verifying file system");
     	File geos = new File(this.kernelname);
     	File logs = new File(this.kernelname+"/logs");
     	File properties = new File(this.kernelname+"/properties");

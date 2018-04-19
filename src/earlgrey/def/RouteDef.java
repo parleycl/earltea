@@ -13,9 +13,11 @@ import org.json.JSONObject;
 import com.sun.mail.iap.Response;
 
 import earlgrey.core.HttpRequest;
+import earlgrey.core.HttpResponse;
 import earlgrey.core.Logging;
 import earlgrey.core.ModelCore;
 import earlgrey.error.Error500;
+import earlgrey.http.CORSResponse;
 import earlgrey.interfaces.PolicieCore;
 
 public class RouteDef implements Cloneable {
@@ -147,13 +149,29 @@ public class RouteDef implements Cloneable {
 		// SI ES UN MODELO REST DE IGUAL FORMA SE EFECTUA LA LLAMADA
 		try {
 			ActionDef action = this.actions.get(httpMethod);
-			if((action.controlador != null && metodo != null) || (action.controlador != null && action.metodo != null) || (action.ModelRest && action.Model != null)){
+			if((action != null && action.controlador != null && metodo != null) || (action != null && action.controlador != null && action.metodo != null) || (action != null && action.ModelRest && action.Model != null)){
 				ActionDef rt = (ActionDef)action.clone();
 				if(metodo != null) rt.metodo = metodo;
 				rt.setParams(params);
 				return rt;
-			}
-			else{
+			} else if (this.CORS && httpMethod == HttpMethod.OPTIONS) {
+				Method[] methods = CORSResponse.class.getMethods();
+				for(Method method : methods) {
+					if(!method.getName().equals("CORS")) continue;
+					ActionDef rt = new ActionDef(HttpMethod.OPTIONS, this, CORSResponse.class, method);
+					JSONObject method_allow = new JSONObject();
+					if(this.actions.containsKey(HttpMethod.GET)) method_allow.put("GET", "true");
+					if(this.actions.containsKey(HttpMethod.POST)) method_allow.put("POST", "true");
+					if(this.actions.containsKey(HttpMethod.OPTIONS)) method_allow.put("OPTIONS", "true");
+					if(this.actions.containsKey(HttpMethod.PURGE)) method_allow.put("PURGE", "true");
+					if(this.actions.containsKey(HttpMethod.PUT)) method_allow.put("PUT", "true");
+					if(this.actions.containsKey(HttpMethod.PATCH)) method_allow.put("PATCH", "true");
+					if(this.actions.containsKey(HttpMethod.HEAD)) method_allow.put("HEAD", "true");
+					if(this.actions.containsKey(HttpMethod.DELETE)) method_allow.put("DELETE", "true");
+					rt.setParams(method_allow);
+					return rt;
+				}
+			} else{
 				return null;
 			}
 		} catch (CloneNotSupportedException e) {

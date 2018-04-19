@@ -1,161 +1,296 @@
 <div class="properties" *ngIf="view=='panel'">
-	<div class="card list">
-	  <div class="card-header card-inverse card-success header">Entorno de Properties</div>
-	  <div class="card-block nopadding">
-	   	<table class="table table-striped">
-	   		<thead>
-			    <tr>
-			      <th>Entorno</th>
-			      <th>Properties</th>
-			      <th>Estado</th>
-			      <th>Acciones</th>
-			    </tr>
-			</thead>
-			<tbody>
-			    <tr *ngFor="let entorno of list">
-			      <td class="title">Entorno {{ entorno.EARLGREY_ENVNAME }}</td>
-			      <td class="actions"><i class="fa fa-book prop" aria-hidden="true"></i></td>
-			      <td class="status">
-			      	<div class="running label" *ngIf="entorno.EARLGREY_ENVNAME == selected && !restarting">Running</div>
-			      	<div class="restart label" *ngIf="entorno.EARLGREY_ENVNAME == selected && restarting">Restarting</div>
-			      	<div class="stock label" *ngIf="entorno.EARLGREY_ENVNAME != selected">Stock</div>
-			      </td>
-			      <td class="actions">
-			      	<i class="fa fa-play-circle item" aria-hidden="true" placement="top" ngbTooltip="Usar entorno" *ngIf="entorno.EARLGREY_ENVNAME != selected" (click)="selectEnv(entorno.EARLGREY_ENVNAME)"></i>
-			      	<i class="fa fa-pencil item" aria-hidden="true" placement="top" ngbTooltip="Editar entorno" (click)="modEnv(entorno)"></i>
-			      	<i class="fa fa-trash item" aria-hidden="true" placement="top" ngbTooltip="Eliminar entorno" (click)="deleteEnv(entorno.EARLGREY_ENVNAME)" *ngIf="entorno.EARLGREY_ENVNAME != selected"></i>
-			      </td>
-			    </tr>
-			</tbody>
-	   	</table>
-
-	  </div>
-	</div>
-	<div class="add">
-		<button class="btn btn-default btn-panel" (click)="add_new()">Crear Entorno</button>
-		<button class="btn btn-success btn-panel">Cargar Configuracion</button>
-		<button class="btn btn-danger btn-panel">Backup</button>
-	</div>
+    <div class="card list">
+      <div class="card-header card-inverse card-success header">Properties enviroments</div>
+      <div class="card-block nopadding">
+            <table class="table table-striped">
+               <thead>
+                    <tr>
+                    <th>Enviroment</th>
+                    <th>Properties</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let entorno of list">
+                        <td class="title">Entorno {{ entorno.EARLGREY_ENVNAME }}</td>
+                        <td class="actions"><i class="fa fa-book prop" aria-hidden="true"></i></td>
+                        <td class="status">
+                            <div class="running label" *ngIf="entorno.EARLGREY_ENVNAME == selected && !restarting">Running</div>
+                            <div class="restart label" *ngIf="entorno.EARLGREY_ENVNAME == selected && restarting">Restarting</div>
+                            <div class="stock label" *ngIf="entorno.EARLGREY_ENVNAME != selected">Stock</div>
+                        </td>
+                        <td class="actions">
+                            <i class="fa fa-edit item" aria-hidden="true" placement="top" ngbTooltip="Edit Properties" (click)="modEnv(entorno)"></i>
+                            <i class="fa fa-database item" aria-hidden="true" placement="top" ngbTooltip="Edit Datasources" (click)="viewDatasource(entorno)"></i>
+                            <i class="fa fa-play-circle item" aria-hidden="true" placement="top" ngbTooltip="Use Enviroment" *ngIf="entorno.EARLGREY_ENVNAME != selected" (click)="selectEnv(entorno.EARLGREY_ENVNAME)"></i>  
+                            <i class="fa fa-trash item" aria-hidden="true" placement="top" ngbTooltip="Delete Enviroment" (click)="deleteEnv(entorno.EARLGREY_ENVNAME)" *ngIf="entorno.EARLGREY_ENVNAME != selected"></i>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+      </div>
+    </div>
+    <div class="add">
+        <button class="btn btn-default btn-panel" (click)="add_new()">Create Enviroment</button>
+        <button class="btn btn-success btn-panel">Load Configuration</button>
+        <a download="config.properties" [href]="backup()" title="Backup Configurations"><button class="btn btn-danger btn-panel">Backup</button></a>
+    </div>
 </div>
 <div class="create" *ngIf="view=='create'">
-	<form (submit)="newsubmit($event, envname.value, formenv)" #formenv>
-		<div class="card list">
-		  	<div class="card-header card-inverse card-success header">Crear nuevo entorno</div>
-		  	<div class="card-block">
-		   		 <div class="form-group">
-		          <label for="nombre-txt">Nombre de Entorno</label>
-		          <input type="text" class="form-control" name="nombre" id="nombre-txt" placeholder="Nombre del entorno" required #envname>
-		          <small id="nombreHelp" class="form-text text-muted">Nombre del entorno de properties.</small>
-		        </div>
-		  	</div>
-		</div>
-		<div class="add">
-			<button type="submit" class="btn btn-default btn-panel">Crear Entorno</button>
-			<button class="btn btn-warning btn-panel" (click)="view='panel'">Volver</button>
-		</div>
-	</form>
+    <form (submit)="newsubmit($event, envname.value, formenv)" #formenv>
+        <div class="card list">
+              <div class="card-header card-inverse card-success header">Create new enviroment</div>
+              <div class="card-block">
+                    <div class="form-group">
+                  <label for="nombre-txt">Enviroment Name</label>
+                  <input type="text" class="form-control" name="nombre" id="nombre-txt" placeholder="Enviroment Name" required #envname>
+                  <small id="nombreHelp" class="form-text text-muted">Name of properties enviroment.</small>
+                </div>
+              </div>
+        </div>
+        <div class="add">
+            <button type="submit" class="btn btn-default btn-panel">Create Enviroment</button>
+            <button class="btn btn-warning btn-panel" (click)="view='panel'">Back</button>
+        </div>
+    </form>
 </div>
-<div class="modify" *ngIf="view=='modify'">
-	<form  #formmod (submit)="saveAll($event)">
-		<div class="card list">
-		  	<div class="card-header card-inverse card-success header">Modificar entorno {{ env_mod.EARLGREY_ENVNAME }}</div>
-		  	<div class="card-block">
-			   		<div class="form-group" *ngFor="let prop of prop_static | keys">
-			          	<label for="nombre-txt" class="tipos"> 
-				          	<div class="single label" *ngIf="prop.value.type == 'single'">Single</div>
-				          	<div class="option label" *ngIf="prop.value.type == 'option'">Option</div>
-				          	<div class="set label" *ngIf="prop.value.type == 'set'">Set</div>
-				          	<div class="array label" *ngIf="prop.value.type == 'array'">Array</div>
-				          	<div class="title">{{ prop.value.name }}</div>
-				          	<div class="addset" *ngIf="prop.value.type == 'set'">
-				          		<button type="button" class="btn btn-primary" (click)="addNewSet(prop.value)"><i class="fa fa-plus" aria-hidden="true"></i> Agregar</button>
-				          	</div>
+<div class="modify" *ngIf="view=='properties'">
+    <form  #formmod (submit)="saveAll($event)">
+        <div class="card list">
+              <div class="card-header card-inverse card-success header">Modificar entorno {{ env_mod.EARLGREY_ENVNAME }}</div>
+              <div class="card-block">
+                       <div class="form-group" *ngFor="let prop of prop_static | keys">
+                          <label for="nombre-txt" class="tipos"> 
+                              <div class="single label" *ngIf="prop.value.type == 'single'">Single</div>
+                              <div class="option label" *ngIf="prop.value.type == 'option'">Option</div>
+                              <div class="set label" *ngIf="prop.value.type == 'set'">Set</div>
+                              <div class="array label" *ngIf="prop.value.type == 'array'">Array</div>
+                              <div class="title">{{ prop.value.name }}</div>
+                              <div class="addset" *ngIf="prop.value.type == 'set'">
+                                  <button type="button" class="btn btn-primary" (click)="addNewSet(prop.value)"><i class="fa fa-plus" aria-hidden="true"></i> Agregar</button>
+                              </div>
 
-			          	</label>
-			          	<!-- SOLAMENTE SI ES UNA PROPERTIE DE TIPO SINGLE -->
-			          	<input *ngIf="prop.value.type == 'single'" [(ngModel)]="prop_static[prop.key].value" type="text" class="form-control" [name]="prop.value.name" [id]="prop.value.name" [placeholder]="prop.value.name" [value]="prop.value.value" required />
-				        <!-- SOLAMENTE SI ES UNA PROPERTIE DE TIPO OPTION -->
-				        <select *ngIf="prop.value.type == 'option'" type="text" class="form-control" [name]="prop.value.name" [id]="prop.value.name" [value]="prop.value.value" required (change)="changeOption(prop.value,prope)" #prope>
-				          	<option *ngFor="let option of prop.value.options | keys" [value]="option.key">{{ option.value }}</option>
-				        </select>
-				        <!-- SOLAMENTE SI ES UNA PROPERTIE DE TIPO SET -->
-				        <div *ngIf="prop.value.type == 'set'" class="sets">
-				        	<div class="set_item" *ngFor="let set of prop.value.sets | keys">
-				        		<div class="set_header" [class.running]="set.key == prop.value.value" (click)="changeset(prop.value.name+set.key)">
-				        			<div class="title">Set {{ set.key }}</div>
-				        			<div class="status">
-				        				<div class="running label" *ngIf="set.key == prop.value.value">Running</div>
-				        				<div class="saved label" *ngIf="set.key != prop.value.value">Saved</div>
-				        			</div>
-				        			<div class="action">
-				        				<i class="fa fa-play" aria-hidden="true" (click)="setSetDefault(prop.value, set.key, $event)" *ngIf="set.key != prop.value.value"></i>
-				        				<i class="fa fa-trash" aria-hidden="true" (click)="removeSet(prop.value, set.key, $event)" *ngIf="set.key != prop.value.value"></i>
-				        			</div>
-				        		</div>
-				        		<div class="set_body" *ngIf="setprop==prop.value.name+set.key">
-				        			<div class="item" *ngFor="let setprop of set.value | keys">
-				        				<div class="title">{{ setprop.key }}</div>
-				        				<div class="value"><input [value]="setprop.value" (change)="changesetvalue(prop.key, set.key, setprop.key, setvalue.value)" #setvalue/></div>
-				        			</div>
-				        		</div>
-				        	</div>
-				        </div>
-		        	</div>
-		        	<!-- TEMPLATES -->
-			        <div class="form-group" *ngFor="let prop of prop_templates | keys">
-			          	<label for="nombre-txt" class="tipos"> 
-				          	<div class="single label" *ngIf="prop.value.type == 'single'">Single</div>
-				          	<div class="option label" *ngIf="prop.value.type == 'option'">Option</div>
-				          	<div class="set label" *ngIf="prop.value.type == 'set'">Set</div>
-				          	<div class="array label" *ngIf="prop.value.type == 'array'">Array</div>
-				          	<div class="title">{{ prop.value.name }}</div>
-				          	<div class="addset" *ngIf="prop.value.type == 'set'">
-				          		<button type="button" class="btn btn-primary" (click)="addNewSet(prop.value)"><i class="fa fa-plus" aria-hidden="true"></i> Agregar</button>
-				          	</div>
+                          </label>
+                          <!-- SOLAMENTE SI ES UNA PROPERTIE DE TIPO SINGLE -->
+                          <input *ngIf="prop.value.type == 'single'" [(ngModel)]="prop_static[prop.key].value" type="text" class="form-control" [name]="prop.value.name" [id]="prop.value.name" [placeholder]="prop.value.name" [value]="prop.value.value" required />
+                        <!-- SOLAMENTE SI ES UNA PROPERTIE DE TIPO OPTION -->
+                        <select *ngIf="prop.value.type == 'option'" type="text" class="form-control" [name]="prop.value.name" [id]="prop.value.name" [value]="prop.value.value" required (change)="changeOption(prop.value,prope)" #prope>
+                              <option *ngFor="let option of prop.value.options | keys" [value]="option.key">{{ option.value }}</option>
+                        </select>
+                        <!-- SOLAMENTE SI ES UNA PROPERTIE DE TIPO SET -->
+                        <div *ngIf="prop.value.type == 'set'" class="sets">
+                            <div class="set_item" *ngFor="let set of prop.value.sets | keys">
+                                <div class="set_header" [class.running]="set.key == prop.value.value" (click)="changeset(prop.value.name+set.key)">
+                                    <div class="title">Set {{ set.key }}</div>
+                                    <div class="status">
+                                        <div class="running label" *ngIf="set.key == prop.value.value">Running</div>
+                                        <div class="saved label" *ngIf="set.key != prop.value.value">Saved</div>
+                                    </div>
+                                    <div class="action">
+                                        <i class="fa fa-play" aria-hidden="true" (click)="setSetDefault(prop.value, set.key, $event)" *ngIf="set.key != prop.value.value"></i>
+                                        <i class="fa fa-trash" aria-hidden="true" (click)="removeSet(prop.value, set.key, $event)" *ngIf="set.key != prop.value.value"></i>
+                                    </div>
+                                </div>
+                                <div class="set_body" *ngIf="setprop==prop.value.name+set.key">
+                                    <div class="item" *ngFor="let setprop of set.value | keys">
+                                        <div class="title">{{ setprop.key }}</div>
+                                        <div class="value"><input [value]="setprop.value" (change)="changesetvalue(prop.key, set.key, setprop.key, setvalue.value)" #setvalue/></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- TEMPLATES -->
+                    <div class="form-group" *ngFor="let prop of prop_templates | keys">
+                          <label for="nombre-txt" class="tipos"> 
+                              <div class="single label" *ngIf="prop.value.type == 'single'">Single</div>
+                              <div class="option label" *ngIf="prop.value.type == 'option'">Option</div>
+                              <div class="set label" *ngIf="prop.value.type == 'set'">Set</div>
+                              <div class="array label" *ngIf="prop.value.type == 'array'">Array</div>
+                              <div class="title">{{ prop.value.name }}</div>
+                              <div class="addset" *ngIf="prop.value.type == 'set'">
+                                  <button type="button" class="btn btn-primary" (click)="addNewSet(prop.value)"><i class="fa fa-plus" aria-hidden="true"></i> Agregar</button>
+                              </div>
 
-			          	</label>
-			          	<!-- SOLAMENTE SI ES UNA PROPERTIE DE TIPO SINGLE -->
-			          	<input *ngIf="prop.value.type == 'single'" [(ngModel)]="prop_templates[prop.key].value" type="text" class="form-control" [name]="prop.value.name" [id]="prop.value.name" [placeholder]="prop.value.name" [value]="prop.value.value" required />
-				        <!-- SOLAMENTE SI ES UNA PROPERTIE DE TIPO OPTION -->
-				        <select *ngIf="prop.value.type == 'option'" type="text" class="form-control" [name]="prop.value.name" [id]="prop.value.name" [value]="prop.value.value" required (change)="changeOption(prop.value,prope)" #prope>
-				          	<option *ngFor="let option of prop.value.options | keys" [value]="option.key">{{ option.value }}</option>
-				        </select>
-				        <!-- SOLAMENTE SI ES UNA PROPERTIE DE TIPO SET -->
-				        <div *ngIf="prop.value.type == 'set'" class="sets">
-				        	<div class="set_item" *ngFor="let set of prop.value.sets | keys">
-				        		<div class="set_header" [class.running]="set.key == prop.value.value" (click)="changeset(prop.value.name+set.key)">
-				        			<div class="title">Set {{ set.key }}</div>
-				        			<div class="status">
-				        				<div class="running label" *ngIf="set.key == prop.value.value">Running</div>
-				        				<div class="saved label" *ngIf="set.key != prop.value.value">Saved</div>
-				        			</div>
-				        			<div class="action">
-				        				<i class="fa fa-play" aria-hidden="true" (click)="setSetDefault(prop.value, set.key, $event)" *ngIf="set.key != prop.value.value"></i>
-				        				<i class="fa fa-trash" aria-hidden="true" (click)="removeSet(prop.value, set.key, $event)" *ngIf="set.key != prop.value.value"></i>
-				        			</div>
-				        		</div>
-				        		<div class="set_body" *ngIf="setprop==prop.value.name+set.key">
-				        			<div class="item" *ngFor="let setprop of set.value | keys">
-				        				<div class="title">{{ setprop.key }}</div>
-				        				<div class="value"><input [value]="setprop.value" (change)="changesetvaluetemplate(prop.key, set.key, setprop.key, setvalue.value)" #setvalue/></div>
-				        			</div>
-				        		</div>
-				        	</div>
-				        </div>
-				    </div>
-		  	</div>
-		  	<div class="card-header card-inverse card-success header">Properties Dinamicas</div>
-		  	<div class="card-block">
-		   		 <div class="form-group">
-		          <label for="nombre-txt">Nombre de Entorno</label>
-		          <input type="text" class="form-control" name="nombre" id="nombre-txt" placeholder="Nombre del entorno" #envname>
-		          <small id="nombreHelp" class="form-text text-muted">Nombre del entorno de properties.</small>
-		        </div>
-		  	</div>
-		</div>
-		<div class="add">
-			<button type="submit" class="btn btn-default btn-panel">Modificar Entorno</button>
-			<button class="btn btn-warning btn-panel" (click)="view='panel'">Volver</button>
-		</div>
-	</form>
+                          </label>
+                          <!-- SOLAMENTE SI ES UNA PROPERTIE DE TIPO SINGLE -->
+                          <input *ngIf="prop.value.type == 'single'" [(ngModel)]="prop_templates[prop.key].value" type="text" class="form-control" [name]="prop.value.name" [id]="prop.value.name" [placeholder]="prop.value.name" [value]="prop.value.value" required />
+                        <!-- SOLAMENTE SI ES UNA PROPERTIE DE TIPO OPTION -->
+                        <select *ngIf="prop.value.type == 'option'" type="text" class="form-control" [name]="prop.value.name" [id]="prop.value.name" [value]="prop.value.value" required (change)="changeOption(prop.value,prope)" #prope>
+                              <option *ngFor="let option of prop.value.options | keys" [value]="option.key">{{ option.value }}</option>
+                        </select>
+                        <!-- SOLAMENTE SI ES UNA PROPERTIE DE TIPO SET -->
+                        <div *ngIf="prop.value.type == 'set'" class="sets">
+                            <div class="set_item" *ngFor="let set of prop.value.sets | keys">
+                                <div class="set_header" [class.running]="set.key == prop.value.value" (click)="changeset(prop.value.name+set.key)">
+                                    <div class="title">Set {{ set.key }}</div>
+                                    <div class="status">
+                                        <div class="running label" *ngIf="set.key == prop.value.value">Running</div>
+                                        <div class="saved label" *ngIf="set.key != prop.value.value">Saved</div>
+                                    </div>
+                                    <div class="action">
+                                        <i class="fa fa-play" aria-hidden="true" (click)="setSetDefault(prop.value, set.key, $event)" *ngIf="set.key != prop.value.value"></i>
+                                        <i class="fa fa-trash" aria-hidden="true" (click)="removeSet(prop.value, set.key, $event)" *ngIf="set.key != prop.value.value"></i>
+                                    </div>
+                                </div>
+                                <div class="set_body" *ngIf="setprop==prop.value.name+set.key">
+                                    <div class="item" *ngFor="let setprop of set.value | keys">
+                                        <div class="title">{{ setprop.key }}</div>
+                                        <div class="value"><input [value]="setprop.value" (change)="changesetvaluetemplate(prop.key, set.key, setprop.key, setvalue.value)" #setvalue/></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+              </div>
+        </div>
+        <div class="add">
+            <button type="submit" class="btn btn-primary btn-panel">Modify Enviroment</button>
+            <button class="btn btn-warning btn-panel" (click)="backPanel()">Back</button>
+        </div>
+    </form>
+</div>
+<div class="modify" *ngIf="view=='datasources'">
+    <div class="card list">
+        <div class="card-header card-inverse card-success header">Datasources</div>
+        <div class="card-block">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                    <th>Datasource name</th>
+                    <th>Type</th>
+                    <th>Database Engine</th>
+                    <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let datasource of datasources">
+                        <td class="title">{{ datasource.NAME }}</td>
+                        <td class="datasources">
+                            <div class="container label" *ngIf="datasource.CONTAINER_DATASOURCE">App Container</div>
+                            <div class="manual label" *ngIf="!datasource.CONTAINER_DATASOURCE">Manual</div>
+                        </td>
+                        <td class="datasources">
+                            <div class="unknow label" *ngIf="datasource.TYPE <= 0">Unknow</div>
+                            <div class="disk label" *ngIf="datasource.TYPE == 1">Disk</div>
+                            <div class="oracle label" *ngIf="datasource.TYPE == 2">Oracle</div>
+                            <div class="mysql label" *ngIf="datasource.TYPE == 3">Mysql/MariaDB</div>
+                            <div class="postgres label" *ngIf="datasource.TYPE == 4">Postgres</div>
+                            <div class="sqlite label" *ngIf="datasource.TYPE == 5">SQLite</div>
+                            <div class="mongo label" *ngIf="datasource.TYPE == 6">Mongo</div>
+                        </td>
+                        <td class="datasources">
+                            <i class="fa fa-edit item" aria-hidden="true" placement="top" ngbTooltip="Edit Datasource" (click)="modDatasource(datasource)"></i> 
+                        </td>
+                    </tr>
+                    <tr *ngIf="datasources.length == 0">
+                        <td colspan="4">There is not registered datasources</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="add">
+        <button class="btn btn-warning btn-panel" (click)="backPanel()">Back to Enviroments</button>
+    </div>
+</div>
+<div class="modify" *ngIf="view=='modify_datasource'">
+    <div class="card modify_datasource">
+        <div class="card-header card-inverse card-success header">Datasource: {{ datasource.NAME }}</div>
+        <div class="card-block">
+            <div class="form-group input_group" >
+                <label>Tipo de datasource: </label>
+                <div class="select">
+                    <label>
+                        <span class="flecha"></span>
+                        <select class="form-control" class="datasource" [value]="getTypeDatasource()" (change)="changeTypeDatasource(type_datasource.value)" #type_datasource>
+                            <option value="0">Manual</option>
+                            <option value="1">Container Datasource</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+            <div class="container_datasource" *ngIf="datasource.CONTAINER_DATASOURCE">
+                <div class="form-group input_group" >
+                    <label>Container datasource: </label>
+                    <input type="text" placeholder="Container datasource name" name="container_datasource" [(ngModel)]="datasource.CONTAINER_DATASOURCE"/>
+                    <small>This input define the container datasource that earlgrey use like a linked datasource.</small>
+                </div>
+            </div>
+            <div class="manual_datasource" *ngIf="!datasource.CONTAINER_DATASOURCE">
+                <div class="form-group input_group" >
+                    <label>Database engine: </label>
+                    <div class="select">
+                        <label>
+                            <span class="flecha"></span>
+                            <select class="form-control" class="datasource" [value]="datasource.TYPE" name="type" [(ngModel)]="datasource.TYPE">
+                                <option value="0">Unknow</option>
+                                <option value="1">Earlgrey Disk</option>
+                                <option value="2">Oracle</option>
+                                <option value="3">Mysql/Mariadb</option>
+                                <option value="4">Postgres</option>
+                                <option value="5">Sqlite</option>
+                                <option value="6">Mongo</option>
+                            </select>
+                        </label>
+                    </div>
+                    <small>This input define the database engine that you use in the datasource.</small>
+                </div>
+                <div class="form-group input_group" >
+                    <label>Datasource Host: </label>
+                    <input type="text" placeholder="Datasource Host" name="host" [(ngModel)]="datasource.HOST"/>
+                    <small>This input define the host that earlgrey use to connect to database.</small>
+                </div>
+                <div class="form-group input_group" >
+                    <label>Datasource Port: </label>
+                    <input type="number" placeholder="Datasource Host" name="port" [(ngModel)]="datasource.PORT"/>
+                    <small>This input define the port that earlgrey use to connect to database.</small>
+                </div>
+                <div class="form-group input_group" >
+                    <label>Database User: </label>
+                    <input type="text" placeholder="Database User" name="username" [(ngModel)]="datasource.USERNAME"/>
+                    <small>This input define the username that earlgrey use to connect to database.</small>
+                </div>
+                <div class="form-group input_group" >
+                    <label>Database Password: </label>
+                    <input type="text" placeholder="Database Password" name="password" [(ngModel)]="datasource.PASSWORD"/>
+                    <small>This input define the password that earlgrey use to connect to database.</small>
+                </div>
+                <div class="form-group input_group" >
+                    <label>Database Source: </label>
+                    <input type="text" placeholder="Database source" name="source" [(ngModel)]="datasource.SOURCE"/>
+                    <small>This input define the source that earlgrey use to connect to database.</small>
+                </div>
+                <div class="form-group input_group" >
+                    <label>Database Pool: </label>
+                    <input type="number" placeholder="Database pool" name="pool" [(ngModel)]="datasource.MAX_POOL"/>
+                    <small>This input define the max number of connections open by earlgrey at same time.</small>
+                </div>
+                <div class="form-group input_group" >  
+                    <label>Database connection type: </label>
+                    <div class="select" #conectiontype>
+                        <label>
+                            <span class="flecha"></span>
+                            <select class="form-control" class="datasource" [value]="getOnDemand()" (change)="setOnDemand(type.value)" #type>
+                                <option value="0">Permanent Links</option>
+                                <option value="1">On Demand Links</option>
+                            </select>
+                        </label>
+                    </div>
+                    <small>This input define the mechanism that use the engine to connect to database.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="add">
+        <button type="submit" class="btn btn-primary btn-panel" (click)="changeManualDatasource()" *ngIf="!datasource.CONTAINER_DATASOURCE">Modify Datasource</button>
+        <button type="submit" class="btn btn-primary btn-panel" (click)="changeContainerDatasource()" *ngIf="datasource.CONTAINER_DATASOURCE">Modify Datasource</button>
+        <button class="btn btn-warning btn-panel" (click)="view='datasources'">Back</button>
+    </div>
+</div>
+<div class="upload">
+    <div class="head"></div>
+    <div class="body"></div>
+    <div class="footer"></div>
 </div>

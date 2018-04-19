@@ -62,17 +62,8 @@ public class Rest extends Apicore implements Filter {
 		engine.patch(false);
 	}
 	protected void OPTIONS(HttpServletRequest request, HttpServletResponse response){
-		response.setHeader("Connection", "Keep-alive");
-		response.setHeader("Keep-Alive", "timeout=2, max=100");
-		response.setHeader("Access-Control-Allow-Origin", "*");
-		response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Methods", "*");
-        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
-        response.setHeader("Access-Control-Max-Age", "86400");
-        response.setHeader("Access-Control-Allow-Credentials", "true");
-        
 		Gear engine = new Gear(request,response);
-		engine.options(true);
+		engine.options(false);
 	}
 
 }

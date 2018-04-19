@@ -156,7 +156,7 @@ public class ResourceMaping {
 	}
 	// MAPEO DE LOS CONTROLADOES
 	private void MapControllers(){
-		log.Info("Mapeo de Controladores: Iniciando mapeo de controladores y rutas");
+		log.Info("Controllers Mapping: Initializing controllers and routes mapping");
 		for(int i=0;i<this.clases.size();i++){
 			String className = this.clases.get(i).replaceAll(".class$", "");
 			try {
@@ -225,19 +225,19 @@ public class ResourceMaping {
 									RouteDef router = this.MapRoute(ruta_uri);
 									ActionDef actionHttp; 
 									if(metodos[g].getAnnotation(DELETE.class) != null) {
-										this.log.Info("Enrutando Controller Action: DELETE "+ruta_uri);
+										this.log.Info("Routing Controller Action: DELETE "+ruta_uri);
 										actionHttp = router.createAction(HttpMethod.DELETE, cls, metodos[g]);
 									} else if(metodos[g].getAnnotation(GET.class) != null) {
-										this.log.Info("Enrutando Controller Action: GET "+ruta_uri);
+										this.log.Info("Routing Controller Action: GET "+ruta_uri);
 										actionHttp = router.createAction(HttpMethod.GET, cls, metodos[g]);
 									} else if(metodos[g].getAnnotation(POST.class) != null) {
-										this.log.Info("Enrutando Controller Action: POST "+ruta_uri);
+										this.log.Info("Routing Controller Action: POST "+ruta_uri);
 										actionHttp = router.createAction(HttpMethod.POST, cls, metodos[g]);
 									} else if(metodos[g].getAnnotation(PUT.class) != null) {
-										this.log.Info("Enrutando Controller Action: PUT "+ruta_uri);
+										this.log.Info("Routing Controller Action: PUT "+ruta_uri);
 										actionHttp = router.createAction(HttpMethod.PUT, cls, metodos[g]);
 									} else if(metodos[g].getAnnotation(PATCH.class) != null) {
-										this.log.Info("Enrutando Controller Action: PATCH "+ruta_uri);
+										this.log.Info("Routing Controller Action: PATCH "+ruta_uri);
 										actionHttp = router.createAction(HttpMethod.PATCH, cls, metodos[g]);
 									} else {
 										actionHttp = router.createAction(HttpMethod.UNKNOW, cls, metodos[g]);
@@ -251,13 +251,50 @@ public class ResourceMaping {
 											actionHttp.policie = policie_class;
 										}
 										else{
-											this.log.Warning("Policie especificada ("+policie.name()+") no existe en el registro de policies.", Error500.POLICIE_NOT_LOADED);
+											this.log.Warning("Policie specify ("+policie.name()+") don't exists in the policies map.", Error500.POLICIE_NOT_LOADED);
 										}
 									}
 								}
 								else
 								{
-									this.log.Warning("La acción del controlador no posee una ruta valida. Se ha declarado pero no es ruteable.", Error500.ROUTE_NOT_DECLARED);
+									String ruta_uri = ruta.route().trim();
+									RouteDef router = this.MapRoute(ruta_uri);
+									ActionDef actionHttp = null;
+									if(metodos[g].getAnnotation(DELETE.class) != null) {
+										this.log.Info("Routing Controller Action: DELETE "+ruta_uri);
+										actionHttp = router.createAction(HttpMethod.DELETE, cls, metodos[g]);
+									} else if(metodos[g].getAnnotation(GET.class) != null) {
+										this.log.Info("Routing Controller Action: GET "+ruta_uri);
+										actionHttp = router.createAction(HttpMethod.GET, cls, metodos[g]);
+									} else if(metodos[g].getAnnotation(POST.class) != null) {
+										this.log.Info("Routing Controller Action: POST "+ruta_uri);
+										actionHttp = router.createAction(HttpMethod.POST, cls, metodos[g]);
+									} else if(metodos[g].getAnnotation(PUT.class) != null) {
+										this.log.Info("Routing Controller Action: PUT "+ruta_uri);
+										actionHttp = router.createAction(HttpMethod.PUT, cls, metodos[g]);
+									} else if(metodos[g].getAnnotation(PATCH.class) != null) {
+										this.log.Info("Routing Controller Action: PATCH "+ruta_uri);
+										actionHttp = router.createAction(HttpMethod.PATCH, cls, metodos[g]);
+									} else {
+										this.log.Warning("The controller action don't have a valid route. It's mapped but don't have a route.", Error500.ROUTE_NOT_DECLARED);
+									}
+									
+									// ACTIONS POST ROUTING
+									if(actionHttp != null) {
+										if(cls.getAnnotation(CORS.class) != null) router.CORS = true;
+										//BUSCAMOS POLICIES
+										Policie policie = metodos[g].getAnnotation(Policie.class);
+										if(policie != null){
+											Class<?> policie_class = this.PolicieTable.get(policie.name());
+											if(policie_class != null){
+												actionHttp.policie = policie_class;
+											}
+											else{
+												this.log.Warning("Policie specify ("+policie.name()+") don't exists in the policies map.", Error500.POLICIE_NOT_LOADED);
+											}
+										}
+									}
+									
 								}
 							}
 						}
@@ -269,7 +306,7 @@ public class ResourceMaping {
 			}
 		}
 		//INFORMAMOS
-		log.Info("Mapeo de Controladores: Proceso Finalizado");
+		log.Info("Controller Mapping: Process Finalized");
 	}
 	// MAPEAMOS UNA RUTA
 	private RouteDef MapRoute(String ruta){
@@ -290,7 +327,7 @@ public class ResourceMaping {
 		}
 		else
 		{
-			log.Info("Ruta "+ruta+" incorrecta. Favor corregir");
+			log.Info("Route "+ruta+" incorrect. Please fix it");
 			return null;
 		}
 	}
@@ -299,7 +336,7 @@ public class ResourceMaping {
     }
 	// MAPEAMOS LOS PACKAGES
 	private void MapPackages(String packagename){
-		log.Info("Mapeo de Packages: Iniciando mapeo de packages");
+		log.Info("Packages Mapping: Initializing Packages Mapping");
 		try {
 			URL root2 = Thread.currentThread().getContextClassLoader().getResource(packagename);
 			this.packages = new ArrayList<Package>();
@@ -334,16 +371,16 @@ public class ResourceMaping {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		log.Info("Mapeo de Packages: Mapeo Finalizado");
+		log.Info("Packages Mapping: Mapping Finalized");
 	}
 	// MAPEAMOS LOS PACKAGES
 	private void MapPackages(){
-		log.Info("Mapeo de Packages: Iniciando mapeo de packages");
+		log.Info("Packages Mapping: Initializing Packages Mapping");
 		this.packages = new ArrayList<Package>();
 		/*for(int i=0;i<FilesList.List.length;i++){
 			this.packages.add(FilesList.List[i].packageName); 
 		}*/
-		log.Info("Mapeo de Packages: Mapeo Finalizado");
+		log.Info("Packages Mapping: Mapping Finalized");
 	}
 	// CARGAMOS LOS .JAR
 	private void loadJAR(){
@@ -366,7 +403,7 @@ public class ResourceMaping {
 	}
 	// MAPEAMOS LAS CLASES
 	private void MapClases() {
-		log.Info("Mapeo de Clases: Iniciando mapeo de clases");
+		log.Info("Class Mapping: Initializing class mapping");
 		this.clases = new ArrayList<String>();
 		try {
 			for(int l=0;l<this.packages.size();l++){
@@ -616,7 +653,7 @@ public class ResourceMaping {
 	}
 	
 	public void MapModels(){
-		log.Info("Mapeo de Modelos: Buscando Modelos de datos declarados");
+		log.Info("Models Mapping: Searching models declared");
 		for(int i=0;i<this.clases.size();i++){
 			String className = this.clases.get(i).replaceAll(".class$", "");
 			try {
@@ -625,7 +662,7 @@ public class ResourceMaping {
 					// BUSCAMOS LAS ANOTACIONES QUE DECLARAN COMO MODELO
 					Model model = cls.getAnnotation(Model.class);
 					if(model != null){
-						this.log.Info("Mapeando Modelo: "+model.name());
+						this.log.Info("Mapping Model: "+model.name());
 						this.ModelTable.put(model.name(), cls);
 						// BUSCAMOS SI TIENE PROPIEDADES REST
 						// DE LO CONTRARIO NO TIENE SENTIDO EL QUE TENGA UNA RUTA ASIGNADA
@@ -635,7 +672,7 @@ public class ResourceMaping {
 						if(blueprints != null){
 							Route route = cls.getAnnotation(Route.class);
 							if(route != null){
-								this.log.Info("Enrutando Modelo RESTFUL: "+route.route());
+								this.log.Info("Routing RESTFUL Model: "+route.route());
 								String ruta_uri = route.route().trim();
 								if(ruta_uri.endsWith("/")) ruta_uri = ruta_uri.substring(0, (ruta_uri.length()-1));
 								if(ruta_uri.startsWith("/")) ruta_uri = ruta_uri.substring(1);
@@ -665,29 +702,29 @@ public class ResourceMaping {
 										}
 									}
 									else{
-										this.log.Warning("Policie especificada ("+policie.name()+") no existe en el registro de policies.", Error500.POLICIE_NOT_LOADED);
+										this.log.Warning("Policie specify ("+policie.name()+") don't exists in the policies map.", Error500.POLICIE_NOT_LOADED);
 									}
 								}
 							}
 							else
 							{
-								this.log.Warning("El modelo fue indicado como RESTFULL pero no se indico la ruta. Se ha declarado pero no es ruteable", Error500.ROUTE_NOT_DECLARED);
+								this.log.Warning("The model was defined like RESTFULL but don't have a route. It's declared but dont have a route", Error500.ROUTE_NOT_DECLARED);
 							}
 						}
 					}
 				}
 			}
 			catch (ClassNotFoundException e) {
-				this.log.Critic("Error al intentar leer una de las clases declaras en el mapeador de recursos (MapModels).", Error500.CLASS_LOAD_ERROR);
+				this.log.Critic("Error when Earlgrey tried to read a class defined in the resources map (MapModels).", Error500.CLASS_LOAD_ERROR);
 				e.printStackTrace();
 			}
 		}
 		//INFORMAMOS
-		log.Info("Mapeo de Modelos: Finalizado");
+		log.Info("Model Mapping: Finalized");
 	}
 	private void MapConsole() {
 		//INFORMAMOS
-		log.Info("Mapeo de acciones de consola: Buscando controladores de consola");
+		log.Info("Console Actions Mapping: Searching Console Controllers");
 		for(int i=0;i<this.clases.size();i++){
 			String className = this.clases.get(i).replaceAll(".class$", "");
 			try {
@@ -757,19 +794,19 @@ public class ResourceMaping {
 									RouteDef router = this.MapRoute(ruta_uri);
 									ActionDef actionHttp; 
 									if(metodos[g].getAnnotation(DELETE.class) != null) {
-										this.log.Info("Enrutando Controller Action: DELETE "+ruta_uri);
+										this.log.Info("Routing Controller Action: DELETE "+ruta_uri);
 										actionHttp = router.createAction(HttpMethod.DELETE, cls, metodos[g]);
 									} else if(metodos[g].getAnnotation(GET.class) != null) {
-										this.log.Info("Enrutando Controller Action: GET "+ruta_uri);
+										this.log.Info("Routing Controller Action: GET "+ruta_uri);
 										actionHttp = router.createAction(HttpMethod.GET, cls, metodos[g]);
 									} else if(metodos[g].getAnnotation(POST.class) != null) {
-										this.log.Info("Enrutando Controller Action: POST "+ruta_uri);
+										this.log.Info("Routing Controller Action: POST "+ruta_uri);
 										actionHttp = router.createAction(HttpMethod.POST, cls, metodos[g]);
 									} else if(metodos[g].getAnnotation(PUT.class) != null) {
-										this.log.Info("Enrutando Controller Action: PUT "+ruta_uri);
+										this.log.Info("Routing Controller Action: PUT "+ruta_uri);
 										actionHttp = router.createAction(HttpMethod.PUT, cls, metodos[g]);
 									} else if(metodos[g].getAnnotation(PATCH.class) != null) {
-										this.log.Info("Enrutando Controller Action: PATCH "+ruta_uri);
+										this.log.Info("Routing Controller Action: PATCH "+ruta_uri);
 										actionHttp = router.createAction(HttpMethod.PATCH, cls, metodos[g]);
 									} else {
 										actionHttp = router.createAction(HttpMethod.UNKNOW, cls, metodos[g]);
@@ -783,13 +820,49 @@ public class ResourceMaping {
 											actionHttp.policie = policie_class;
 										}
 										else{
-											this.log.Warning("Policie especificada ("+policie.name()+") no existe en el registro de policies.", Error500.POLICIE_NOT_LOADED);
+											this.log.Warning("Policie specify ("+policie.name()+") don't exists in the policies map.", Error500.POLICIE_NOT_LOADED);
 										}
 									}
 								}
 								else
 								{
-									this.log.Warning("La acción del controlador no posee una ruta valida. Se ha declarado pero no es ruteable.", Error500.ROUTE_NOT_DECLARED);
+									String ruta_uri = "admin/console"+ruta.route().trim();
+									RouteDef router = this.MapRoute(ruta_uri);
+									ActionDef actionHttp = null;
+									if(metodos[g].getAnnotation(DELETE.class) != null) {
+										this.log.Info("Routing Controller Action: DELETE "+ruta_uri);
+										actionHttp = router.createAction(HttpMethod.DELETE, cls, metodos[g]);
+									} else if(metodos[g].getAnnotation(GET.class) != null) {
+										this.log.Info("Routing Controller Action: GET "+ruta_uri);
+										actionHttp = router.createAction(HttpMethod.GET, cls, metodos[g]);
+									} else if(metodos[g].getAnnotation(POST.class) != null) {
+										this.log.Info("Routing Controller Action: POST "+ruta_uri);
+										actionHttp = router.createAction(HttpMethod.POST, cls, metodos[g]);
+									} else if(metodos[g].getAnnotation(PUT.class) != null) {
+										this.log.Info("Routing Controller Action: PUT "+ruta_uri);
+										actionHttp = router.createAction(HttpMethod.PUT, cls, metodos[g]);
+									} else if(metodos[g].getAnnotation(PATCH.class) != null) {
+										this.log.Info("Routing Controller Action: PATCH "+ruta_uri);
+										actionHttp = router.createAction(HttpMethod.PATCH, cls, metodos[g]);
+									} else {
+										this.log.Warning("The controller action don't have a valid route. It's mapped but don't have a route.", Error500.ROUTE_NOT_DECLARED);
+									}
+									
+									// ACTIONS POST ROUTING
+									if(actionHttp != null) {
+										if(cls.getAnnotation(CORS.class) != null) router.CORS = true;
+										//BUSCAMOS POLICIES
+										Policie policie = metodos[g].getAnnotation(Policie.class);
+										if(policie != null){
+											Class<?> policie_class = this.PolicieTable.get(policie.name());
+											if(policie_class != null){
+												actionHttp.policie = policie_class;
+											}
+											else{
+												this.log.Warning("Policie specify ("+policie.name()+") don't exists in the policies map.", Error500.POLICIE_NOT_LOADED);
+											}
+										}
+									}
 								}
 							}
 						}
@@ -801,11 +874,11 @@ public class ResourceMaping {
 			}
 		}
 		//INFORMAMOS
-		log.Info("Mapeo de acciones de consola: Finalizado");
+		log.Info("Console Actions Mapping: Finalized");
 	}
 	public void search_database_drivers() {
 		//INFORMAMOS
-		log.Info("Mapeo de drivers de base de datos.");
+		log.Info("Mapping database drivers.");
 		for(int i=0;i<this.clases.size();i++){
 			String className = this.clases.get(i).replaceAll(".class$", "");
 			try {
@@ -814,7 +887,7 @@ public class ResourceMaping {
 				    //MAPEAMOS QUE SEA UN CONTROLADOR HABILITADO
 					DatabaseDriver database = cls.getAnnotation(DatabaseDriver.class);
 					if(database != null){
-						log.Info("Mapeando driver: "+database.name());
+						log.Info("Mapping driver: "+database.name());
 						this.databaseDriverTable.put(database.id(), cls);
 					}
 				}
@@ -824,7 +897,7 @@ public class ResourceMaping {
 			}
 		}
 		//INFORMAMOS
-		log.Info("Mapeo de drivers de base de datos: Finalizado");
+		log.Info("Database Drivers Mapping: Finalized");
 	}
 	public String[] MapAnnotation(String annotation, String key) {
 		return null;
@@ -897,25 +970,25 @@ public class ResourceMaping {
 	}
 	private void MapPolicies() {
 		//INFORMAMOS
-		log.Info("Mapeo de policies: Buscando Policies");
+		log.Info("Policies Mapping: Searching Policies");
 		for(int i=0;i<this.clases.size();i++){
 			String className = this.clases.get(i).replaceAll(".class$", "");
 			try {
 				Class<?> cls = Thread.currentThread().getContextClassLoader().loadClass(className);
 				// BUSCAMOS PROPERTIES
 				if (PolicieCore.class.isAssignableFrom(cls) && !cls.isInterface()) {
-					this.log.Info("Policie Mapeada: "+cls.getName().substring(cls.getName().lastIndexOf(".")+1));
+					this.log.Info("Policie Mapped: "+cls.getName().substring(cls.getName().lastIndexOf(".")+1));
 					this.PolicieTable.put(cls.getName().substring(cls.getName().lastIndexOf(".")+1), cls);
 				}
 			}
 			catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
-				this.log.Critic("Error al intentar leer una de las clases declaras en el mapeador de recursos (MapPolicies).", Error500.CLASS_LOAD_ERROR);
+				this.log.Critic("Error when Earlgrey tried to read a class defined in the resources map (MapPolicies).", Error500.CLASS_LOAD_ERROR);
 				e.printStackTrace();
 			}
 		}
 		//INFORMAMOS
-		log.Info("Mapeo de policies: Finalizado");
+		log.Info("Policies Mapping: Finalized");
 	}
 	// GETERS DE LAS TABLAS MAPEADAS
 	public Hashtable<String, ErrorDef> getErrorTable() {

@@ -41,20 +41,22 @@ public class DatasourceManager implements Process, PropertiesDepend {
 		/* Iterate the models finding datasources. */
 		Hashtable<String, Class<?>> model = ResourceMaping.getInstance().getModelTable();
 		Enumeration<String> keys = model.keys();
+		boolean created = false;
 		while(keys.hasMoreElements()){
 			String llave = keys.nextElement();
 			Class<?> modelo = model.get(llave);
 			Model model_info = modelo.getAnnotation(Model.class);
 			if(!this.sources.containsKey(model_info.datasource())){
-				this.registerConnection(model_info.datasource());
+				if(this.registerConnection(model_info.datasource())) created = true;
 				this.sources.put(model_info.datasource(), new ConnectionPool(model_info.datasource()));
 			}
 		}
+		if(created) this.prop.saveToDisk();
 	}
-	private void registerConnection(String datasource){
+	private boolean registerConnection(String datasource){
 		// CREAMOS EL DATASOURCE POR DEFECTO
 		// PARA ESTO CREAMOS EL SET DE PROPERTIES QUE LO MANEJA
-		this.prop.createOrSetDatasource(datasource);
+		return this.prop.createOrSetDatasource(datasource);
 	}
 	public ConnectionPool getConnection(String datasource){
 		return this.sources.get(datasource);

@@ -22,7 +22,7 @@ import earlgrey.core.ModelCore;
 import earlgrey.core.Properties;
 import earlgrey.def.SessionDef;
 
-@Console(description = "Controlador para manejar los usuarios del admin panel.", name = "Users", version = 1)
+@Console(description = "Controller to manage the admin panel users.", name = "Admins", version = 1)
 @Route(route = "/admins")
 @CORS
 public class UserConsole extends ControllerCore{
@@ -42,7 +42,7 @@ public class UserConsole extends ControllerCore{
 		return;
 	}
 	//CONTROLADOR DE PRUEBA PARA EFECTUAR DESARROLLO DE LA PLATAFORMA.
-	@ControllerAction(description = "Metodo de autentificación para el admin mediante session.", name = "user_login", version = 1)
+	@ControllerAction(description = "Method to login with user and password.", name = "user_login", version = 1)
 	@Route(route = "/login")
 	@ParamRequire(name = "username")
 	@ParamRequire(name = "password")
@@ -66,7 +66,7 @@ public class UserConsole extends ControllerCore{
 		return;
 	}
 	
-	@ControllerAction(description = "Metodo de autentificación para el admin mediante session.", name = "user_login", version = 1)
+	@ControllerAction(description = "Method to get the session user status.", name = "user_login", version = 1)
 	@Route(route = "/status")
 	@GET
 	public static void Status(HttpRequest req, HttpResponse res){
@@ -82,7 +82,7 @@ public class UserConsole extends ControllerCore{
 		return;
 	}
 	
-	@ControllerAction(description = "Metodo para efectuar el proceso de logout de un administrador.", name = "user_login", version = 1)
+	@ControllerAction(description = "Method to logout the admin user.", name = "user_login", version = 1)
 	@Route(route = "/logout")
 	@GET
 	public static void logout(HttpRequest req, HttpResponse res){

@@ -103,7 +103,7 @@ public class Properties {
 		config.put("models", new JSONArray());
 		config.put("comunication", new JSONObject());
 		config.put("policies", new JSONArray());
-		config.put("config", (new JSONObject()).put("STATIC", new JSONObject()).put("TEMPLATES", new JSONObject()));
+		config.put("config", this.getTemplateConfig(this.propertiesMap.getConfigTable()));
 		//config.put("propertie_map", db_template);
 		JSONArray users = (new JSONArray()).put((new JSONObject()).put("USERNAME", "admin").put("PASSWORD", "earlgrey"));
 		config.put("console",(new JSONObject()).put("users", users));
@@ -166,38 +166,7 @@ public class Properties {
 				config.put(propName, prop);
 			}
 			else if(prop.get("type").equals("set")){
-				// CARACTERISTICA AUN NO LISTA
-				// PENSANDO EN NUEVO REALEASE
-				// PERO NO SE DESCARTA EL ELIMINARLA
 				JSONObject template = prop.getJSONObject("set");
-				/*JSONObject set_template = new JSONObject();
-				Iterator<String> llaves = template.keys();
-				while(llaves.hasNext()){
-					String llave = llaves.next();
-					String value = template.getString(llave);
-					// BUSCAMOS UNA ANNOTATION QUERY
-					try{
-						JSONObject object = new JSONObject(value);
-						if(object.has("type") && object.has("anottation") && object.has("anottation")){
-							
-						}
-						else{
-							this.log.Warning("el object propertie no se encuentra bien estructurado", Error60.PROPERTIE_OBJECT_INCORRECT);
-							JSONObject obj = new JSONObject();
-							obj.put("type", "single");
-							obj.put("default", value);
-							obj.put("value", value);
-							set_template.put(llave, obj);
-						}
-					}
-					catch(JSONException e){
-						JSONObject obj = new JSONObject();
-						obj.put("type", "single");
-						obj.put("default", value);
-						obj.put("value", value);
-						set_template.put(llave, obj);
-					}
-				}*/
 				JSONArray sets = new JSONArray();
 				sets.put(template);
 				prop.put("sets", sets);
@@ -217,12 +186,46 @@ public class Properties {
 		config_master.put("DATASOURCES", new JSONObject());
 		return config_master;
 	}
+	
+	private JSONObject getTemplateConfig(Hashtable<String,JSONObject> properties){
+		JSONObject config_master = new JSONObject();
+		config_master.put("TEMPLATES", new JSONObject());
+		JSONObject config = new JSONObject();
+		Enumeration<String> keys = properties.keys();
+		while(keys.hasMoreElements()){
+			String propName = keys.nextElement();
+			JSONObject prop = properties.get(propName);
+			if(prop.get("type").equals("single")){
+				prop.put("value", prop.getString("default"));
+				config.put(propName, prop);
+			}
+			else if(prop.get("type").equals("set")){
+				JSONObject template = prop.getJSONObject("set");
+				JSONArray sets = new JSONArray();
+				sets.put(template);
+				prop.put("sets", sets);
+				prop.put("value", 0);
+				config.put(propName, prop);
+			}
+			else if(prop.get("type").equals("option")){
+				prop.put("value", prop.getInt("default"));
+				config.put(propName, prop);
+			}
+			else if(prop.get("type").equals("array")){
+				prop.put("value", prop.getJSONArray("default"));
+				config.put(propName, prop);
+			}
+		}
+		config_master.put("STATIC", config);
+		return config_master;
+	}
+	
 	private String[] search_annotation(){
 		
 		return null;
 	}
 	private void checkPropertieFileAndFix(){
-		this.log.Info("Analizando archivo de configuraciones");
+		this.log.Info("Checking the configuration file.");
 		JSONObject prop_save = this.config_obj;
 		Hashtable<String,JSONObject> propiedades = this.propertiesMap.getPropertieTable();
 		Hashtable<String,JSONObject> config = this.propertiesMap.getConfigTable();
@@ -236,16 +239,16 @@ public class Properties {
 		prop_save.put("config", this.checkConfig(prop_save.getJSONObject("config"), config));
 		if(!prop_save.has("prop_templates")) prop_save.put("prop_templates", this.templates_prop);
 		this.config_obj = prop_save;
-		this.log.Info("Verificando cambios en archivos de configuraciones");
+		this.log.Info("Checking changes in the configuration file");
 		if(hash == prop_save.toString().hashCode()){
-			this.log.Info("No existen cambios, cargando archivo");
+			this.log.Info("The file has not change, loading");
 			return;
 		}
 		else
 		{
-			this.log.Info("Existen cambios respecto a la version antigua. respaldando.");
+			this.log.Info("The file has changes compare with the old configuration file. Saving the old file like backup");
 			this.backupFile();
-			this.log.Info("Guardando nuevo archivo de configuraciones.");
+			this.log.Info("Saving the new configuration file..");
 			this.saveFile();
 		}
 		
@@ -253,6 +256,7 @@ public class Properties {
 	private JSONObject checkEnv(JSONObject env, Hashtable<String,JSONObject> props){
 		JSONObject conf_global = new JSONObject();
 		conf_global.put("EARLGREY_ENVNAME", env.getString("EARLGREY_ENVNAME"));
+		conf_global.put("DATASOURCES", env.getJSONObject("DATASOURCES"));
 		JSONObject conf = new JSONObject();
 		Enumeration<String> keys = props.keys();
 		while(keys.hasMoreElements()){
@@ -551,17 +555,17 @@ public class Properties {
 					pw.println(linea);
 					pw.close();
 			    } catch (JSONException ex) {
-			    	this.log.Critic("No se puede escribir el archivo Backup. Verifique los permisos y el sistema de archivos kernel", Error700.FILE_SAVE_ERROR);
+			    	this.log.Critic("Earlgrey can't write the backup file. Verify the permisions and Earlgrey kernel system files.", Error700.FILE_SAVE_ERROR);
 			    }
 			}
 			else{
-				this.log.Critic("El archivo antiguo de configuracion esta vacio. Abortando Backup", Error700.FILE_EMPTY_ERROR);
+				this.log.Critic("The old config file is empty. Aborting Backup", Error700.FILE_EMPTY_ERROR);
 				this.setDefault();
 			}
 		} catch (FileNotFoundException e1) {
-			this.log.Critic("El archivo de configuraciones no existe.", 2);
+			this.log.Critic("The config file don't exist.", 2);
 		} catch (IOException e) {
-			this.log.Critic("Error IO, al intentar obtener el archivo de configuraciones. (Backup)",Error700.FILE_READ_ERROR);
+			this.log.Critic("Error IO, When Earlgrey try get the config file. (Backup)",Error700.FILE_READ_ERROR);
 		}
 	}
 	private void selectEnv() {
@@ -576,7 +580,7 @@ public class Properties {
 				return;
 			}
 		}
-		this.log.Critic("No se cargo ningun entorno de propiedades", Error500.PROPERTIES_ENV);
+		this.log.Critic("Any properties enviroment has been loaded", Error500.PROPERTIES_ENV);
 	}
 	public JSONObject getProperties(){
 		return this.target;
@@ -587,12 +591,12 @@ public class Properties {
 				return this.target.getJSONObject(propname).getString("value");
 			}
 			else{
-				this.log.Warning("La propertie ("+propname+") especificada no corresponde al tipo llamado. Tipo declarado "+this.target.getJSONObject(propname).getString("type"), Error60.PROPERTIE_TYPE_INCORRECT);
+				this.log.Warning("The propertie ("+propname+") selected not match with the type called. Type Declared "+this.target.getJSONObject(propname).getString("type"), Error60.PROPERTIE_TYPE_INCORRECT);
 			}
 		}
 		else
 		{
-			this.log.Warning("La propertie ("+propname+")especificada no existe, se envia valor null", Error60.PROPERTIE_NOT_SET);
+			this.log.Warning("The propertie ("+propname+") dont exists, earlgrey will send null value", Error60.PROPERTIE_NOT_SET);
 			
 		}
 		return null;
@@ -604,7 +608,7 @@ public class Properties {
 				return new PropertieSet(this.target.getJSONObject(propname).getJSONArray("sets").getJSONObject(selected));
 			}
 			else{
-				this.log.Warning("La propertie ("+propname+") especificada no corresponde al tipo llamado. Tipo declarado "+this.target.getJSONObject(propname).getString("type"), Error60.PROPERTIE_TYPE_INCORRECT);
+				this.log.Warning("The propertie ("+propname+") selected not match with the type called. Type Declared "+this.target.getJSONObject(propname).getString("type"), Error60.PROPERTIE_TYPE_INCORRECT);
 			}
 		}
 		else
@@ -642,6 +646,19 @@ public class Properties {
 			return this.datasources.get(datasource_name);
 		}
 		return null;
+	}
+	
+	public void setDatasource(String name, String env, Datasource datasource) {
+		JSONArray propiedades = this.config_obj.getJSONArray("environment");
+		for(int i=0; i<propiedades.length(); i++){
+			if(propiedades.getJSONObject(i).getString("EARLGREY_ENVNAME").equals(env)){
+				propiedades.getJSONObject(i).getJSONObject("DATASOURCES").put(name, datasource.toJSON());
+				this.datasources.put(name, datasource);
+			}
+		}
+		this.saveFile();
+		this.log.Info("Datasource save, restarting properties.");
+		Engine.getInstance().restartByProperties();
 	}
 	
 	public JSONObject createOrSetPropertieTemplate(String template, String name){
@@ -706,12 +723,12 @@ public class Properties {
 			}
 			else
 			{
-				this.log.Warning("No existe el propertie template especificado",Error60.PROPERTIE_SET_TEMPLATE_NOTFOUND);
+				this.log.Warning("The properties template selected don't exists",Error60.PROPERTIE_SET_TEMPLATE_NOTFOUND);
 			}
 		}
 		else
 		{
-			this.log.Warning("El entorno no tiene configurado adecuadamente los templates sets",Error60.PROPERTIE_SET_TEMPLATE_ERROR);
+			this.log.Warning("The enviroment don't have the template set configurated correctly",Error60.PROPERTIE_SET_TEMPLATE_ERROR);
 		}
 		return null;
 	}
@@ -857,15 +874,15 @@ public class Properties {
 				this.config_obj.put("env_used", envi);
 				this.saveFile();
 				Engine.getInstance().restartByProperties();
-				this.log.Info("Funcionando en entorno, "+envi);
+				this.log.Info("Working on enviroment, "+envi);
 				return true;
 			}
 		}
-		this.log.Critic("No se cargo ningun entorno de propiedades", Error500.PROPERTIES_ENV);
+		this.log.Critic("Cant load any propertie enviroment", Error500.PROPERTIES_ENV);
 		return false;
 	}
 	public JSONObject createEnv(String name){
-		this.log.Info("Creando nuevo entorno de properties: "+name);
+		this.log.Info("Creating new properties enviroment: "+name);
 		JSONObject env = this.getTemplate(name, this.propertiesMap.getPropertieTable());
 		this.config_obj.getJSONArray("environment").put(env);
 		this.backupFile();
@@ -886,6 +903,10 @@ public class Properties {
 		this.saveFile();
 		this.log.Info("Properties modified.");
 	}
+	public void saveToDisk(){
+		this.backupFile();
+		this.saveFile();
+	}
 	public void setConfig(JSONObject config){
 		this.log.Info("Modifying configs.");
 		this.joinConfigs(config);
@@ -900,5 +921,9 @@ public class Properties {
 	
 	public JSONArray getConsoleUsers() {
 		return this.config_obj.getJSONObject("console").getJSONArray("users");
+	}
+	
+	public JSONObject getPropertiefile(){
+		return this.config_obj;
 	}
 }

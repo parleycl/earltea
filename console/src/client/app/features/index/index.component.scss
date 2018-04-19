@@ -2,11 +2,11 @@
     flex: 1 1 100%;
     display: flex;
     flex-flow: column;
-    min-height:1000px;
+    height:100%;
   }
   .content{
       display:flex;
       flex-direction:row;
-      min-height:1000px;
+      height:100%;
       width:100%;
   }

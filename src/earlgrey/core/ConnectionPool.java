@@ -35,7 +35,7 @@ public class ConnectionPool {
 		this.makeConnection();
 	}
 	private void makeConnection(){
-		//LIMPIAMOS LAS CONEXIONES
+		// Cleaning the conections
 		this.clearConnections();
 		// OBTENEMOS LAS NUEVAS VARIABLES
 		Datasource source = this.prop.getDatasource(this.datasource);
@@ -44,13 +44,13 @@ public class ConnectionPool {
 				Class<?> clase = drivers.get(source.TYPE);
 				Connector driver = (Connector) clase.newInstance();
 				if(!source.HOST.equals("") || !source.USERNAME.equals("") || !source.PASSWORD.equals("") || !source.equals("")) {
-					this.log.Info("Cargando Datasource "+this.datasource);
-					this.log.Info("Cargando Driver "+Database.toString(source.TYPE));
+					this.log.Info("Loading Datasource "+this.datasource);
+					this.log.Info("Loading Driver "+Database.toString(source.TYPE));
 					if(source.CONTAINER_DATASOURCE){
 						driver.setDatasource(source.DATASOURCE);
 						if(driver.TestConector()){
 							this.driver = driver;
-							this.log.Info("Estableciendo pool de conexión en: "+source.MAX_POOL);
+							this.log.Info("Set connection pool in: "+source.MAX_POOL);
 							for(int h=0;h<source.MAX_POOL;h++){
 								Connector driver_pool = (Connector) clase.newInstance();
 								driver_pool.setDatasource(source.DATASOURCE);
@@ -64,7 +64,7 @@ public class ConnectionPool {
 						driver.setCredencial(source.USERNAME, source.PASSWORD, source.SOURCE, source.HOST, source.PORT);
 						if(driver.TestConector()){
 							this.driver = driver;
-							this.log.Info("Estableciendo pool de conexión en: "+source.MAX_POOL);
+							this.log.Info("Set connection pool in: "+source.MAX_POOL);
 							for(int h=0;h<source.MAX_POOL;h++){
 								Connector driver_pool = (Connector) clase.newInstance();
 								driver_pool.setCredencial(source.USERNAME, source.PASSWORD, source.SOURCE, source.HOST, source.PORT);
@@ -79,11 +79,11 @@ public class ConnectionPool {
 			}
 			// SI NO SE ACOGE A NIGUNO DE LOS DRIVERS ESTABLECIDOS SE INICIA GEOS SIN DRIVER PERSISTENTE.
 			// NO SE PODRAN EJECUTAR CONSULTAR NI TRABAJO CON MODELO DE DATOS.
-			this.log.Warning("No se ha cargado ningun driver en memoria",Error800.DATABASE_NO_DRIVER);
+			this.log.Warning("No driver has been loaded in memory",Error800.DATABASE_NO_DRIVER);
 			this.driver = null;
 			return;
 		} catch (InstantiationException | IllegalAccessException e) {
-			this.log.Critic("Existio un error al crear una instancia del driver de base de datos. Asegurese que el constructor no recibe parametros", Error800.DATABASE_CONNECT_ERROR);
+			this.log.Critic("Occurred an error when try to load an instance of driver. Check the constructor dont receive parameters", Error800.DATABASE_CONNECT_ERROR);
 		}
 	}
 	public void closeConnection(Connector conection){

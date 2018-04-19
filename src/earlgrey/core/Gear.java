@@ -1,13 +1,20 @@
 package earlgrey.core;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.json.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -153,7 +160,6 @@ public class Gear {
 		// EXTRAEMOS LOS PARAMETROS
 		
 		JSONObject params = this.extract_params();
-		
 		Router router = new Router();
 		ActionDef action = router.route(route, verbose);
 		//DECIDIMOS LA ACTION
@@ -202,18 +208,59 @@ public class Gear {
 				params.put(name,this.request.getParameter(name));
 			}
 		}
+		
+		if(params.length() == 0){
+			try {
+				String query_string = this.request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+				Map<String, String[]> param_body = this.getQueryParameters(query_string);
+				Set<String> keys = param_body.keySet();
+				for(String key : keys) {
+					String[] value = param_body.get(key);
+					if(value.length > 0) {
+						params.put(key, value[0]);
+					}
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		return params;
 	}
+	
+	public static Map<String, String[]> getQueryParameters(String payload) {
+	    Map<String, String[]> queryParameters = new HashMap<>();
+	    String queryString = payload;
+
+	    if (StringUtils.isEmpty(queryString)) {
+	        return queryParameters;
+	    }
+
+	    String[] parameters = queryString.split("&");
+
+	    for (String parameter : parameters) {
+	        String[] keyValuePair = parameter.split("=");
+	        String[] values = queryParameters.get(keyValuePair[0]);
+	        values = ArrayUtils.add(values, keyValuePair.length == 1 ? "" : keyValuePair[1]); //length is one if no value is available.
+	        queryParameters.put(keyValuePair[0], values);
+	    }
+	    return queryParameters;
+	}
+	
 	private void doAction(ActionDef actionDef, JSONObject params){
 		Engine engine = Engine.getInstance();
-		if(actionDef.getRoute().hasHttpMethod(this.verbose)){
+		if(actionDef.getRoute().hasHttpMethod(this.verbose)) {
 			HttpActionDef action = new HttpActionDef(actionDef, this.request, this.response, params, this);
 			this.ID = engine.registerTask(action);
 			action.set_id(this.ID);
 			action.run();
-		}
-		else
-		{
+		} else if(actionDef.getRoute().CORS && this.verbose == HttpMethod.OPTIONS) {
+			HttpActionDef action = new HttpActionDef(actionDef, this.request, this.response, params, this);
+			this.ID = engine.registerTask(action);
+			action.set_id(this.ID);
+			action.run();
+		} else {
 			this.response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 		}
 		
