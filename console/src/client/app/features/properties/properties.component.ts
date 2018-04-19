@@ -5,6 +5,9 @@ import { DatasourcesService } from '../../services/datasources/datasources.servi
 import { AlertService } from '../../shared/alerts/alert.service';
 import { OnDestroy } from '@angular/core';
 import { SafeUrl, DomSanitizer } from '@angular/platform-browser';
+import { UploadEvent, FileSystemFileEntry, FileSystemDirectoryEntry } from 'ngx-file-drop/ngx-file-drop';
+import { ConfigProp } from '../../classes/configprop';
+import { PropertiesService } from '../../services/properties/properties.service';
 
 /**
  * This class represents the main application component.
@@ -28,9 +31,12 @@ export class PropertiesComponent implements OnDestroy{
     private prop_templates:any;
     private setprop:string;
     private timer:any;
+    private uploadview: boolean = false;
+    private statusfile: number = 0;
+    private config_file: ConfigProp;
 
     constructor(private rest:RestService,private cd: ChangeDetectorRef, private ref:ApplicationRef, private datasource_service: DatasourcesService,
-    private alert: AlertService, private sanitizer: DomSanitizer) {
+    private alert: AlertService, private sanitizer: DomSanitizer, private properties: PropertiesService) {
       this.fetchEntornos();
       this.restarting = false;
       this.checkRestart();
@@ -270,15 +276,92 @@ export class PropertiesComponent implements OnDestroy{
     }
 
     private backup(){
-        let theJSON = JSON.stringify(this.list);
-        let blob = new Blob([theJSON], { type: 'text/json' });
-        let url= window.URL.createObjectURL(blob);
-        let uri:SafeUrl = this.sanitizer.bypassSecurityTrustUrl(url);
-        return uri;
+        this.properties.getConfigFile().subscribe(data => {
+            let theJSON = JSON.stringify(data);
+            let blob = new Blob([theJSON], { type: 'text/json' });
+            let url= window.URL.createObjectURL(blob);
+            let uri:SafeUrl = this.sanitizer.bypassSecurityTrustUrl(url);
+            var link = document.createElement("a");
+            link.download = "config.properties";
+            link.href = url;
+            document.body.appendChild(link);
+            link.click();
+            document.removeChild(link);
+        });
     }
 
     private backPanel() {
         this.view = 'panel';
         this.clearRestart();
     }
+
+    public dropped(event: UploadEvent) {
+        let files = event.files;
+        const self = this;
+        for (const droppedFile of event.files) {
+     
+          // Is it a file?
+          if (droppedFile.fileEntry.isFile) {
+            const fileEntry = droppedFile.fileEntry as FileSystemFileEntry;
+            fileEntry.file((file: File) => {
+     
+                // Here you can access the real file
+                let fileReader = new FileReader();
+                fileReader.onload = (e) => {
+                    try {
+                        let config = JSON.parse(fileReader.result);
+                        self.checkFile(config);
+                    } catch (e) {
+                        self.statusfile = 1;
+                        console.log(e);
+                    }
+                }
+                fileReader.readAsText(file);
+            });
+          } else {
+            // It was a directory (empty directories are added, otherwise only files)
+            const fileEntry = droppedFile.fileEntry as FileSystemDirectoryEntry;
+          }
+        }
+      }
+     
+        public fileOver(event: any){
+        }
+     
+        public fileLeave(event: any){
+        }
+
+        private checkFile(config:any) {
+            let config_obj = new ConfigProp(config);
+            if(config_obj.getValidity()) {
+                this.statusfile = 2;
+                this.config_file = config_obj;
+               
+            } else {
+                this.statusfile = 1;
+            }
+        }
+
+        private saveFile(){
+            if(this.statusfile === 2){
+                this.properties.saveConfigFile(this.config_file).subscribe(data => {
+                    if(data) {
+                        this.alert.success("File saved and apply");
+                        this.config_file = null;
+                        this.uploadview = false;
+                        this.statusfile = 0;
+                    } else {
+                        this.alert.error("There is an error when earlgrey save the file. Check logs");
+                    }
+                })
+            } else {
+                this.alert.warning("The file not pass the structure checker");
+            }
+        }
+
+        private uploadView() {
+            this.config_file = null;
+            this.uploadview = true;
+            this.statusfile = 0;
+        }
 }

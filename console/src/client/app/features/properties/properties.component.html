@@ -33,8 +33,8 @@
     </div>
     <div class="add">
         <button class="btn btn-default btn-panel" (click)="add_new()">Create Enviroment</button>
-        <button class="btn btn-success btn-panel">Load Configuration</button>
-        <a download="config.properties" [href]="backup()" title="Backup Configurations"><button class="btn btn-danger btn-panel">Backup</button></a>
+        <button class="btn btn-success btn-panel" (click)="uploadView()">Load Configuration</button>
+        <a download="config.properties" (click)="backup()" title="Backup Configurations"><button class="btn btn-danger btn-panel">Backup</button></a>
     </div>
 </div>
 <div class="create" *ngIf="view=='create'">
@@ -289,8 +289,24 @@
         <button class="btn btn-warning btn-panel" (click)="view='datasources'">Back</button>
     </div>
 </div>
-<div class="upload">
-    <div class="head"></div>
-    <div class="body"></div>
-    <div class="footer"></div>
+<div class="upload" *ngIf="uploadview">
+    <div class="head">
+        <span class="title">Load configuration file</span>
+        <span class="close"><i class="fa fa-times" (click)="uploadview=false"></i></span>
+    </div>
+    <div class="body">
+        <file-drop headertext="Drop configuration file here" (onFileDrop)="dropped($event)" 
+        (onFileOver)="fileOver($event)" (onFileLeave)="fileLeave($event)">
+        </file-drop>
+    </div>
+    <div class="footer">
+        <div class="statusfile">
+            <span *ngIf="statusfile===0" class="nofile">Status: <i class="fa fa-times"></i> No File is Present</span>
+            <span *ngIf="statusfile===1" class="wrongfile">Status: <i class="fa fa-times"></i> The File is Incorrect</span>
+            <span *ngIf="statusfile===2" class="okfile">Status: <i class="fa fa-check"></i> The File is Ok</span>
+        </div>
+        <div class="buttons">
+            <button class="btn btn-primary" (click)="saveFile()">Load Configuration</button>
+        </div>
+    </div>
 </div>

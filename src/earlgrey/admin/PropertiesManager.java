@@ -45,7 +45,7 @@ public class PropertiesManager extends ControllerCore{
 	
 	@ControllerAction(description = "Method to get the active properties.", name = "get_properties", version = 1)
 	@GET
-	public static void GetProperties(HttpRequest req, HttpResponse res){
+	public static void getProperties(HttpRequest req, HttpResponse res){
 		Properties prop = Properties.getInstance();
 		JSONObject retorno = prop.getPropertiefile();
 		res.json(retorno);
@@ -105,6 +105,15 @@ public class PropertiesManager extends ControllerCore{
 		JSONObject retorno = new JSONObject();
 		retorno.put("STATUS", "OK");
 		res.json(retorno);
+		return;
+	}
+	@ControllerAction(description = "Method to set the properties enviroment file.", name = "restart_env", version = 1)
+	@POST
+	public static void setProperties(HttpRequest req, HttpResponse res){
+		Properties prop = Properties.getInstance();
+		JSONObject file = new JSONObject(req.getParam("file"));
+		prop.setPropertiefile(file);
+		res.noContent();
 		return;
 	}
 }

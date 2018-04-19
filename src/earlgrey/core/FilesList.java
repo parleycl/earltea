@@ -20,7 +20,7 @@ public class FilesList {
     // Error Files
 	public static FilePackage Error = new FilePackage("earlgrey.error", new String[]{"Error500", "Error60", "Error70", "Error700", "Error800", "ErrorBase"});
 	// Gateway FilesSS
-	public static FilePackage Gateway = new FilePackage("earlgrey.gateway", new String[]{"Channel", "Gateway", "Rest", "Websocket"});
+	public static FilePackage Gateway = new FilePackage("earlgrey.gateway", new String[]{"Channel", "Websocket"});
     // Http files
 	public static FilePackage Http = new FilePackage("earlgrey.http", new String[]{"Response200", "Response300", "Response500"});
     // Interface files

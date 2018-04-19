@@ -9,7 +9,6 @@ import javax.servlet.ServletRegistration;
 import javax.servlet.annotation.WebListener;
 import earlgrey.*;
 import earlgrey.error.Error700;
-import earlgrey.gateway.Rest;
 
 public class Earlgrey{
 	// LOGGING MAP

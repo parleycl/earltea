@@ -232,23 +232,23 @@ public class OracleConnector implements Connector{
 	}
 	//METODOS DE TESTEO
 	public boolean TestConector(){
-		this.log.Info("Oracle Driver: Test de conexión.");
+		this.log.Info("Oracle Driver: Connection test.");
 		try {
 			Driver driver = (Driver) Class.forName("oracle.jdbc.driver.OracleDriver", true, ResourceMaping.getInstance().getJARClassLoader()).newInstance();
 			DriverManager.registerDriver(new DelegatingDriver(driver));
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-			this.log.Critic("El driver JDBC Oracle no se encuentra como libreria dinamica", Error800.DATABASE_ORACLE_JDBC);
+			this.log.Critic("The JDBC Oracle driver is not present in the libraries loaded", Error800.DATABASE_ORACLE_JDBC);
 			return false;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		this.log.Info("El driver JDCB se encuentra en las librerias dinamicas, probando conexión.");
+		this.log.Info("The JDCB driver is in the libraries loaded, testing connection.");
 		Connection connection = null;
 		try {
 			int timeout = DriverManager.getLoginTimeout();
 			DriverManager.setLoginTimeout(2);
-			this.log.Info("Probado Source como servicio.");
+			this.log.Info("Testing Source like service.");
 			connection = DriverManager.getConnection(
 					"jdbc:oracle:thin:@"+this.host+":"+this.port+"/"+this.db, this.user,
 					this.password);
@@ -256,7 +256,7 @@ public class OracleConnector implements Connector{
 			DriverManager.setLoginTimeout(timeout);
 		} catch (SQLException e) {
 			try {
-				this.log.Info("Probado Source como SSID.");
+				this.log.Info("Testing Source like SSID.");
 				int timeout = DriverManager.getLoginTimeout();
 				DriverManager.setLoginTimeout(2);
 				connection = DriverManager.getConnection(
@@ -269,10 +269,10 @@ public class OracleConnector implements Connector{
 			}
 		}
 		if (connection != null) {
-			this.log.Info("Oracle Driver: Conexión exitosa.");
+			this.log.Info("Oracle Driver: Connection Successful.");
 			return true;
 		} else {
-			this.log.Critic("Existio un error al conectar a la base de datos", Error800.DATABASE_CONNECT_ERROR);
+			this.log.Critic("There is an error trying connecting to database", Error800.DATABASE_CONNECT_ERROR);
 			return false;
 		}
 	}

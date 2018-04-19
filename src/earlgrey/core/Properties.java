@@ -51,7 +51,7 @@ public class Properties {
 	private void setFile(){
 		this.config = new File(Earlgrey.getInstance().kernelname+"/properties/config.properties");
 		// EN CASO DE QUE NO EXISTA DEBE SER CREADO
-		log.Info("Cargando Archivo de configuraciones de properties");
+		log.Info("Loading config properties file");
 		try {
 			if(!this.config.exists()){
 				this.config.createNewFile();
@@ -59,7 +59,7 @@ public class Properties {
 			}
 			else
 			{
-				log.Info("Verificando integridad de archivo de configuraciones");
+				log.Info("Checking integrity of config file");
 				FileReader fr = new FileReader(this.config);
 				BufferedReader br = new BufferedReader(fr);
 				String linea = br.readLine();
@@ -70,11 +70,11 @@ public class Properties {
 						// VERIFICAMOS MODIFICACIONES
 						this.checkPropertieFileAndFix();
 				    } catch (JSONException ex) {
-				    	this.log.Critic("El archivo de configuraciones esta corrupto, verifique su confguracion", Error700.FILE_DAMAGE_ERROR);
+				    	this.log.Critic("The config file is corrupted, checking your configuration", Error700.FILE_DAMAGE_ERROR);
 				    }
 				}
 				else{
-					this.log.Critic("El archivo de configuraciones esta vacio, restaurando la copia", Error700.FILE_EMPTY_ERROR);
+					this.log.Critic("The config file is empty, restoring backup", Error700.FILE_EMPTY_ERROR);
 					this.setDefault();
 				}
 			}
@@ -83,7 +83,7 @@ public class Properties {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		log.Info("Archivo de configuración de properties, cargado.");
+		log.Info("Properties config file, Loaded.");
 		this.selectEnv();
 	}
 	private void setDefault() throws IOException{
@@ -101,7 +101,7 @@ public class Properties {
 		config.put("prop_templates", this.templates_prop);
 		config.put("conf_templates", this.templates_prop);
 		config.put("models", new JSONArray());
-		config.put("comunication", new JSONObject());
+		config.put("comunication", new JSONArray());
 		config.put("policies", new JSONArray());
 		config.put("config", this.getTemplateConfig(this.propertiesMap.getConfigTable()));
 		//config.put("propertie_map", db_template);
@@ -658,7 +658,7 @@ public class Properties {
 		}
 		this.saveFile();
 		this.log.Info("Datasource save, restarting properties.");
-		Engine.getInstance().restartByProperties();
+		this.restartProperties();
 	}
 	
 	public JSONObject createOrSetPropertieTemplate(String template, String name){
@@ -873,7 +873,7 @@ public class Properties {
 				this.joinConfigs(this.config_obj.getJSONObject("config"));
 				this.config_obj.put("env_used", envi);
 				this.saveFile();
-				Engine.getInstance().restartByProperties();
+				this.restartProperties();
 				this.log.Info("Working on enviroment, "+envi);
 				return true;
 			}
@@ -925,5 +925,11 @@ public class Properties {
 	
 	public JSONObject getPropertiefile(){
 		return this.config_obj;
+	}
+	public void setPropertiefile(JSONObject config){
+		this.config_obj = config;
+		this.backupFile();
+		this.saveFile();
+		this.restartProperties();
 	}
 }
