@@ -24,12 +24,12 @@ import earlgrey.core.Earlgrey;
 import earlgrey.core.ModelCore;
 import earlgrey.core.Properties;
 
-@Console(description = "Controlador para gestionar las properties", name = "Properties", version = 1)
+@Console(description = "Controller to manage the properties", name = "Properties", version = 1)
 @Route(route = "/properties")
 @CORS
 public class PropertiesManager extends ControllerCore{
 	//CONTROLADOR PARA GESTIONAR LAS PROPERTIES
-	@ControllerAction(description = "Metodo para obtener los entornos de properties.", name = "get_env", version = 1)
+	@ControllerAction(description = "Method to get the properties enviroments.", name = "get_enviroments", version = 1)
 	@Route(route = "/getenv")
 	@GET
 	public static void GetEnviroments(HttpRequest req, HttpResponse res){
@@ -42,7 +42,17 @@ public class PropertiesManager extends ControllerCore{
 		res.json(retorno);
 		return;
 	}
-	@ControllerAction(description = "Metodo para designar un entorno de properties por defecto.", name = "set_env", version = 1)
+	
+	@ControllerAction(description = "Method to get the active properties.", name = "get_properties", version = 1)
+	@GET
+	public static void getProperties(HttpRequest req, HttpResponse res){
+		Properties prop = Properties.getInstance();
+		JSONObject retorno = prop.getPropertiefile();
+		res.json(retorno);
+		return;
+	}
+	
+	@ControllerAction(description = "Method to set the default properties enviroment.", name = "set_enviroment", version = 1)
 	@ParamRequire(name = "env", type = String.class)
 	@Route(route = "/setenv")
 	@POST
@@ -55,7 +65,7 @@ public class PropertiesManager extends ControllerCore{
 		res.json(retorno);
 		return;
 	}
-	@ControllerAction(description = "Metodo para crear un entorno properties por defecto.", name = "create_env", version = 1)
+	@ControllerAction(description = "Method to create a properties enviroment.", name = "create_env", version = 1)
 	@Route(route = "/createenv")
 	@ParamRequire(name = "name", type = String.class)
 	@POST
@@ -65,7 +75,7 @@ public class PropertiesManager extends ControllerCore{
 		res.json(objeto);
 		return;
 	}
-	@ControllerAction(description = "Metodo para modificar un entorno de properties.", name = "mod_env", version = 1)
+	@ControllerAction(description = "Method to modify a properties enviroment.", name = "mod_enviroment", version = 1)
 	@Route(route = "/modprop")
 	@ParamRequire(name = "name", type = String.class)
 	@ParamRequire(name = "prop", type = String.class)
@@ -78,7 +88,7 @@ public class PropertiesManager extends ControllerCore{
 		res.json(retorno);
 		return;
 	}
-	@ControllerAction(description = "Metodo para verificar el estado de restarting.", name = "get_restart_status", version = 1)
+	@ControllerAction(description = "Method to verify the restarting status.", name = "get_restart_status", version = 1)
 	@Route(route = "/getrestart")
 	@GET
 	public static void getRestartStatus(HttpRequest req, HttpResponse res){
@@ -87,14 +97,23 @@ public class PropertiesManager extends ControllerCore{
 		res.json(retorno);
 		return;
 	}
-	@ControllerAction(description = "Metodo para reiniciar el entorno de properties.", name = "restart_env", version = 1)
+	@ControllerAction(description = "Method to restart the properties enviroment.", name = "restart_env", version = 1)
 	@Route(route = "/restart")
-	@POST
+	@GET
 	public static void restartEnv(HttpRequest req, HttpResponse res){
 		Properties.getInstance().restartProperties();
 		JSONObject retorno = new JSONObject();
 		retorno.put("STATUS", "OK");
 		res.json(retorno);
+		return;
+	}
+	@ControllerAction(description = "Method to set the properties enviroment file.", name = "restart_env", version = 1)
+	@POST
+	public static void setProperties(HttpRequest req, HttpResponse res){
+		Properties prop = Properties.getInstance();
+		JSONObject file = new JSONObject(req.getParam("file"));
+		prop.setPropertiefile(file);
+		res.noContent();
 		return;
 	}
 }

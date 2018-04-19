@@ -12,9 +12,6 @@ import earlgrey.core.ModelCore;
 
 public interface Connector {
 	public boolean busy = false;
-	public void setCredencial(String user,String password, String db, String host, String port);
-	public void setPool(ConnectionPool pool);
-	public void connect();
 	public boolean TestConector();
 	public ResultSet query(String query);
 	public boolean update(String query);
@@ -31,4 +28,24 @@ public interface Connector {
 	public void rollback();
 	public int getLastInsertedId() throws SQLException;
 	public void complete(Hashtable<Field, Object> prepared, ArrayList<Field> prepared_list);
+	
+	public void connect();
+	
+	public void datasourceConnect();
+	
+	public void manualConnect();
+	
+	// Seters
+	
+	public void setCredencial(String user,String password, String db, String host, int port);
+	
+	public void setDatasource(String datasource);
+
+	public void setDemand(boolean demand);
+	
+	public void setPool(ConnectionPool pool);
+	
+	public void checkConnection();
+	
+	public void checkCloseConnection();
 }

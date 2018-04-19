@@ -10,4 +10,5 @@ import java.lang.annotation.Target;
 public @interface DatabaseDriver {
 	String type();
 	String name();
+	int id();
 }

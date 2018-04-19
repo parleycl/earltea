@@ -25,7 +25,7 @@ public class Engine {
 	}
 	public Engine(){
 		instance = this;
-		this.log.Info("Administrador de tareas en linea");
+		this.log.Info("Task manager online");
 	}
 	public HttpActionDef[] getList(){
 		return null;
@@ -50,7 +50,7 @@ public class Engine {
 		space.add(ID);
 	}
 	public void restartByProperties(){
-		this.log.Info("Reiniciando procesos dependientes de properties.");
+		this.log.Info("Restarting tasks that depends on properties.");
 		this.restarting = true;
 		Enumeration<Integer> en = this.process.keys();
 		while(en.hasMoreElements()){
@@ -60,7 +60,7 @@ public class Engine {
 				prop.propertiesRestart();
 			}
 		}
-		this.log.Info("Reinicio finalizado.");
+		this.log.Info("Restart finalised.");
 		this.restarting = false;
 	}
 	public boolean getRestartStatus(){

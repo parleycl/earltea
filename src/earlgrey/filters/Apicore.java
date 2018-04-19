@@ -3,6 +3,7 @@ package earlgrey.filters;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -28,6 +29,7 @@ public class Apicore {
 		httpResponse.setContentType("text/html;charset=UTF-8");
 		httpResponse.setHeader("Date", (new Date()).toString());
 		String method = httpRequest.getMethod();
+		
 		switch (method) {
 			case "GET":
 				this.GET(httpRequest, httpResponse);

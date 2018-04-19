@@ -23,12 +23,12 @@ import earlgrey.core.Logging;
 import earlgrey.core.ModelCore;
 import earlgrey.core.Properties;
 
-@Console(description = "Controlador para gestionar los logs", name = "Logs", version = 1)
+@Console(description = "Controller use to manage the logs", name = "Logs", version = 1)
 @Route(route = "/logs")
 @CORS
 public class LogsConsole extends ControllerCore{
 	//CONTROLADOR PARA GESTIONAR LAS PROPERTIES
-	@ControllerAction(description = "Metodo para obtener el historial de logs.", name = "logs_history", version = 1)
+	@ControllerAction(description = "Method to get the log history.", name = "logs_history", version = 1)
 	@Route(route = "/gethistory")
 	@GET
 	public static void GetHistory(HttpRequest req, HttpResponse res){
@@ -40,7 +40,7 @@ public class LogsConsole extends ControllerCore{
 		res.json(historial);
 		return;
 	}
-	@ControllerAction(description = "Metodo para designar un set de properties por defecto.", name = "set_env", version = 1)
+	@ControllerAction(description = "Method to get a log file.", name = "set_env", version = 1)
 	@Route(route = "/getlog")
 	@ParamRequire(name = "from", type = double.class)
 	@ParamRequire(name = "file", type = String.class)

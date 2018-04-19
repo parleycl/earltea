@@ -10,76 +10,86 @@ import earlgrey.annotations.AddPropertieSet;
 import earlgrey.database.Connector;
 import earlgrey.database.OracleConnector;
 import earlgrey.database.PostgresConnector;
+import earlgrey.def.Database;
+import earlgrey.def.Datasource;
 import earlgrey.error.Error800;
 import earlgrey.interfaces.PropertiesDepend;
 import earlgrey.interfaces.Process;
 
-public class ConnectionPool implements Process, PropertiesDepend {
+public class ConnectionPool {
 	private static ConnectionPool instance = null;
 	private Properties prop;
-	private PropertieSet config;
 	private ArrayList<Connector> free_conectors = new ArrayList<Connector>();
 	private ArrayList<Connector> connections = new ArrayList<Connector>();
 	private Logging log;
 	private String datasource;
-	private Hashtable<String,Class<?>> drivers;
+	private Hashtable<Integer,Class<?>> drivers;
 	private Connector driver;
 	//CONSTRUCTOR
 	public ConnectionPool(String datasource){
 		instance = this;
 		this.datasource = datasource;
-		Engine.getInstance().registerTask(this);
 		this.prop = Properties.getInstance();
 		this.log = new Logging(this.getClass().getName());
 		this.drivers = ResourceMaping.getInstance().getDatabaseDriverTable();
 		this.makeConnection();
 	}
 	private void makeConnection(){
-		//LIMPIAMOS LAS CONEXIONES
+		// Cleaning the conections
 		this.clearConnections();
 		// OBTENEMOS LAS NUEVAS VARIABLES
-		this.config = this.prop.getPropertieSet(this.datasource);
-		String host = this.config.getString("DB_HOST");
-		String username = this.config.getString("DB_USERNAME");
-		String password = this.config.getString("DB_PASSWORD");
-		String source = this.config.getString("DB_SOURCE");
-		String port = this.config.getNumber("DB_PORT");
-		String demand = this.config.getOption("DB_ON_DEMAND");
-		int pool = Integer.valueOf(this.config.getString("DB_MAX_POOL"));
+		Datasource source = this.prop.getDatasource(this.datasource);
 		try {
-			String type = this.config.getOption("DB_TYPE");
-			if(drivers.containsKey(type)){
-				Class<?> clase = drivers.get(type);
+			if(drivers.containsKey(source.TYPE)){
+				Class<?> clase = drivers.get(source.TYPE);
 				Connector driver = (Connector) clase.newInstance();
-				if(!host.equals("") || !username.equals("") || !password.equals("") || !source.equals("")) {
-					this.log.Info("Cargando Datasource "+this.datasource);
-					this.log.Info("Cargando Driver "+type);
-					driver.setCredencial(username, password, source, host, port);
-					if(driver.TestConector()){
-						this.driver = driver;
-						this.log.Info("Estableciendo pool de conexión en: "+pool);
-						for(int h=0;h<pool;h++){
-							Connector driver_pool = (Connector) clase.newInstance();
-							driver_pool.setCredencial(username, password, source, host, port);
-							driver_pool.setPool(this);
-							this.free_conectors.add(driver_pool);
+				if(!source.HOST.equals("") || !source.USERNAME.equals("") || !source.PASSWORD.equals("") || !source.equals("")) {
+					this.log.Info("Loading Datasource "+this.datasource);
+					this.log.Info("Loading Driver "+Database.toString(source.TYPE));
+					if(source.CONTAINER_DATASOURCE){
+						driver.setDatasource(source.DATASOURCE);
+						if(driver.TestConector()){
+							this.driver = driver;
+							this.log.Info("Set connection pool in: "+source.MAX_POOL);
+							for(int h=0;h<source.MAX_POOL;h++){
+								Connector driver_pool = (Connector) clase.newInstance();
+								driver_pool.setDatasource(source.DATASOURCE);
+								driver_pool.setPool(this);
+								this.free_conectors.add(driver_pool);
+							}
+							return;
 						}
-						return;
+						
+					} else {
+						driver.setCredencial(source.USERNAME, source.PASSWORD, source.SOURCE, source.HOST, source.PORT);
+						if(driver.TestConector()){
+							this.driver = driver;
+							this.log.Info("Set connection pool in: "+source.MAX_POOL);
+							for(int h=0;h<source.MAX_POOL;h++){
+								Connector driver_pool = (Connector) clase.newInstance();
+								driver_pool.setCredencial(source.USERNAME, source.PASSWORD, source.SOURCE, source.HOST, source.PORT);
+								driver_pool.setDemand(source.ON_DEMAND);
+								driver_pool.setPool(this);
+								this.free_conectors.add(driver_pool);
+							}
+							return;
+						}
 					}
 				}
 			}
 			// SI NO SE ACOGE A NIGUNO DE LOS DRIVERS ESTABLECIDOS SE INICIA GEOS SIN DRIVER PERSISTENTE.
 			// NO SE PODRAN EJECUTAR CONSULTAR NI TRABAJO CON MODELO DE DATOS.
-			this.log.Warning("No se ha cargado ningun driver en memoria",Error800.DATABASE_NO_DRIVER);
+			this.log.Warning("No driver has been loaded in memory",Error800.DATABASE_NO_DRIVER);
 			this.driver = null;
 			return;
 		} catch (InstantiationException | IllegalAccessException e) {
-			this.log.Critic("Existio un error al crear una instancia del driver de base de datos. Asegurese que el constructor no recibe parametros", Error800.DATABASE_CONNECT_ERROR);
+			this.log.Critic("Occurred an error when try to load an instance of driver. Check the constructor dont receive parameters", Error800.DATABASE_CONNECT_ERROR);
 		}
 	}
 	public void closeConnection(Connector conection){
 		int index = this.connections.indexOf(conection);
 		if(index != -1){
+			this.connections.get(index).checkCloseConnection();
 			this.free_conectors.add(this.connections.get(index));
 			this.connections.remove(index);
 		}
@@ -102,26 +112,24 @@ public class ConnectionPool implements Process, PropertiesDepend {
 			if(this.free_conectors.size() > 0){
 				Connector conector = this.free_conectors.get(0);
 				this.free_conectors.remove(0);
-				conector.connect();
+				conector.checkConnection();
 				this.connections.add(conector);
 				cone = conector;
 			}
 			else
 			{
-				this.log.Info("No hay conectores disponbiles, Retardandno ejecucion.");
+				this.log.Info("Not have free connector. Delaying execution.");
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					this.log.Warning("Having error while delaying connector requirement execution. " + e.getMessage());
 				} 
 			}
 		}
 		return cone;
 	}
-	@Override
-	public void propertiesRestart() {
-		// TODO Auto-generated method stub
+	
+	public void restart() {
 		this.makeConnection();
 	}
 }

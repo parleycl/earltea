@@ -3,6 +3,7 @@ package earlgrey.core;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 
 import org.json.JSONObject;
 
@@ -17,25 +18,6 @@ import earlgrey.error.Error800;
 import earlgrey.interfaces.PropertiesDepend;
 import earlgrey.interfaces.Process;
 
-@AddPropertieSetTemplate(name = "DB_CONFIG", 
-set = { "DB_TYPE",
-		"DB_HOST",
-		"DB_USERNAME", 
-		"DB_PASSWORD", 
-		"DB_SOURCE", 
-		"DB_PORT", 
-		"DB_MAX_POOL",
-		"DB_ON_DEMAND"}, 
-defaultTo = { 
-		"[OPTION]||ORACLE/MYSQL/POSTGRES||ORACLE",
-		"[STRING]('')",
-		"[STRING]('')",
-		"[STRING]('')",
-		"[STRING]('')",
-		"[STRING]('')",
-		"[STRING]('')",
-		"[OPTION]||YES/NO||NO"
-})
 public class DatasourceManager implements Process, PropertiesDepend {
 	private Hashtable<String,ConnectionPool> sources;
 	private static DatasourceManager instance = null;
@@ -49,33 +31,32 @@ public class DatasourceManager implements Process, PropertiesDepend {
 	public DatasourceManager(){
 		instance = this;
 		this.log = new Logging(this.getClass().getName());
-		this.log.Info("Inciando Datasource Manager");
+		this.log.Info("Datasource Manager initializing");
 		this.sources = new Hashtable<String,ConnectionPool>();
 		Engine.getInstance().registerTask(this);
 		this.prop = Properties.getInstance();
 		this.makeDataSources();
 	}
 	private void makeDataSources(){
-		/*CREAMOS EL DATASOURCE POR DEFECTO*/
-		//this.registerConnection("DEFAULTDB");
-		//this.sources.put("DEFAULTDB", new ConnectionPool("DEFAULTDB"));
-		/*ITERAMOS EL RESTO DE LOS ELEMENTOS*/
+		/* Iterate the models finding datasources. */
 		Hashtable<String, Class<?>> model = ResourceMaping.getInstance().getModelTable();
 		Enumeration<String> keys = model.keys();
+		boolean created = false;
 		while(keys.hasMoreElements()){
 			String llave = keys.nextElement();
 			Class<?> modelo = model.get(llave);
 			Model model_info = modelo.getAnnotation(Model.class);
 			if(!this.sources.containsKey(model_info.datasource())){
-				this.registerConnection(model_info.datasource());
+				if(this.registerConnection(model_info.datasource())) created = true;
 				this.sources.put(model_info.datasource(), new ConnectionPool(model_info.datasource()));
 			}
 		}
+		if(created) this.prop.saveToDisk();
 	}
-	private void registerConnection(String datasource){
+	private boolean registerConnection(String datasource){
 		// CREAMOS EL DATASOURCE POR DEFECTO
 		// PARA ESTO CREAMOS EL SET DE PROPERTIES QUE LO MANEJA
-		this.prop.createOrSetPropertieTemplate("DB_CONFIG", datasource);
+		return this.prop.createOrSetDatasource(datasource);
 	}
 	public ConnectionPool getConnection(String datasource){
 		return this.sources.get(datasource);
@@ -83,5 +64,9 @@ public class DatasourceManager implements Process, PropertiesDepend {
 	@Override
 	public void propertiesRestart() {
 		// TODO Auto-generated method stub
+		Enumeration<String> pools = this.sources.keys();
+		while(pools.hasMoreElements()) {
+			this.sources.get(pools.nextElement()).restart();
+		}
 	}
 }

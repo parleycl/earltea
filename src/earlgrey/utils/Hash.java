@@ -7,8 +7,8 @@ import java.security.NoSuchAlgorithmException;
 
 import earlgrey.core.Logging;
 
-public class Utils {
-	private static Logging log = new Logging(Utils.class.getName());
+public class Hash {
+	private static Logging log = new Logging(Hash.class.getName());
 	public static String MD5(String value) {
 		try {
 			byte[] bytesOfMessage = value.getBytes("UTF-8");
