@@ -80,6 +80,7 @@ public class Console extends Apicore implements Filter {
 						response.getWriter().print((char) content);
 					}
 					String mimeType = URLConnection.guessContentTypeFromName(filereq);
+					if(filereq.matches(".*[.]css")) mimeType = "text/css; charset=utf-8";
 					if(mimeType != null) response.setContentType(mimeType);
 					response.getWriter().flush();
 					file.close();
