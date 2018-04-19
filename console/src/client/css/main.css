@@ -72,3 +72,18 @@ button {
 button:hover {
   background-color: #28739e;
 }
+
+.drop-zone{
+    height: 100% !important;
+    widows: 100% !important;
+    border-color: #333 !important;
+    border-radius: 0px !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.drop-zone .content{
+    display: flex;
+
+}

@@ -5,7 +5,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import earlgrey.interfaces.Cacheable;
-import earlgrey.utils.Utils;
+import earlgrey.utils.Hash;
 
 public class CacheElement {
 	private int time;
@@ -49,7 +49,7 @@ public class CacheElement {
 	     { 
 	         public void run()  
 	         { 
-	        	 self.origin.cleanCache(Utils.MD5(self.path));
+	        	 self.origin.cleanCache(Hash.MD5(self.path));
 	         } 
 	     }; 
 	     // Creamos el timmer

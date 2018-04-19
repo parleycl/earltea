@@ -11,6 +11,7 @@ import org.json.XML;
 
 import earlgrey.def.HttpActionDef;
 import earlgrey.error.Error500;
+import earlgrey.http.CORSResponse;
 import earlgrey.interfaces.Response;
 
 public class HttpResponse implements Response{
@@ -21,19 +22,11 @@ public class HttpResponse implements Response{
 	
 	Logging log = new Logging(this.getClass().getName());
 	// DEFINIMOS EL CONSTRUCTOR
-	public HttpResponse(HttpServletResponse response, HttpServletRequest request, HttpActionDef httpActionDef){
+	public HttpResponse(HttpServletResponse response, HttpServletRequest request, HttpActionDef httpActionDef, boolean CORS){
 		this.response = response;
 		this.httpActionDef = httpActionDef;
 		this.request = request;
-		// BUSCAMOS SI TIENE ORIGEN 
-		String clientOrigin = request.getHeader("Origin");
-		if(clientOrigin != null && !clientOrigin.isEmpty()){
-			response.setHeader("Access-Control-Allow-Origin", clientOrigin);
-	        response.setHeader("Access-Control-Allow-Methods", "*");
-	        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
-	        response.setHeader("Access-Control-Max-Age", "86400");
-	        response.setHeader("Access-Control-Allow-Credentials", "true");
-		}
+		if(CORS) this.setCORS();
 	}
 	@Override
 	public void file() {
@@ -52,7 +45,7 @@ public class HttpResponse implements Response{
 			this.httpActionDef.checkCache(xml, CacheCore.CACHE_XML);
 			this.response.getWriter().println(xml);
 		} catch (IOException e) {
-			this.log.Critic("No se ha podido escribir el buffer web http para la respuesta xml", Error500.HTTP_RENDER_ERROR);
+			this.log.Critic("Earlgrey can't write the web buffer to send xml response", Error500.HTTP_RENDER_ERROR);
 		}
 		this.httpActionDef.finalice();
 	}
@@ -68,7 +61,7 @@ public class HttpResponse implements Response{
 			this.httpActionDef.checkCache(xml, CacheCore.CACHE_XML);
 			this.response.getWriter().println(xml);
 		} catch (IOException e) {
-			this.log.Critic("No se ha podido escribir el buffer web http para la respuesta xml", Error500.HTTP_RENDER_ERROR);
+			this.log.Critic("Earlgrey can't write the web buffer to send xml response", Error500.HTTP_RENDER_ERROR);
 		}
 		this.httpActionDef.finalice();
 	}
@@ -82,7 +75,7 @@ public class HttpResponse implements Response{
 			this.httpActionDef.checkCache(obj.toString(), CacheCore.CACHE_JSON);
 			this.response.getWriter().println(obj.toString());
 		} catch (IOException e) {
-			this.log.Critic("No se ha podido escribir el buffer web http para la respuesta json", Error500.HTTP_RENDER_ERROR);
+			this.log.Critic("Earlgrey can't write the web buffer to send json response", Error500.HTTP_RENDER_ERROR);
 		}
 		this.httpActionDef.finalice();
 	}
@@ -100,6 +93,42 @@ public class HttpResponse implements Response{
 		}
 		this.httpActionDef.finalice();
 	}
+	
+	@Override
+	public void noContent() {
+		this.response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+		try {
+			this.httpActionDef.checkCache("", CacheCore.CACHE_JSON);
+			this.response.getWriter().println("");
+		} catch (IOException e) {
+			this.log.Critic("No se ha podido escribir el buffer web http para la respuesta json", Error500.HTTP_RENDER_ERROR);
+		}
+		this.httpActionDef.finalice();
+	}
+	
+	@Override
+	public void accepted() {
+		this.response.setStatus(HttpServletResponse.SC_ACCEPTED);
+		try {
+			this.httpActionDef.checkCache("", CacheCore.CACHE_JSON);
+			this.response.getWriter().println("");
+		} catch (IOException e) {
+			this.log.Critic("Earlgrey can't write the web buffer to send json response", Error500.HTTP_RENDER_ERROR);
+		}
+		this.httpActionDef.finalice();
+	}
+	
+	@Override
+	public void created() {
+		this.response.setStatus(HttpServletResponse.SC_CREATED);
+		try {
+			this.httpActionDef.checkCache("", CacheCore.CACHE_JSON);
+			this.response.getWriter().println("");
+		} catch (IOException e) {
+			this.log.Critic("Earlgrey can't write the web buffer to send json response", Error500.HTTP_RENDER_ERROR);
+		}
+		this.httpActionDef.finalice();
+	}
 
 	@Override
 	public void ok(String message) {
@@ -110,7 +139,7 @@ public class HttpResponse implements Response{
 			this.httpActionDef.checkCache(message, CacheCore.CACHE_TEXT);
 			this.response.getWriter().println(message);
 		} catch (IOException e) {
-			this.log.Critic("No se ha podido escribir el buffer web http para la respuesta", Error500.HTTP_RENDER_ERROR);
+			this.log.Critic("Earlgrey can't write the web buffer to send the response", Error500.HTTP_RENDER_ERROR);
 		}
 		this.httpActionDef.finalice();
 	}
@@ -124,7 +153,7 @@ public class HttpResponse implements Response{
 			this.httpActionDef.checkCache(text, CacheCore.CACHE_TEXT);
 			this.response.getWriter().println(text);
 		} catch (IOException e) {
-			this.log.Critic("No se ha podido escribir el buffer web http para la respuesta", Error500.HTTP_RENDER_ERROR);
+			this.log.Critic("Earlgrey can't write the web buffer to send the response", Error500.HTTP_RENDER_ERROR);
 		}
 		this.httpActionDef.finalice();
 	}
@@ -152,7 +181,7 @@ public class HttpResponse implements Response{
 		try {
 			this.response.getWriter().println("");
 		} catch (IOException e) {
-			this.log.Critic("No se ha podido escribir el buffer web http para la respuesta", Error500.HTTP_RENDER_ERROR);
+			this.log.Critic("Earlgrey can't write the web buffer to send the response", Error500.HTTP_RENDER_ERROR);
 		}
 		this.httpActionDef.finalice();
 	}
@@ -165,7 +194,7 @@ public class HttpResponse implements Response{
 		try {
 			this.response.getWriter().println("");
 		} catch (IOException e) {
-			this.log.Critic("No se ha podido escribir el buffer web http para la respuesta", Error500.HTTP_RENDER_ERROR);
+			this.log.Critic("Earlgrey can't write the web buffer to send the response", Error500.HTTP_RENDER_ERROR);
 		}
 		this.httpActionDef.finalice();
 	}
@@ -178,7 +207,7 @@ public class HttpResponse implements Response{
 		try {
 			this.response.getWriter().println("");
 		} catch (IOException e) {
-			this.log.Critic("No se ha podido escribir el buffer web http para la respuesta", Error500.HTTP_RENDER_ERROR);
+			this.log.Critic("Earlgrey can't write the web buffer to send the response", Error500.HTTP_RENDER_ERROR);
 		}
 		this.httpActionDef.finalice();
 	}
@@ -191,7 +220,7 @@ public class HttpResponse implements Response{
 		try {
 			this.response.getWriter().println("");
 		} catch (IOException e) {
-			this.log.Critic("No se ha podido escribir el buffer web http para la respuesta", Error500.HTTP_RENDER_ERROR);
+			this.log.Critic("Earlgrey can't write the web buffer to send the response", Error500.HTTP_RENDER_ERROR);
 		}
 		this.httpActionDef.finalice();
 		
@@ -205,7 +234,7 @@ public class HttpResponse implements Response{
 		try {
 			this.response.getWriter().println("");
 		} catch (IOException e) {
-			this.log.Critic("No se ha podido escribir el buffer web http para la respuesta", Error500.HTTP_RENDER_ERROR);
+			this.log.Critic("Earlgrey can't write the web buffer to send the response", Error500.HTTP_RENDER_ERROR);
 		}
 		this.httpActionDef.finalice();
 		
@@ -219,7 +248,7 @@ public class HttpResponse implements Response{
 		try {
 			this.response.getWriter().println(obj.toString());
 		} catch (IOException e) {
-			this.log.Critic("No se ha podido escribir el buffer web http para la respuesta", Error500.HTTP_RENDER_ERROR);
+			this.log.Critic("Earlgrey can't write the web buffer to send the response", Error500.HTTP_RENDER_ERROR);
 		}
 		this.httpActionDef.finalice();
 	}
@@ -231,10 +260,17 @@ public class HttpResponse implements Response{
 		try {
 			this.response.getWriter().println(obj.toString());
 		} catch (IOException e) {
-			this.log.Critic("No se ha podido escribir el buffer web http para la respuesta", Error500.HTTP_RENDER_ERROR);
+			this.log.Critic("Earlgrey can't write the web buffer to send the response", Error500.HTTP_RENDER_ERROR);
 		}
 		this.httpActionDef.finalice();
 		
 	}
+	@Override
+	public void setHeader(String key, String value) {
+		this.response.setHeader(key, value);		
+	}
 	
+	private void setCORS(){
+		CORSResponse.CORS(request, response);
+	}
 }

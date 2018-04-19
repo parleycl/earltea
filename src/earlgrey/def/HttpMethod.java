@@ -1,6 +1,6 @@
 package earlgrey.def;
 
-public class HttpMethods {
+public class HttpMethod {
 	public static final int UNKNOW = -1;
 	public static final int GET = 1;
 	public static final int POST = 2;

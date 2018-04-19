@@ -14,6 +14,6 @@ public @interface Model {
 	String tableName();
 	boolean REST() default false;
 	boolean migrate() default true;
-	String datasource() default "DEFAULTDB";
+	String datasource() default "Default";
 	float version();
 }

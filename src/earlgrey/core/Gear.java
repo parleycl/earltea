@@ -1,13 +1,20 @@
 package earlgrey.core;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.json.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,7 +23,7 @@ import earlgrey.core.Logging;
 import earlgrey.core.Router;
 import earlgrey.def.ActionDef;
 import earlgrey.def.HttpActionDef;
-import earlgrey.def.HttpMethods;
+import earlgrey.def.HttpMethod;
 import earlgrey.def.RouteDef;
 
 public class Gear {
@@ -34,75 +41,75 @@ public class Gear {
 		this.SESSION_ID = request.getSession().getId();
 	}
 	public void get(boolean console) {
-		this.verbose = HttpMethods.GET;
+		this.verbose = HttpMethod.GET;
 		if(console){
-			this.digest_console(HttpMethods.GET);
+			this.digest_console(HttpMethod.GET);
 		}
 		else{
-			this.digest(HttpMethods.GET);
+			this.digest(HttpMethod.GET);
 		}
 	}
 	public void post(boolean console) {
-		this.verbose = HttpMethods.POST;
+		this.verbose = HttpMethod.POST;
 		if(console){
-			this.digest_console(HttpMethods.POST);
+			this.digest_console(HttpMethod.POST);
 		}
 		else{
-			this.digest(HttpMethods.POST);
+			this.digest(HttpMethod.POST);
 		}
 	}
 	public void put(boolean console) {
-		this.verbose = HttpMethods.PUT;
+		this.verbose = HttpMethod.PUT;
 		if(console){
-			this.digest_console(HttpMethods.PUT);
+			this.digest_console(HttpMethod.PUT);
 		}
 		else{
-			this.digest(HttpMethods.PUT);
+			this.digest(HttpMethod.PUT);
 		}
 	}
 	public void delete(boolean console) {
-		this.verbose = HttpMethods.DELETE;
+		this.verbose = HttpMethod.DELETE;
 		if(console){
-			this.digest_console(HttpMethods.DELETE);
+			this.digest_console(HttpMethod.DELETE);
 		}
 		else{
-			this.digest(HttpMethods.DELETE);
+			this.digest(HttpMethod.DELETE);
 		}
 	}
 	public void patch(boolean console) {
-		this.verbose = HttpMethods.PATCH;
+		this.verbose = HttpMethod.PATCH;
 		if(console){
-			this.digest_console(HttpMethods.PATCH);
+			this.digest_console(HttpMethod.PATCH);
 		}
 		else{
-			this.digest(HttpMethods.PATCH);
+			this.digest(HttpMethod.PATCH);
 		}
 	}
 	public void options(boolean console) {
-		this.verbose = HttpMethods.OPTIONS;
+		this.verbose = HttpMethod.OPTIONS;
 		if(console){
-			this.digest_console(HttpMethods.OPTIONS);
+			this.digest_console(HttpMethod.OPTIONS);
 		}
 		else{
-			this.digest(HttpMethods.OPTIONS);
+			this.digest(HttpMethod.OPTIONS);
 		}
 	}
 	public void purge(boolean console) {
-		this.verbose = HttpMethods.PURGE;
+		this.verbose = HttpMethod.PURGE;
 		if(console){
-			this.digest_console(HttpMethods.PURGE);
+			this.digest_console(HttpMethod.PURGE);
 		}
 		else{
-			this.digest(HttpMethods.PURGE);
+			this.digest(HttpMethod.PURGE);
 		}
 	}
 	public void head(boolean console) {
-		this.verbose = HttpMethods.HEAD;
+		this.verbose = HttpMethod.HEAD;
 		if(console){
-			this.digest_console(HttpMethods.HEAD);
+			this.digest_console(HttpMethod.HEAD);
 		}
 		else{
-			this.digest(HttpMethods.HEAD);
+			this.digest(HttpMethod.HEAD);
 		}
 	}
 	private void digest_console(int verbose){
@@ -153,7 +160,6 @@ public class Gear {
 		// EXTRAEMOS LOS PARAMETROS
 		
 		JSONObject params = this.extract_params();
-		
 		Router router = new Router();
 		ActionDef action = router.route(route, verbose);
 		//DECIDIMOS LA ACTION
@@ -202,18 +208,59 @@ public class Gear {
 				params.put(name,this.request.getParameter(name));
 			}
 		}
+		
+		if(params.length() == 0){
+			try {
+				String query_string = this.request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+				Map<String, String[]> param_body = this.getQueryParameters(query_string);
+				Set<String> keys = param_body.keySet();
+				for(String key : keys) {
+					String[] value = param_body.get(key);
+					if(value.length > 0) {
+						params.put(key, value[0]);
+					}
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		return params;
 	}
+	
+	public static Map<String, String[]> getQueryParameters(String payload) {
+	    Map<String, String[]> queryParameters = new HashMap<>();
+	    String queryString = payload;
+
+	    if (StringUtils.isEmpty(queryString)) {
+	        return queryParameters;
+	    }
+
+	    String[] parameters = queryString.split("&");
+
+	    for (String parameter : parameters) {
+	        String[] keyValuePair = parameter.split("=");
+	        String[] values = queryParameters.get(keyValuePair[0]);
+	        values = ArrayUtils.add(values, keyValuePair.length == 1 ? "" : keyValuePair[1]); //length is one if no value is available.
+	        queryParameters.put(keyValuePair[0], values);
+	    }
+	    return queryParameters;
+	}
+	
 	private void doAction(ActionDef actionDef, JSONObject params){
 		Engine engine = Engine.getInstance();
-		if(actionDef.getRoute().hasHttpMethod(this.verbose)){
+		if(actionDef.getRoute().hasHttpMethod(this.verbose)) {
 			HttpActionDef action = new HttpActionDef(actionDef, this.request, this.response, params, this);
 			this.ID = engine.registerTask(action);
 			action.set_id(this.ID);
 			action.run();
-		}
-		else
-		{
+		} else if(actionDef.getRoute().CORS && this.verbose == HttpMethod.OPTIONS) {
+			HttpActionDef action = new HttpActionDef(actionDef, this.request, this.response, params, this);
+			this.ID = engine.registerTask(action);
+			action.set_id(this.ID);
+			action.run();
+		} else {
 			this.response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 		}
 		

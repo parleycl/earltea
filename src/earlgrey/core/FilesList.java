@@ -7,7 +7,7 @@ public class FilesList {
 			"Session"});
 	
 	// Console Files
-	public static FilePackage Console = new FilePackage("earlgrey.admin", new String[]{"LogsConsole", "PropertiesManager", "UserConsole"});
+	public static FilePackage Console = new FilePackage("earlgrey.admin", new String[]{"LogsConsole", "PropertiesManager", "UserConsole", "Datasources"});
 	// Anotations Files
 	public static FilePackage Annotations = new FilePackage("earlgrey.annotations", new String[]{"AddPropertie", "AddPropertieArray", "AddPropertieOption", "AddPropertieSet", "AddPropertieSetTemplate", "AutoIncrement", "Cache", "Console", "Controller",
     "ControllerAction", "Cronwork", "DatabaseDriver", "ErrorCode", "GroupParamOptional", "GroupParamRequire", "GroupPropertieOption", "GroupProperties", "GroupPropertiesArray",
@@ -20,7 +20,7 @@ public class FilesList {
     // Error Files
 	public static FilePackage Error = new FilePackage("earlgrey.error", new String[]{"Error500", "Error60", "Error70", "Error700", "Error800", "ErrorBase"});
 	// Gateway FilesSS
-	public static FilePackage Gateway = new FilePackage("earlgrey.gateway", new String[]{"Channel", "Gateway", "Rest", "Websocket"});
+	public static FilePackage Gateway = new FilePackage("earlgrey.gateway", new String[]{"Channel", "Websocket"});
     // Http files
 	public static FilePackage Http = new FilePackage("earlgrey.http", new String[]{"Response200", "Response300", "Response500"});
     // Interface files

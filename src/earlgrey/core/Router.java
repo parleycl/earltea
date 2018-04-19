@@ -19,7 +19,6 @@ public class Router {
 		this.RouteTable = resource.getRouteTable();
 	}
 	public ActionDef route(String path, int httpMethod){
-		
 		String[] ruta = path.split("/");
 		if(ruta.length > 0){
 			if(this.RouteMap.containsKey(ruta[0])){

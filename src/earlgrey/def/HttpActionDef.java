@@ -69,7 +69,7 @@ public class HttpActionDef implements Runnable, Process{
 			try {
 				this.response.getWriter().println("Parameters are required");
 			} catch (IOException e) {
-				this.log.Critic("Ha existido un error al renderizar la respuesta http", Error500.HTTP_RENDER_ERROR);
+				this.log.Critic("Occured an error when Earlgrey render the response", Error500.HTTP_RENDER_ERROR);
 			}
 			this.finalice();
 		}
@@ -104,7 +104,7 @@ public class HttpActionDef implements Runnable, Process{
 		
 		// ESTE ES EL NUCLEO DE LAS PETICIONES SE CREA UN NUEVO OBJETO REQUEST Y UN OBJETO RESPONSE
 		HttpRequest request = new HttpRequest(this.parametros, this.request, this);
-		HttpResponse response = new HttpResponse(this.response, this.request, this);
+		HttpResponse response = new HttpResponse(this.response, this.request, this, this.action.getRoute().CORS);
 		Method metodo = this.action.metodo;
 		this.session.ping(metodo);
 		if(metodo.isAnnotationPresent(Cache.class)){
@@ -130,7 +130,7 @@ public class HttpActionDef implements Runnable, Process{
 			metodo.invoke(null, request,response);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			StackTraceElement[] stack = e.getCause().getStackTrace();
-			this.log.Critic("Ha existido un error en la llamada del metodo "+metodo.getName(), Error500.METHOD_INVOCATION_ERROR);
+			this.log.Critic("Earlgrey detect an error in the method call: "+metodo.getName(), Error500.METHOD_INVOCATION_ERROR);
 			this.log.Critic("Cause: "+e.getCause().getMessage(), Error500.METHOD_INVOCATION_ERROR);
 			this.log.Critic("Cause: ", Error500.METHOD_INVOCATION_ERROR);
 			this.log.Critic("Localized Message: "+e.getLocalizedMessage(), Error500.METHOD_INVOCATION_ERROR);

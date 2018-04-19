@@ -273,7 +273,7 @@ public class ModelCore {
 			// TODO Auto-generated catch block
 			StackTraceElement[] stack = e.getStackTrace();
 			this.log.Critic(e.getCause().getMessage(), 510);
-			this.log.Critic("Ha existido un error al examinar el juego de datos SQL", Error500.METHOD_INVOCATION_ERROR);
+			this.log.Critic("Earlgrey detected an error while examinate the SQL data set", Error500.METHOD_INVOCATION_ERROR);
 			for(int i=0;i<stack.length;i++){
 				this.log.Critic(stack[i].toString(), Error800.DATABASE_SQL_SET);
 			}
@@ -545,17 +545,17 @@ public class ModelCore {
 				try{
 					if(PrimaryKey.class.isAssignableFrom(anotaciones[l].getClass())){
 						if(this.primaryKey != null) {
-							if(this.primaryKey.getName() != field_array[i].getName()) throw new Exception("No se puede declarar mas de una llave primaria");
+							if(this.primaryKey.getName() != field_array[i].getName()) throw new Exception("Only can declare one primary key");
 						}
 						this.primaryKey = field_array[i];
 					}
 					else if(ModelField.class.isAssignableFrom(anotaciones[l].getClass())){
-						if(relation) throw new Exception("No se puede declarar un campo como ModelField si previamente fue declarado como ModelRelation");
+						if(relation) throw new Exception("You can't declare a field like ModelField if previously was declared like ModelRelation");
 						this.fields.put(field_array[i].getName(), field_array[i]);
 						field = true;
 					}
 					else if(ModelRelation.class.isAssignableFrom(anotaciones[l].getClass())){
-						if(field) throw new Exception("No se puede declarar un campo como ModelRelation si previamente fue declarado como ModelField");
+						if(field) throw new Exception("You can't declare a field like ModelRelation if previously was declared like ModelField");
 						ModelRelation relacion = (ModelRelation) anotaciones[l];
 						this.relation.put(field_array[i].getName(), new RelationDef(field_array[i], relacion.model()));
 						relation = true;
@@ -567,7 +567,7 @@ public class ModelCore {
 				}
 				catch(Exception e){
 					StackTraceElement[] stack = e.getCause().getStackTrace();
-					this.log.Critic("Ha existido un error al establecer el modelo de datos", Error70.FIELD_OVERLAYED_DEFINITION);
+					this.log.Critic("Exists an error stablising the data model", Error70.FIELD_OVERLAYED_DEFINITION);
 					this.log.Critic("Cause: "+e.getCause().getMessage(), Error70.FIELD_OVERLAYED_DEFINITION);
 					this.log.Critic("Cause: ", Error70.FIELD_OVERLAYED_DEFINITION);
 					this.log.Critic("Localized Message: "+e.getLocalizedMessage(), Error70.FIELD_OVERLAYED_DEFINITION);
@@ -592,19 +592,19 @@ public class ModelCore {
 				try{
 					if(PrimaryKey.class.isAssignableFrom(anotaciones[l].getClass())){
 						if(this.primaryKey != null) {
-							if(this.primaryKey.getName() != field_array[i].getName()) throw new Exception("No se puede declarar mas de una llave primaria");
+							if(this.primaryKey.getName() != field_array[i].getName()) throw new Exception("Only can declare one primary key");
 						}
 						this.primaryKey = field_array[i];
 					}
 					else if(ModelField.class.isAssignableFrom(anotaciones[l].getClass())){
-						if(relation) throw new Exception("No se puede declarar un campo como ModelField si previamente fue declarado como ModelRelation");
+						if(relation) throw new Exception("You can't declare a field like ModelField if previously was declared like ModelRelation");
 						if(field_array[i].get(this) != null){
 							this.fields.put(field_array[i].getName(), field_array[i]);
 							field = true;
 						}
 					}
 					else if(ModelRelation.class.isAssignableFrom(anotaciones[l].getClass())){
-						if(field) throw new Exception("No se puede declarar un campo como ModelRelation si previamente fue declarado como ModelField");
+						if(field) throw new Exception("You can't declare a field like ModelRelation if previously was declared like ModelField");
 						ModelRelation relacion = (ModelRelation) anotaciones[l];
 						if(field_array[i].get(this) != null){
 							this.relation.put(field_array[i].getName(), new RelationDef(field_array[i], relacion.model()));
@@ -620,7 +620,7 @@ public class ModelCore {
 				}
 				catch(Exception e){
 					StackTraceElement[] stack = e.getCause().getStackTrace();
-					this.log.Critic("Ha existido un error al establecer el modelo de datos", Error70.FIELD_OVERLAYED_DEFINITION);
+					this.log.Critic("Exists an error stablising the data model", Error70.FIELD_OVERLAYED_DEFINITION);
 					this.log.Critic("Cause: "+e.getCause().getMessage(), Error70.FIELD_OVERLAYED_DEFINITION);
 					this.log.Critic("Cause: ", Error70.FIELD_OVERLAYED_DEFINITION);
 					this.log.Critic("Localized Message: "+e.getLocalizedMessage(), Error70.FIELD_OVERLAYED_DEFINITION);
