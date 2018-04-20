@@ -36,18 +36,20 @@ public class HttpRequest implements Request{
 	private void readHeaders(){
 		this.header = new JSONObject();
 		Enumeration<String> names = this.request.getHeaderNames();
+		
 		while(names.hasMoreElements()){
 			String key = names.nextElement();
+			
 			this.header.put(key, request.getHeader(key));
 		}
 	}
 	
 	private void readAttributes(){
-		this.header = new JSONObject();
+		this.attributes = new JSONObject();
 		Enumeration<String> names = this.request.getAttributeNames();
 		while(names.hasMoreElements()){
 			String key = names.nextElement();
-			this.header.put(key, request.getAttribute(key));
+			this.attributes.put(key, request.getAttribute(key));
 		}
 	}
 	
