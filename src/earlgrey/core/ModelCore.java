@@ -395,7 +395,7 @@ public class ModelCore {
 	}
 	public JSONObject getOneJSON(){
 		JSONArray result = this.getJSON(0,1);
-		return result.getJSONObject(0);
+		return (result.length() > 0) ? result.getJSONObject(0) : new JSONObject();
 	}
 	private void prepareParams(){
 		Field[] campos = this.getClass().getFields();
