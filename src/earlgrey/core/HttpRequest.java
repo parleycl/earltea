@@ -18,6 +18,7 @@ public class HttpRequest implements Request{
 	// DEFINIMOS LAS VARIABLES DEL OBJETO REQUEST
 	/////////////////////////////////////////////////////////////
 	JSONObject header;
+	JSONObject attributes;
 	JSONObject params;
 	SessionDef session;
 	HttpServletRequest request;
@@ -30,15 +31,26 @@ public class HttpRequest implements Request{
 		this.action = httpActionDef;
 		this.session = httpActionDef.getSession();
 		this.readHeaders();
+		this.readAttributes();
 	}
 	private void readHeaders(){
 		this.header = new JSONObject();
-		Enumeration<String> names = this.request.getAttributeNames();
+		Enumeration<String> names = this.request.getHeaderNames();
 		while(names.hasMoreElements()){
 			String key = names.nextElement();
 			this.header.put(key, request.getHeader(key));
 		}
 	}
+	
+	private void readAttributes(){
+		this.header = new JSONObject();
+		Enumeration<String> names = this.request.getAttributeNames();
+		while(names.hasMoreElements()){
+			String key = names.nextElement();
+			this.header.put(key, request.getAttribute(key));
+		}
+	}
+	
 	@Override
 	public String getParam(String key) {
 		// TODO Auto-generated method stub

@@ -258,6 +258,8 @@ public class ResourceMaping {
 								else
 								{
 									String ruta_uri = ruta.route().trim();
+									if(ruta_uri.endsWith("/")) ruta_uri = ruta_uri.substring(0, (ruta_uri.length()-1));
+									if(ruta_uri.startsWith("/")) ruta_uri = ruta_uri.substring(1);
 									RouteDef router = this.MapRoute(ruta_uri);
 									ActionDef actionHttp = null;
 									if(metodos[g].getAnnotation(DELETE.class) != null) {
@@ -827,6 +829,8 @@ public class ResourceMaping {
 								else
 								{
 									String ruta_uri = "admin/console"+ruta.route().trim();
+									if(ruta_uri.endsWith("/")) ruta_uri = ruta_uri.substring(0, (ruta_uri.length()-1));
+									if(ruta_uri.startsWith("/")) ruta_uri = ruta_uri.substring(1);
 									RouteDef router = this.MapRoute(ruta_uri);
 									ActionDef actionHttp = null;
 									if(metodos[g].getAnnotation(DELETE.class) != null) {
