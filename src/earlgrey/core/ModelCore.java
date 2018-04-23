@@ -76,6 +76,7 @@ public class ModelCore {
 	public ModelCore find() {
 		// SE PREPARAN LOS PARAMETROS
 		this.prepareParams();
+		if(this.conector != null) this.conector.close();
 		this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
 		if(conector != null){
 			this.mapFields();
@@ -99,6 +100,7 @@ public class ModelCore {
 	public ModelCore match() {
 		// SE PREPARAN LOS PARAMETROS
 		this.prepareParams();
+		if(this.conector != null) this.conector.close();
 		this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
 		if(conector != null){
 			this.mapFields();
@@ -122,6 +124,7 @@ public class ModelCore {
 	public ModelCore findOne() {
 		// SE PREPARAN LOS PARAMETROS
 		this.prepareParams();
+		if(this.conector != null) this.conector.close();
 		this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
 		if(conector != null){
 			this.mapFields();
@@ -156,6 +159,7 @@ public class ModelCore {
 	public int count() {
 		// SE PREPARAN LOS PARAMETROS
 		this.prepareParams();
+		if(this.conector != null) this.conector.close();
 		this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
 		if(conector != null){
 			this.mapFields();
@@ -633,9 +637,6 @@ public class ModelCore {
 			}
 		}
 	}
-	public void finalize() {
-	    this.conector.close();
-	}
 	public void mayorOrEqual(String string, String from) {
 		// TODO Auto-generated method stub
 		
@@ -646,5 +647,12 @@ public class ModelCore {
 	public void where(String key, String operator, String value){
 		this.where_field.add(key+" "+operator+" "+value);
 	}
-	
+	@Override
+	protected void finalize() throws Throwable {
+	     try {
+	    	 this.conector.close();
+	     } finally {
+	         super.finalize();
+	     }
+	}
 }
