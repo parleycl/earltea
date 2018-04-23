@@ -1,5 +1,10 @@
 ## Changelog
 
+### [Bugfix: Se resuelve JSONArra not found, en getOneJSON ModelCore ](https://github.com/acalvoa/earlgrey/pull/49) (23/04/2018) 
+### [Bugfix: Http get Headers fixed ](https://github.com/acalvoa/earlgrey/pull/47) (20/04/2018) 
+### [Bugfix: Headers fixed ](https://github.com/acalvoa/earlgrey/pull/45) (20/04/2018) 
+### [Feature: Datasource features, Config properties, new utils and others ](https://github.com/acalvoa/earlgrey/pull/36)(20/04/2018) 
+### [Bugfix: Fix the overwrite of http action when the http method are same ](https://github.com/acalvoa/earlgrey/pull/32) (10/04/2018)
 ### [Bugfix: Fix the overwrite of http action when the http method are same ](https://github.com/acalvoa/earlgrey/pull/32) (10/04/2018)
 ### [Bugfix: Properties Bugfix call API ](https://github.com/acalvoa/earlgrey/pull/28) (09/04/2018)
 ### [Bugfix: Compiling console lacking module ](https://github.com/acalvoa/earlgrey/pull/26) (09/04/2018)
