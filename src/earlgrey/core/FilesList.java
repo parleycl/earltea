@@ -32,7 +32,7 @@ public class FilesList {
 	// Types Files
 	public static FilePackage Types = new FilePackage("earlgrey.types", new String[]{"CentroideType", "GeometriaType", "IType", "ObraType", "Type"});
     // Utils files
-	public static FilePackage Utils = new FilePackage("earlgrey.utils", new String[]{"ConversorCoordenadas", "GeoAlgorithm"});
+	public static FilePackage Utils = new FilePackage("earlgrey.utils", new String[]{"ConversorCoordenadas", "GeoAlgorithm", "Hash", "JWT"});
 	// LIST
 	public static FilePackage [] List = { Core, Console, Annotations, Database, Def, Error, Gateway, Http, Interface, Policies, Security, Types, Utils }; 
 }

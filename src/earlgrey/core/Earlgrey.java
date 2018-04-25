@@ -137,4 +137,7 @@ public class Earlgrey{
     	return this.api;
     }
     
+    public ServletContext getContext(){
+    	return this.context;
+    }
 }

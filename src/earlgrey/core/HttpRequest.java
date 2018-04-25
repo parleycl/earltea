@@ -36,7 +36,6 @@ public class HttpRequest implements Request{
 	private void readHeaders(){
 		this.header = new JSONObject();
 		Enumeration<String> names = this.request.getHeaderNames();
-		
 		while(names.hasMoreElements()){
 			String key = names.nextElement();
 			

@@ -5,6 +5,7 @@ import java.util.Hashtable;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.jose4j.jwt.JwtClaims;
 import org.json.JSONObject;
 
 import earlgrey.annotations.AddConfig;
@@ -13,12 +14,15 @@ import earlgrey.def.Datasource;
 import earlgrey.def.SessionDef;
 import earlgrey.interfaces.Cacheable;
 import earlgrey.utils.JWT;
+
 @AddConfig(defaultTo = "1800000", name = "SESSION_TIME", earlgrey_name = "Session time expiration")
 public class Session {
 	// LOG
 	Logging log = new Logging(this.getClass().getName());
-	//ADMINISTRADOR DE SESIONES
+	// ADMINISTRADOR DE SESIONES
 	private Hashtable<String,SessionDef> sessions = new Hashtable<String,SessionDef>();
+	// JWT SESSIONS
+	private Hashtable<String,SessionDef> sessionsjwt = new Hashtable<String,SessionDef>();
 	private int timer_time;
 	private Datasource tenant;
 	private static Session instance;
@@ -41,6 +45,28 @@ public class Session {
 		}
 		else
 		{
+			SessionDef session = new SessionDef(id);
+			this.sessions.put(id, session);
+			return session;
+		}
+	}
+	// RECUPERAR SESSION DEL SISTEMA
+	public SessionDef getJWTSession(String jwt, String id){
+		try {
+			JwtClaims token = JWT.getJWTPayload(jwt);
+			if(this.sessions.containsKey(token.getJwtId())){
+				SessionDef session =  this.sessions.get(id);
+				return session;
+			}
+			else
+			{
+				SessionDef session = new SessionDef(id);
+				this.sessions.put(id, session);
+				return session;
+			}
+		} catch(Exception e) {
+			this.log.Warning("Invalid JWT session");
+			this.log.Warning(e.getMessage());
 			SessionDef session = new SessionDef(id);
 			this.sessions.put(id, session);
 			return session;
@@ -78,12 +104,12 @@ public class Session {
 	     this.log.Info("Session Watchdog - Online");
 	}
 	
-	public String setTenant(Datasource datasource){
+	/*public String setTenant(Datasource datasource){
 		this.tenant = datasource;
 		return JWT.getJWT(new JSONObject());
 	}
 	
 	public void wakeupTenant(String jwt){
 		this.tenant = new Datasource(JWT.getJWTPayload(jwt));
-	}
+	}*/
 }

@@ -3,6 +3,7 @@ package earlgrey.def;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.regex.Pattern;
 
@@ -56,15 +57,26 @@ public class HttpActionDef implements Runnable, Process{
 		this.motor = motor;
 		this.route = action.getRoute();
 		this.action = action;
-		this.session = Session.getInstance().getSession(request.getSession().getId());
+		this.session = this.session();
 	}
+	
+	private SessionDef session(){
+		String authorization = (this.request.getHeader("authorization") != null) ? this.request.getHeader("authorization") : this.request.getHeader("Authorization");
+		if(authorization != null) {
+			String token = (authorization.indexOf("Bearer") != -1) ? authorization.substring(authorization.indexOf("Bearer")+7) : authorization;
+			return Session.getInstance().getJWTSession(token, request.getSession().getId());
+		} else {
+			return Session.getInstance().getSession(request.getSession().getId());
+		}
+		
+	}
+	
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		if(this.checkAllParams()){
+		if(this.checkAllParams()) {
 			this.execute();
-		}
-		else{
+		} else {
 			this.response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			try {
 				this.response.getWriter().println("Parameters are required");
@@ -140,7 +152,6 @@ public class HttpActionDef implements Runnable, Process{
 				this.log.Critic(stack[i].toString(), Error500.METHOD_INVOCATION_ERROR);
 			}
 		}
-		
 	}
 	private void processCache(CacheElement element, HttpResponse response){
 		this.response.setCharacterEncoding("UTF-8");

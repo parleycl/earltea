@@ -155,7 +155,7 @@ public class Gear {
 			return;
 		}
 		// EXTRAEMOS LA RUTA
-		String route = (Earlgrey.getInstance().getApi()) ? uri.substring(Earlgrey.getInstance().context.getContextPath().length()+1) : uri.substring((uri.indexOf("/api/")+5));
+		String route = (Earlgrey.getInstance().getApi()) ? uri.substring(Earlgrey.getInstance().getContext().getContextPath().length()+1) : uri.substring((uri.indexOf("/api/")+5));
 		// MODIFICAMOS LA RUTA PARA INDICAR QUE ES CONSOLA
 		// EXTRAEMOS LOS PARAMETROS
 		JSONObject params = this.extract_params();
