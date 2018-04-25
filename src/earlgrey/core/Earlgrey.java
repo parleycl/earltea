@@ -16,8 +16,8 @@ public class Earlgrey{
 	private static Earlgrey instance = null;
 	public String kernelname;
 	public String rootPackageName;
-	private int comport;
-	private boolean api;
+	private int comport = 10300;
+	private boolean api = false;
     Properties properties;
     Communication com;
     ResourceMaping resources;
