@@ -30,12 +30,12 @@ public class Rest extends Apicore implements Filter {
 		// place your code here
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		String requestURI = httpRequest.getRequestURI();
-		if(requestURI.startsWith("/console") || requestURI.startsWith("/admin/console")){
+		if(requestURI.startsWith(Earlgrey.getInstance().getContext().getContextPath()+"/console") || requestURI.startsWith(Earlgrey.getInstance().getContext().getContextPath()+"/admin/console")){
 			chain.doFilter(request, response);
-		} else {
+		} else {			
 			if(this.api) {
 				this.ApiEngine(request, response, chain);
-			} else if(requestURI.startsWith("/api/")) {
+			} else if(requestURI.startsWith(Earlgrey.getInstance().getContext().getContextPath()+"/api/")) {
 				this.ApiEngine(request, response, chain);
 			} else {
 				chain.doFilter(request, response);

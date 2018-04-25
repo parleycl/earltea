@@ -13,12 +13,15 @@ import earlgrey.def.Datasource;
 import earlgrey.def.SessionDef;
 import earlgrey.interfaces.Cacheable;
 import earlgrey.utils.JWT;
+import io.jsonwebtoken.Claims;
 @AddConfig(defaultTo = "1800000", name = "SESSION_TIME", earlgrey_name = "Session time expiration")
 public class Session {
 	// LOG
 	Logging log = new Logging(this.getClass().getName());
-	//ADMINISTRADOR DE SESIONES
+	// ADMINISTRADOR DE SESIONES
 	private Hashtable<String,SessionDef> sessions = new Hashtable<String,SessionDef>();
+	// JWT SESSIONS
+	private Hashtable<String,SessionDef> sessionsjwt = new Hashtable<String,SessionDef>();
 	private int timer_time;
 	private Datasource tenant;
 	private static Session instance;
@@ -46,6 +49,21 @@ public class Session {
 			return session;
 		}
 	}
+	// RECUPERAR SESSION DEL SISTEMA
+	/*public SessionDef getJWTSession(String jwt){
+		Claims token = JWT.getJWTPayload(jwt);
+		
+		/*if(this.sessions.containsKey(id)){
+			SessionDef session =  this.sessions.get(id);
+			return session;
+		}
+		else
+		{
+			SessionDef session = new SessionDef(id);
+			this.sessions.put(id, session);
+			return session;
+		}
+	}*/
 	// PROCESO QUE EJECUTAR EL CLEANER
 	private void sessionCleaner(){
 		Enumeration<String> keys = this.sessions.keys();
@@ -78,12 +96,12 @@ public class Session {
 	     this.log.Info("Session Watchdog - Online");
 	}
 	
-	public String setTenant(Datasource datasource){
+	/*public String setTenant(Datasource datasource){
 		this.tenant = datasource;
 		return JWT.getJWT(new JSONObject());
 	}
 	
 	public void wakeupTenant(String jwt){
 		this.tenant = new Datasource(JWT.getJWTPayload(jwt));
-	}
+	}*/
 }
