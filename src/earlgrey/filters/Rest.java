@@ -14,20 +14,33 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import earlgrey.core.Earlgrey;
 import earlgrey.core.Gear;
 /**
  * Servlet Filter implementation class Angular
  */
-@WebFilter("/api/*")
+@WebFilter("/*")
 public class Rest extends Apicore implements Filter {
-
+	private boolean api;
 	/**
 	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		// TODO Auto-generated method stub
 		// place your code here
-		this.ApiEngine(request, response, chain);
+		HttpServletRequest httpRequest = (HttpServletRequest) request;
+		String requestURI = httpRequest.getRequestURI();
+		if(requestURI.startsWith("/console") || requestURI.startsWith("/admin/console")){
+			chain.doFilter(request, response);
+		} else {
+			if(this.api) {
+				this.ApiEngine(request, response, chain);
+			} else if(requestURI.startsWith("/api/")) {
+				this.ApiEngine(request, response, chain);
+			} else {
+				chain.doFilter(request, response);
+			}
+		}
 	}
 
 	@Override
@@ -39,7 +52,7 @@ public class Rest extends Apicore implements Filter {
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
 		// TODO Auto-generated method stub
-		
+		this.api = Earlgrey.getInstance().getApi();
 	}
 	protected void GET(HttpServletRequest request, HttpServletResponse response){
 		Gear engine = new Gear(request,response);
