@@ -16,6 +16,8 @@ public class Earlgrey{
 	private static Earlgrey instance = null;
 	public String kernelname;
 	public String rootPackageName;
+	private int comport = 10300;
+	private boolean api = false;
     Properties properties;
     Communication com;
     ResourceMaping resources;
@@ -45,9 +47,19 @@ public class Earlgrey{
     		this.log.Critic("The app don't have permision to write in disk, please fix and try again.", Error700.FILESYSTEM_WRITE_ERROR);
     	}
     }
+    
+    public void setComPort(int comport) {
+    	this.comport = comport;
+    }
+    
+    public void onlyAPI(boolean api) {
+    	this.api = api;
+    }
+    
 	public static synchronized Earlgrey getInstance(){
 		return instance;
 	}
+	
     private void setAutors(){
     	this.log.Info("INICIALIZING EARLGREY SYSTEM.");
     	this.log.Info("********************************************************");
@@ -116,4 +128,13 @@ public class Earlgrey{
     	if(status && !policies.exists()) status = policies.mkdir();
     	return status;
     }
+    
+    public int getComPort() {
+    	return this.comport;
+    }
+    
+    public boolean getApi() {
+    	return this.api;
+    }
+    
 }
