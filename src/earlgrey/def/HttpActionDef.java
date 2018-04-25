@@ -3,6 +3,7 @@ package earlgrey.def;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.regex.Pattern;
 
@@ -60,10 +61,10 @@ public class HttpActionDef implements Runnable, Process{
 	}
 	
 	private SessionDef session(){
-		String authorization = request.getHeader("Authorization");
+		String authorization = (this.request.getHeader("authorization") != null) ? this.request.getHeader("authorization") : this.request.getHeader("Authorization");
 		if(authorization != null) {
-			String token = authorization.substring(authorization.indexOf("Bearer")+7);
-			return Session.getInstance().getSession(request.getSession().getId());
+			String token = (authorization.indexOf("Bearer") != -1) ? authorization.substring(authorization.indexOf("Bearer")+7) : authorization;
+			return Session.getInstance().getJWTSession(token, request.getSession().getId());
 		} else {
 			return Session.getInstance().getSession(request.getSession().getId());
 		}

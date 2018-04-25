@@ -5,6 +5,7 @@ import java.util.Hashtable;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.jose4j.jwt.JwtClaims;
 import org.json.JSONObject;
 
 import earlgrey.annotations.AddConfig;
@@ -13,7 +14,7 @@ import earlgrey.def.Datasource;
 import earlgrey.def.SessionDef;
 import earlgrey.interfaces.Cacheable;
 import earlgrey.utils.JWT;
-import io.jsonwebtoken.Claims;
+
 @AddConfig(defaultTo = "1800000", name = "SESSION_TIME", earlgrey_name = "Session time expiration")
 public class Session {
 	// LOG
@@ -50,20 +51,27 @@ public class Session {
 		}
 	}
 	// RECUPERAR SESSION DEL SISTEMA
-	/*public SessionDef getJWTSession(String jwt){
-		Claims token = JWT.getJWTPayload(jwt);
-		
-		/*if(this.sessions.containsKey(id)){
-			SessionDef session =  this.sessions.get(id);
-			return session;
-		}
-		else
-		{
+	public SessionDef getJWTSession(String jwt, String id){
+		try {
+			JwtClaims token = JWT.getJWTPayload(jwt);
+			if(this.sessions.containsKey(token.getJwtId())){
+				SessionDef session =  this.sessions.get(id);
+				return session;
+			}
+			else
+			{
+				SessionDef session = new SessionDef(id);
+				this.sessions.put(id, session);
+				return session;
+			}
+		} catch(Exception e) {
+			this.log.Warning("Invalid JWT session");
+			this.log.Warning(e.getMessage());
 			SessionDef session = new SessionDef(id);
 			this.sessions.put(id, session);
 			return session;
 		}
-	}*/
+	}
 	// PROCESO QUE EJECUTAR EL CLEANER
 	private void sessionCleaner(){
 		Enumeration<String> keys = this.sessions.keys();

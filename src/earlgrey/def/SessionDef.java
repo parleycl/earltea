@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import earlgrey.core.CacheElement;
 import earlgrey.interfaces.Cacheable;
 import earlgrey.utils.Hash;
+import earlgrey.utils.JWT;
 import oracle.sql.DATE;
 
 public class SessionDef implements Cacheable{
@@ -117,5 +118,12 @@ public class SessionDef implements Cacheable{
 		this.authenticated = false;
 		this.admin = false;
 		this.roles = null;
+	}
+	
+	public String getJWT(JSONObject payload, String user) {
+		return JWT.getJWT(payload, this.ID, user);
+	}
+	public String getJWT(String user) {
+		return JWT.getJWT(new JSONObject(), this.ID, user);
 	}
 }
