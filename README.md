@@ -22,7 +22,7 @@ The framework propose two principles used to make this possible.
 
 Earlgrey is good to use in any type of proyect, but it's perfect to use in any small or quick project oriented to services. Earlgrey it's a great solution to use in adition with Angular, React or Vue.js when you need a API to communicate Backend with Frontend. It's a secret but Earlgrey originally was made to use with apps build in Angular and React, when we need the frontend and backend in only one "WAR or EAR" packet.
 
-**Try Earlgrey, and be part of a new JAVA revolution.**
+**Try Earlgrey, and brew the new JAVA revolution.**
 
 ## Compilation and distribution
 
