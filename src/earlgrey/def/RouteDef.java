@@ -127,19 +127,17 @@ public class RouteDef implements Cloneable {
 								continue;
 							}
 						}
-						// EN CASO CONTRARIO INTENTAMOS SABER SI SON PARAMETROS
-						if(this.ParamByUri.size() > param_counter){
-							String pam = this.ParamByUri.get(param_counter++);
-							params.put(pam.substring(1,pam.length()-1), route[0]);
-							RouteDef router = this.RouteTable.get(pam);
-							route = ArrayUtils.remove(route,0);
-							return router.route(route, httpMethod, params);
-						}
-						else
-						{
-							return null;
-						}
-					} else {
+					} 
+					// EN CASO CONTRARIO INTENTAMOS SABER SI SON PARAMETROS
+					if(this.ParamByUri.size() > param_counter){
+						String pam = this.ParamByUri.get(param_counter++);
+						params.put(pam.substring(1,pam.length()-1), route[0]);
+						RouteDef router = this.RouteTable.get(pam);
+						route = ArrayUtils.remove(route,0);
+						return router.route(route, httpMethod, params);
+					}
+					else
+					{
 						return null;
 					}
 				}

@@ -357,11 +357,13 @@ public class ResourceMaping {
 				    	return false;
 				    }
 				});
-				for(int l=0; l<packages_project2.length; l++){
-					if(this.packages.get(i).packageName.equals("default")){
-						this.packages.add(new Package(packages_project2[l].getName(), this.packages.get(i).path+packages_project2[l].getName()+"/"));
-					} else {
-						this.packages.add(new Package(this.packages.get(i).packageName+"."+packages_project2[l].getName(), this.packages.get(i).path+packages_project2[l].getName()+"/"));
+				if(packages_project2 != null){
+					for(int l=0; l<packages_project2.length; l++){
+						if(this.packages.get(i).packageName.equals("default")){
+							this.packages.add(new Package(packages_project2[l].getName(), this.packages.get(i).path+packages_project2[l].getName()+"/"));
+						} else {
+							this.packages.add(new Package(this.packages.get(i).packageName+"."+packages_project2[l].getName(), this.packages.get(i).path+packages_project2[l].getName()+"/"));
+						}
 					}
 				}
 			}
@@ -424,9 +426,11 @@ public class ResourceMaping {
 					    	}
 					    }
 					});
-					for(int i=0;i<packages.length;i++){
-						if(!packages[i].getName().contains("$")){
-							this.clases.add(this.packages.get(l).packageName+"."+packages[i].getName());
+					if(packages != null){
+						for(int i=0;i<packages.length;i++){
+							if(!packages[i].getName().contains("$")){
+								this.clases.add(this.packages.get(l).packageName+"."+packages[i].getName());
+							}
 						}
 					}
 				} catch (IOException e) {
