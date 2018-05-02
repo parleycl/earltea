@@ -105,6 +105,8 @@ public class RouteDef implements Cloneable {
 		int param_counter = 0;
 		if(route.length > 0){
 			while(route.length > 0){
+				System.out.println(route[0]);
+				System.out.println(RouteTable.containsKey(route[0]));
 				if(RouteTable.containsKey(route[0])){
 					RouteDef router = this.RouteTable.get(route[0]);
 					route = ArrayUtils.remove(route,0);
@@ -127,6 +129,7 @@ public class RouteDef implements Cloneable {
 								continue;
 							}
 						}
+					} else {
 						// EN CASO CONTRARIO INTENTAMOS SABER SI SON PARAMETROS
 						if(this.ParamByUri.size() > param_counter){
 							String pam = this.ParamByUri.get(param_counter++);
@@ -139,8 +142,6 @@ public class RouteDef implements Cloneable {
 						{
 							return null;
 						}
-					} else {
-						return null;
 					}
 				}
 			}
