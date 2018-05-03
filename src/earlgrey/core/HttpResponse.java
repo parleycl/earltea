@@ -72,8 +72,9 @@ public class HttpResponse implements Response{
 		this.response.setCharacterEncoding("UTF-8");
 		this.response.setStatus(HttpServletResponse.SC_OK);
 		try {
-			this.httpActionDef.checkCache(obj.toString(), CacheCore.CACHE_JSON);
-			this.response.getWriter().println(obj.toString());
+			String json = obj.toString();
+			this.httpActionDef.checkCache(json, CacheCore.CACHE_JSON);
+			this.response.getWriter().println(json);
 		} catch (IOException e) {
 			this.log.Critic("Earlgrey can't write the web buffer to send json response", Error500.HTTP_RENDER_ERROR);
 		}
@@ -86,8 +87,9 @@ public class HttpResponse implements Response{
 		this.response.setCharacterEncoding("UTF-8");
 		this.response.setStatus(HttpServletResponse.SC_OK);
 		try {
-			this.httpActionDef.checkCache(obj.toString(), CacheCore.CACHE_JSON);
-			this.response.getWriter().println(obj.toString());
+			String json = obj.toString();
+			this.httpActionDef.checkCache(json, CacheCore.CACHE_JSON);
+			this.response.getWriter().println(json);
 		} catch (IOException e) {
 			this.log.Critic("No se ha podido escribir el buffer web http para la respuesta json", Error500.HTTP_RENDER_ERROR);
 		}
