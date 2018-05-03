@@ -154,8 +154,6 @@ public class HttpActionDef implements Runnable, Process{
 		}
 	}
 	private void processCache(CacheElement element, HttpResponse response){
-		this.response.setCharacterEncoding("UTF-8");
-		this.response.setStatus(HttpServletResponse.SC_OK);
 		if(element.getType() == CacheCore.CACHE_JSON){
 			this.response.setContentType("application/json");
 		} else if(element.getType() == CacheCore.CACHE_XML) {
@@ -165,6 +163,8 @@ public class HttpActionDef implements Runnable, Process{
 			this.response.setContentType("text/plain");
 		}
 		try {
+			this.response.setCharacterEncoding("UTF-8");
+			this.response.setStatus(HttpServletResponse.SC_OK);
 			this.response.getWriter().println(element.getContent());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
