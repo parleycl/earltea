@@ -449,7 +449,6 @@ public class ModelCore {
 	}
 	public boolean insert(){
 		this.prepareParams();
-		if(this.conector != null) this.conector.close();
 		this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
 		if(conector != null){
 			this.mapNNFields();
@@ -462,11 +461,14 @@ public class ModelCore {
 			// PREPARAMOS LOS FIELDS
 			conector.complete(q.prepared(), q.prepared_list());
 			if(!conector.executeUpdate()){
+			    this.conector.close();
 				// HANDLEREAMOS EL INSERT
 				return false;
 			}
+			this.conector.close();
 			return true;
 		}
+		this.conector.close();
 		return false;
 	}
 	public int getLastId(){
