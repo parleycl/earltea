@@ -2,9 +2,10 @@ package earlgrey.core;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -15,16 +16,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.json.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import earlgrey.core.Logging;
-import earlgrey.core.Router;
 import earlgrey.def.ActionDef;
 import earlgrey.def.HttpActionDef;
 import earlgrey.def.HttpMethod;
-import earlgrey.def.RouteDef;
 
 public class Gear {
 	// DEFINIMOS EL CLASS QUE EFECTUA LAS OPERACIONES DE LA CONSOLA
@@ -216,7 +213,7 @@ public class Gear {
 				for(String key : keys) {
 					String[] value = param_body.get(key);
 					if(value.length > 0) {
-						params.put(key, value[0]);
+					    params.put(key, URLDecoder.decode(value[0], StandardCharsets.UTF_8.toString()));
 					}
 				}
 			} catch (IOException e) {
