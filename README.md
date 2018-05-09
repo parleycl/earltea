@@ -1,6 +1,4 @@
-# Earlgrey
-
-![tea love](https://raw.githubusercontent.com/acalvoa/EARLGREY/master/console/src/client/assets/images/logo.jpg)
+![tea love](https://github.com/acalvoa/earlgrey/blob/master/console/src/client/assets/images/logoearlgrey2.png)
 
 A Lightweight Java Services Framework inspired in Nodejs Express, Sails.js &amp; Phalcon PHP and Loopback for quick develop of apps based in client server architecture. Build apps with frontend frameworks like Angular, React and Vue.js. Code and build faster and leave the machine's work to machines.
 
@@ -22,7 +20,7 @@ The framework propose two principles used to make this possible.
 
 Earlgrey is good to use in any type of proyect, but it's perfect to use in any small or quick project oriented to services. Earlgrey it's a great solution to use in adition with Angular, React or Vue.js when you need a API to communicate Backend with Frontend. It's a secret but Earlgrey originally was made to use with apps build in Angular and React, when we need the frontend and backend in only one "WAR or EAR" packet.
 
-**Try Earlgrey, and be part of a new JAVA revolution.**
+**Try Earlgrey, and brew the new JAVA revolution.**
 
 ## Compilation and distribution
 

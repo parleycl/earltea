@@ -8,7 +8,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Enumeration;
-
 import java.util.Hashtable;
 import java.util.Iterator;
 
@@ -450,14 +449,7 @@ public class ModelCore {
 	}
 	public boolean insert(){
 		this.prepareParams();
-		if(conector_transaction.contains(this.datasource)){
-			this.conector = conector_transaction.get(this.datasource);
-            this.transaction = true;
-		}
-		else
-		{
-			this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
-		}
+		this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
 		if(conector != null){
 			this.mapNNFields();
 			// BUSCAMOS EL NOMBRE DE LA TABLA
@@ -469,11 +461,14 @@ public class ModelCore {
 			// PREPARAMOS LOS FIELDS
 			conector.complete(q.prepared(), q.prepared_list());
 			if(!conector.executeUpdate()){
+			    this.conector.close();
 				// HANDLEREAMOS EL INSERT
 				return false;
 			}
+			this.conector.close();
 			return true;
 		}
+		this.conector.close();
 		return false;
 	}
 	public int getLastId(){
