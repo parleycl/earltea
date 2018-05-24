@@ -1,0 +1,31 @@
+version: '2.0'
+volumes:
+  mysql_earlgrey:
+services:
+  mariadb:
+    image: mariadb
+    container_name: earlgrey-mariadb-develop
+    volumes:
+      - mysql_earlgrey:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: shadowfax
+    networks:
+      app:
+        ipv4_address: 11.0.0.2
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: earlgrey-phpmyadmin-develop
+    environment:
+      PMA_HOST: 11.0.0.2
+    links:
+      - "mariadb:mysql"
+    networks:
+      app:
+        ipv4_address: 11.0.0.3
+networks:
+  app:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 11.0.0.0/24
+          gateway: 11.0.0.1

@@ -24,6 +24,7 @@ import earlgrey.annotations.PrimaryKey;
 import earlgrey.database.Connector;
 import earlgrey.database.QueryBuilder;
 import earlgrey.def.RelationDef;
+import earlgrey.error.EarlgreyException;
 import earlgrey.error.Error500;
 import earlgrey.error.Error70;
 import earlgrey.error.Error800;
@@ -470,7 +471,13 @@ public class ModelCore {
 			conector.complete(q.prepared(), q.prepared_list());
 			if(!conector.executeUpdate()){
 				// HANDLEREAMOS EL INSERT
+				if(!conector_transaction.contains(this.datasource)){
+					conector.close();
+				}
 				return false;
+			}
+			if(!conector_transaction.contains(this.datasource)){
+				conector.close();
 			}
 			return true;
 		}
@@ -486,8 +493,112 @@ public class ModelCore {
 		}
 		return -1;
 	}
-	public static void delete(){
-		
+	public boolean delete(){
+		this.prepareParams();
+		if(conector_transaction.contains(this.datasource)){
+			this.conector = conector_transaction.get(this.datasource);
+            this.transaction = true;
+		}
+		else
+		{
+			this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
+		}
+		if(conector != null){
+			this.prepareParams();
+			this.mapFields();
+			// BUSCAMOS EL NOMBRE DE LA TABLA
+			// EN ESTE SEGMENTO VA EL CODIGO DE LA CONSULTA
+			QueryBuilder q = new QueryBuilder(table,this);
+			q.delete();
+			q.where(prepare_fields);
+			q.makeConditional();
+			conector.prepare(q.getQuery(), this.primaryKey);
+			// PREPARAMOS LOS FIELDS
+			conector.complete(q.prepared(), q.prepared_list());
+			if(!conector.executeUpdate()){
+				// HANDLEREAMOS EL INSERT
+				if(!conector_transaction.contains(this.datasource)){
+					conector.close();
+				}
+				return false;
+			}
+			if(!conector_transaction.contains(this.datasource)){
+				conector.close();
+			}
+			return true;
+		}
+		return false;
+	}
+	public boolean delete(Integer id){
+		this.prepareParams();
+		if(conector_transaction.contains(this.datasource)){
+			this.conector = conector_transaction.get(this.datasource);
+            this.transaction = true;
+		}
+		else
+		{
+			this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
+		}
+		if(conector != null){
+			this.mapFields();
+			try {
+				if(this.primaryKey != null) {
+					if(this.primaryKey.getType() == Integer.class) {
+							QueryBuilder q = new QueryBuilder(table,this);
+							try {
+								this.primaryKey.set(this, id);
+								this.prepareParams();
+								q.delete();
+								q.where(prepare_fields);
+								q.makeConditional();
+								conector.prepare(q.getQuery(), this.primaryKey);
+								conector.complete(q.prepared(), q.prepared_list());
+								if(!conector.executeUpdate()){
+									// HANDLEREAMOS EL INSERT
+									if(!conector_transaction.contains(this.datasource)){
+										conector.close();
+									}
+									return false;
+								}
+								if(!conector_transaction.contains(this.datasource)){
+									conector.close();
+								}
+								return true;
+							} catch (IllegalArgumentException | IllegalAccessException e) {
+								// TODO Auto-generated catch block
+								StackTraceElement[] stack = e.getCause().getStackTrace();
+								this.log.Critic("Exists an error stablising the data model", Error70.PRIMARY_KEY_NOT_INTEGER);
+								this.log.Critic("Cause: "+e.getCause().getMessage(), Error70.PRIMARY_KEY_NOT_INTEGER);
+								this.log.Critic("Cause: ", Error70.PRIMARY_KEY_NOT_INTEGER);
+								this.log.Critic("Localized Message: "+e.getLocalizedMessage(), Error70.PRIMARY_KEY_NOT_INTEGER);
+								this.log.Critic("Message:"+e.getMessage(), Error70.PRIMARY_KEY_NOT_INTEGER);
+								this.log.Critic("-------------------- STACK --------------------", Error70.PRIMARY_KEY_NOT_INTEGER);
+								for(int k=0;k<stack.length;k++){
+									this.log.Critic(stack[k].toString(), Error70.PRIMARY_KEY_NOT_INTEGER);
+								}
+								return false;
+							}
+							
+					} else {
+						throw new EarlgreyException("To use delete with id, the primary key ModelField must be an Integer type.");
+					}
+				} else {
+					throw new EarlgreyException("To use delete with id, you need define a PrimaryKey ModelField");
+				}
+			} catch (EarlgreyException e) {
+				StackTraceElement[] stack = e.getCause().getStackTrace();
+				this.log.Critic("Exists an error stablising the data model", Error70.PRIMARY_KEY_NOT_INTEGER);
+				this.log.Critic("Cause: "+e.getCause().getMessage(), Error70.PRIMARY_KEY_NOT_INTEGER);
+				this.log.Critic("Cause: ", Error70.PRIMARY_KEY_NOT_INTEGER);
+				this.log.Critic("Localized Message: "+e.getLocalizedMessage(), Error70.PRIMARY_KEY_NOT_INTEGER);
+				this.log.Critic("Message:"+e.getMessage(), Error70.PRIMARY_KEY_NOT_INTEGER);
+				this.log.Critic("-------------------- STACK --------------------", Error70.PRIMARY_KEY_NOT_INTEGER);
+				for(int k=0;k<stack.length;k++){
+					this.log.Critic(stack[k].toString(), Error70.PRIMARY_KEY_NOT_INTEGER);
+				}
+			}
+		}
+		return false;
 	}
 	public static void openTransaction(Class clase){
 		Model modelo = (Model) clase.getAnnotation(Model.class);

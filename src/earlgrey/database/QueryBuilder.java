@@ -78,6 +78,9 @@ public class QueryBuilder {
 		String valores = String.join(",", Collections.nCopies(param_list.size(), "?"));
 		this.query = "INSERT INTO "+this.table+" ("+parametros+") VALUES ("+valores+")";
 	}
+	public void delete(){
+		this.query = "DELETE FROM "+this.table;
+	}
 	private void joinSelect(Hashtable<String,RelationDef> relation, ArrayList<String> params){
 		Enumeration<String> join_llaves = relation.keys();
 		while(join_llaves.hasMoreElements()){
@@ -105,14 +108,13 @@ public class QueryBuilder {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			}
-			else
-			{
+			} else {
 				params.add(tabla+"."+llave);
 			}
 		}
 	}
 	public void where(Hashtable<String,Field> params){
+		System.out.println(params.size());
 		if(params.size() > 0){
 			Enumeration<String> llaves = params.keys();
 			while(llaves.hasMoreElements()){
