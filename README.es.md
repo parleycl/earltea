@@ -1,6 +1,4 @@
-# Earlgrey
-
-![tea love](https://raw.githubusercontent.com/acalvoa/EARLGREY/master/console/src/client/assets/images/logo.jpg)
+![tea love](https://raw.githubusercontent.com/acalvoa/earlgrey/master/console/src/client/assets/images/logoearlgrey2.png)
 
 Earlgrey es un liviano framework java inspirado en Express, Sails.js, Phalcon PHP y Loopback para el desarrollo agil de aplicaciones orientadas a servicios y apps basadas en las arquitectura cliente servidor. Desarrolla aplicaciones con framework como Angular, React y Vue.js usando a Earlgrey como tu capa de servidor. Construye aplicaciones Y API's rapidamente y deja el trabajo de las maquinas a las maquinas.
 
@@ -18,19 +16,17 @@ Para este fin el framework propone dos principios:
 
 - El primero de ellos es **"One Framework"**, y propone que sin importar que uses para desplegar tu aplicación, el mismo codigo que fabriques funcionara en todos ellos. Si usas un contenedor como JBOSS, Tomcat, Weblogic, GlassFish, no hay ningun problema y puedes usar el que gustes, pero si decides usar el servidor embebido en earlgrey, no necesitas hacer ningun cambio, el mismo codigo te servira para ambos fines.
 
-- El segundo es **"LTMWTM"** o **"Let the machine's work to machines"**. Estamos realmente obsecionados con escribir menos codigo, otorgandole parte de la responsabilidad a la maquina, para lo cual ejecutamos automaticamente multiples tareas, que ayudan al desarrollador en su tarea de construir aplicaciones. Muchas funciones
+- El segundo es **"LTMWTM"** o **"Let the machine's work to machines"**. Estamos realmente obsecionados con escribir menos codigo, otorgandole parte de la responsabilidad a la maquina, para lo cual ejecutamos automaticamente multiples tareas, que ayudan al desarrollador en su tarea de construir aplicaciones. Earlgrey tiene muchas funciones de mapeo y reflexión entregan la información necesaria para proveer una gran consola de administración, donde los desarrolladores pueden configurar y extender las funciones de la app con funciones en tiempo real, recarga de properties sin reinicio, etc. Tambien, el nucleo de earlgrey provee muchas funcionalidades para escribir API's con interacción a base de datos, de una forma simple y rapida usando "Modelos con Blueprints", proporcionando una función similar a lo que entrega "Loopback" de IBM, usando una arquitectura orientada a modelos.
 
-- The second is **"LTMWTM"** or **"Let the machine's work to machines"**. We are obsessed with write less code, bringing part of responsibility to machine, executing automatically multiple tasks, that assist to developer in the deveping work. A lot of functions of mapping and reflection of the code provide a great admin console, when the developer can configure and extend the functions of app, with realtime functions, Hot reloading properties, etc. Also Earlgrey core provide a lot of functions to write faster API's with Database interations, using "Models with blueprints", providing a function similar to "Loopback" of IBM, using a Model oriented architecture.
+Earlgrey es adecuado para usar en cualquier tamaño de proyecto, pero es perfecto para usar en proyectos pequeños orientados a servicios que necesiten un desarrollo rapido o una implementación sencilla. Ademas Ealrgrey es perfecto para utilizar en adición con Angular, React o Vue.js, cuando necesitas usar como una API para comunicar Backend con Frontend. Es un secreto, pero Earlgrey fue originalmente hecho para construir aplicaciones con Angular y React, en donde necesitabamos que el frontend y el backend estuvieran en un solo un paquete "WAR o EAR" para generar deploys. 
 
-Earlgrey is good to use in any type of proyect, but it's perfect to use in any small or quick project oriented to services. Earlgrey it's a great solution to use in adition with Angular, React or Vue.js when you need a API to communicate Backend with Frontend. It's a secret but Earlgrey originally was made to use with apps build in Angular and React, when we need the frontend and backend in only one "WAR or EAR" packet.
+**Prueba Earlgrey, y se parte de la nueva revolución de JAVA.**
 
-**Try Earlgrey, and be part of a new JAVA revolution.**
+## Compilación y distribución
 
-## Compilation and distribution
+Para compilar y empaquetar este proyecto necesitas maven. [Apache Maven](https://maven.apache.org/).
 
-To compile and package this project you need to use Maven [Apache Maven](https://maven.apache.org/).
-
-### Installing Apache Maven
+### Instalando Apache Maven
 
 - Linux Debian Distribution
    
@@ -43,23 +39,27 @@ To compile and package this project you need to use Maven [Apache Maven](https:/
    $ sudo yum install mvn
    ```
 
-### Compiling and Packaging Earlgrey
+### Configuraciónes en Maven
+
+El proyecto utiliza como dependencia la libreria ODBC de la base de datos Oracle, para lo cual se debe configurar este repositorio en el maven local. Es importante señalar que el repositorio maven de Oracle requiere de autenticación, por lo cual se debera disponer de una cuenta en Oracle. Para mas información visita: [Configuring the Oracle Maven Repository](https://docs.oracle.com/middleware/1213/core/MAVEN/config_maven_repo.htm)
+
+### Compilando y empaquetando Earlgrey
 
 ```bash
 mvn clean package
 ```
 
-### Compiling Console
+### Compilando la consola
 
-Ealgrey use a admin console to control and configurating the operation of the framework like a subsystem. This console is built in Angular using [Angular-seed](https://github.com/mgechev/angular-seed) and is inyected in the jar while maven made the packet. To do this posible, We need compile the console, but sometimes only it's necesary the first time when the console no have a changes in his functionallity. To build the Earlgrey with the console use this command.
+Earlgrey usa una consola de administración para controlar y configurar la operación del framework, actuando como un subsistema. La consola esta construida en Angular usando [Angular-seed](https://github.com/mgechev/angular-seed) y es inyectada en el jar mientras maven fabrica el paquete Earlgrey. Para lograr esto, necesitamos previamente compilar la consola, pero solo es necesario la primera vez mientras la consola no tenga cambios que afecten su funcionalidad. Para compilar Earlgrey junto a la consola se debe usar el siguiente comando.
 
 ```bash
 mvn clean package -P console
 ```
 
-## Get Started
+## Comenzando con Earlgrey
 
-To use Earlgrey only you need import the jar to your web project and start the Earlgrey Kernel in a Servlet listener in the contextInitialized event. The Earlgrey System automatically read the project structure and load the Earlgrey structures to implement a lightweight system based on services architecture with an admin console with hot configuration options.
+Para usar Earlgrey solo necesitas importar el archivo JAR en tu proyecto web y inicializar el nucleo de Earlgrey en un Servlet Listener en el evento contextInitialized. El subsistema del framework automaticamente leera la estructura del proyecto y cargara las estructuras de Earlgrey para implementar un sistema ligero basado en una arquitectura orientada a servicios REST, con una consola de administración y opciones de configuración en caliente. Un ejemplo de lo señalado anteriormente es el siguiente.
 
 ```java
 @WebListener
@@ -73,41 +73,42 @@ public class Testapp implements ServletContextListener, ServletRequestListener {
 }
 ```
 
-## Ealgrey Controllers
+## Controladores en Earlgrey
 
-Write a controllers and API endpoints it's really easy with Earlgrey. Only you need put the controller class in a package you choose, extends the ControllerBase class. Aditional you must add the "Controller" annotation. Earlgrey System automatically recognize the controllers and map them to use in the app. To declare an Controller you need put the description, name and versión of this controller. An example of this can be.
+Escribir controladores y API's endpoints es muy sencillo en Earlgrey.
+Solo necesitas escribir la clase del controlador en el package que tu elijas y extender la clase ControllerBase. Ademas, debes incluir la anotación "Controller". Earlgrey automaticamente reconocera el controlador y la mapeara para utilizarlo dentro del subsistema. Para declarar un controlador, se debe indicar el nombre, la descripción y la versión dell controlador en la anotación. un ejemplo de esto podria ser. 
 
 ```java
-@Controller(description = "A test of Controller", name = "HelloWorld", version = 1)
+@Controller(description = "Un controlador de prueba", name = "HolaMundo", version = 1)
 public class HelloWorld extends ControllerBase {
 	/**
-     * The controller actions are code here
+     * El codigo de las acciones de controlador va aqui
      */
 }
 ```
 
-The controllers have an options to extend his behaviors like Routes, Cache, UserCache, Policies, Properties, etc. If you wan't to define a context route for this endpoint only you need to use the annotation @Route like this.
+Los controladores tienen opciones para extender su comportamiento, como rutas, cache, politicas, properties, etc. Si por ejemplo deseas definir un endpoint, solo necesitas usar la anotación @Route para asignarle una ruta.
 
 ```java
-@Controller(description = "A test of Controller", name = "HelloWorld", version = 1)
+@Controller(description = "Un controlador de prueba", name = "HolaMundo", version = 1)
 @Route(route = "/hello")
 public class HelloWorld extends ControllerBase {
 	/**
-     * The controller actions are code here
+     * El codigo de las acciones de controlador va aqui
      */
 }
 ```
 
-### Controller actions and routing.
+### Acciones de controlador y enrutamiento.
 
-In this case, the controllers Actions are the way to write endpoint actions or anything you needs. To define a controller action you need declare a @ControllerAction annotation in a public static method defined into controller. Earlgrey automatically recognize the action and map them. This method receive two parameters to handle any http request and response. An example of this can be.
+En este caso, las acciones de controlador son una forma de escribir endpoints, variaciones RESTful o lo que necesites. Para definir una acción de controlador necesitas declarar la anotación @ControllerAction en un metodo estatico de ambito publico definido dentro del controlador. Earlgrey automaticamente reconocera esta acción y la mapeara. El metodo en todos A test of Controllerlos casos recibe dos parametros para gatillar una acción http. Un ejemplo de esto seria.
 
 ```java
-@Controller(description = "A test of Controller", name = "HelloWorld", version = 1)
+@Controller(description = "Un controlador de prueba", name = "HolaMundo", version = 1)
 @Route(route = "/hello")
 public class HelloWorld extends ControllerBase {
     
-    @ControllerAction(description = "A test action to write hello world", name = "Test", version = 1)
+    @ControllerAction(description = "Una acción de prueba para escribir hola mundo", name = "prueba", version = 1)
     public static void test(HttpRequest req, HttpResponse res) {
         System.out.println("Hello world");
         return;
@@ -115,16 +116,16 @@ public class HelloWorld extends ControllerBase {
 }
 ```
 
-#### Route a Controller Action
+#### Rutas y acciones de controlador
 
-You can add diferents options to define and endpoint. All RESTFul operations are soported, and you can use like an annotation. Also you can define a Route for this endpoint with @Route annotation like the controllers. The actions support multiple HTTP methods declaration, but it's not recomended following the semantic API guidelines. An example of this can be.
+Puedes añadir diferentes opciones para definir un endpoint. Todas las operacion RESTful esta soportadas y pueden ser utilizadas como una anotación, muy similar a como se hace en Jersey. Ademas puedes definir una ruta de contexto extra para esta acción con la anotación @Route como en los controladores. Las acciones soportan multiples declaraciones de metodos HTTP, pero no es muy recomendado si quieres usar las normas de API's semanticas. Un ejemplo podria ser.
 
 ```java
-@Controller(description = "A test of Controller", name = "HelloWorld", version = 1)
+@Controller(description = "Un controlador de prueba", name = "HolaMundo", version = 1)
 @Route(route = "/hello")
 public class HelloWorld extends ControllerBase {
     
-    @ControllerAction(description = "A test action to write hello world", name = "Test", version = 1)
+    @ControllerAction(description = "Una acción de prueba para escribir hola mundo", name = "prueba", version = 1)
     @Route(route = "/world")
     @GET
     public static void test(HttpRequest req, HttpResponse res) {
@@ -134,22 +135,20 @@ public class HelloWorld extends ControllerBase {
     }
 }
 ```
-
-This definitiion make automatically an endpoint, following the next definition.
+Esta definición crea automaticamente un endpoint siguiendo la siguiente url.
 
 ```bash
 [http/https]://[HOST]:[PORT]/CONTEXT/api/[CONTEXT ENDPOINT]/[ACTION ROUTE]
 ```
-
-For the test controller action the url is defined by.
+Para el controlador test y su acción la url estaria definida por.
 
 ```bash
 [http/https]://[HOST]:[PORT]/CONTEXT/api/hello/world
 ```
 
-#### Restful methods soported
+#### Metodos RESTful soportados
 
-The next HTTP method are supported in Earlgrey. If your application container not support a method, not problem buddy, Earlgrey bypass the application server and bring support to your app to use this method following the RESTful guidelines defined in [Restfull Cookbook](http://restcookbook.com)
+Los siguientes metodos HTTP son soportados en Earlgrey. Si usas un contenedor de aplicaciones que no soporta alguno de los metodos, no hay problema amigo, porque Earlgrey efectua un bypass al servidor de aplicaciones y brinda soporte a tu app para utilizar el metodo para seguir las normas RESTful definidas en guias como [Restfull Cookbook](http://restcookbook.com) entre otras.
 
 - [X] POST (@POST)
 - [X] PUT (@PUT)
@@ -158,18 +157,18 @@ The next HTTP method are supported in Earlgrey. If your application container no
 - [X] DELETE (@DELETE)
 - [X] OPTIONS (@OPTIONS)
 
-#### Cache Support
+#### Soporte para cache
 
-Ealrgrey support cache for the controller actions in two levels, The cache can be general using the @Cache Annotation or by User using the @UserCache annotation. The general cache is a global cache for all users, while the UserCache is a cache for each user that make petitions to system, normally with diferentns results by user. Both ways define the lifetime of cache; If the lifetime are cero, Earlgrey automatically remove the register of cache memory. If the cache is not set, in the first request of client made, the cache will the take the result of petition and save into the memory. the next petitions take the result of the cache memory, enhancing the speed of response.  
+Earlgrey soporta cache para los controladores en dos niveles, el cache general usando la anotación @Cache o el cache por usuario usando la anotación @UserCache. El cache general es un cache global para todas las peticiones, mientras que el cache por usuario es un cache que solo afecta al usuario que lo genero. Ambas formas necesitan definir su tiempo de vida; Cuando el tiempo de vida llega a cero, Earlgrey automaticamente remueve el registro de memoria. Una vez que el cache es definido en una acción, queda a la espera de que sea gatillado. Para esto puede ser gatillado desde dentro de la aplicación por un Cronjob o en caso de que no exista ningun trigger, cuando el un cliente efectue la primera llamada a la acción, el cache tomara el resultado de la acción y automaticamente lo guardara en memoria. Las proximas peticiones tomaran el resultado directamente desde la memoria, mejorando drasticamente la velocidad de las respuestas.
 
-The way to use the cache are the next for global cache.
+La manera de usar el cache es la siguiente para el cache global.
 
 ```java
-@Controller(description = "A test of Controller", name = "HelloWorld", version = 1)
+@Controller(description = "Un controlador de prueba", name = "HolaMundo", version = 1)
 @Route(route = "/hello")
 public class HelloWorld extends ControllerBase {
     
-    @ControllerAction(description = "A test action to write hello world", name = "Test", version = 1)
+    @ControllerAction(description = "Una acción de prueba para escribir hola mundo", name = "prueba", version = 1)
     @Route(route = "/world")
     @GET
     @Cache(time = 3600) // Time in seconds
@@ -180,14 +179,14 @@ public class HelloWorld extends ControllerBase {
     }
 }
 ```
-The way to use the cache are the next for user cache.
+La forma de usar el cache de usuario es la siguiente.
 
 ```java
-@Controller(description = "A test of Controller", name = "HelloWorld", version = 1)
+@Controller(description = "Un controlador de prueba", name = "HolaMundo", version = 1)
 @Route(route = "/hello")
 public class HelloWorld extends ControllerBase {
     
-    @ControllerAction(description = "A test action to write hello world", name = "Test", version = 1)
+    @ControllerAction(description = "Una acción de prueba para escribir hola mundo", name = "prueba", version = 1)
     @Route(route = "/world")
     @GET
     @UserCache(time = 3600) // Time in seconds
@@ -199,52 +198,122 @@ public class HelloWorld extends ControllerBase {
 }
 ```
 
-## Earlgrey ORM Functions.
+## Match ORM y sus funciones.
 
-Earlgrey implement a lightweight ORM to operate with databases in a common way. This ORM works based on Models definitions in the code write by the apps developers. Earlgrey recognize the models and map them to interact with the controllers and the configuration console. You can define Blueprints Models that implement the CRUD operations in the REST API based only in the model. The ORM provide a powerfull function set to operate with the database, with a custom querys, transaction suport and multi tenancy.
+Earlgrey implementa un ORM ligero llamado Match para operar con bases de datos de una forma estandar. Este ORM funciona leyendo las estructuras definidas por los desarrolladores en los Modelos. Earlgrey reconoce los modelos y los mapea para interactuar con los controladores y la consola de configuración. Ademas, puedes definir "Blueprints models", los cuales implementan las operaciones CRUD en una API REST, basadas solamente en la definición del modelo. El ORM provee un set poderoso y reducido set de funciones para operar con las bases de datos, con soporte para consultas personalizadas, transacciones y multi tenancy.
 
-### Datasbase Suport
+### Bases de datos soportadas
 
 * [X] Mysql
 * [X] Oracle
 * [X] Postgres
 
-### Model Declaration
+### Declaración de un Modelo
 
-To DO
+Para declarar un modelo se debe definir una clase que extienda de la clase ModelCore. Ademas se debe incluir la anotación descriptiva @Model para que Earlgrey pueda describirlo dentro de sus funciones de mapeo. Para declara un modelo sencillo se deben declarar campos, los cuales deben ser homologados al tipo de datos que desea alterar en la fuente de datos. Un ejemplo podria verse asi.
 
-### Blueprint Model
+```java
+@Model(name = "CATEGORIES", tableName = "CATEGORIES", version = 1)
+public class Category extends ModelCore {
+    @ModelField
+    @PrimaryKey
+    public Integer ID;
+    @ModelField
+    @Required
+    public String NAME;
+    @ModelField
+    public String DESCRIPTION;
+    @ModelField
+    public String STATUS;
+}
+```
+Como se puede apreciar, el modelo es definido como una clase con los atributos correspondientes. Earlgrey, utiliza todos los datos del ORM como objetos de tipo ModelCore. Cada atributo es una columna de una tabla en el origen de datos, dentro de las cuales es conveniente definir y designar cual de esta es la llave primaria o identificador. Todos los atributos deben llevar la anotación @ModelField para ser reconocidos como una columna en el origen de datos.
 
-To DO
+### Opciones declarativas
 
-### ORM Operations
+Matcha provee un juego de anotaciones que permite definir y extender los modelos de datos. Para esto, se utilizan las siguientes anotaciones.
 
-To DO
+* **@ModelField**: Es la anotación por defecto utilizada para declarar un atributo de un modelo de datos.
+* **@Require**: La anotación Require indica que un atributo que posee la anotación ModelField es requerido para efectuar operación de tipo insert. Cuando un modelo es definido como Blueprint automaticamente se convierte en un parametro requerido.
+* **@DefaultValue**: La anotación DefaultValue define un valor por defecto para un atributo. La anotación @DefaultValue es incompatible con la anotación @Require.
+* **@Unique**: La anotación unique es utilizada para definir un campo que tiene como restricción que es de tipo unico. Es una anotación declarativa y se utiliza para la construcción de modelos. No es compatible con la anotación @Defaultvalue.
+* **@AutoIncrement**: Permite que la columna sube incrementalmente su valor fila tras fila, para atributos que tienen definido tipos numericos. Al igual que la anotación @Unique, es una propiedad declarativa y no es compatible con la anotación @DefaultValue.
+* **@PrimaryKey**: Esta anotación define la llave primaria de un modelo de datos. Solo puede existir una llave primaria por modelo de datos. La llave primaria debe ser un @Modelfield como todos los atributos.
+* **@MultiTenant**: Es una anotación utilizada a nivel de modelo de datos para definir que este es de tipo multitenant. Un modelo de tipo multitenant no esta asociado a un datasource en particular, si no que tiene datasources dinamicos dependiendo el usuario que utiliza el modelo de datos.
+* **@Route**: La anotación route es utilizada para definir un modelo de datos como Blueprint. Esto quiere decir que en la ruta especificada se suscribe un endpoint capaz de proveer las operaciones CRUD. Para mas información vease Modelos Blueprints. 
+* **@ModelJoin**: Es utilizado para definir que un campo del modelo actual se relaciona con el campo de otro modelo. Debe ser utilizado sobre un atributo previamente definido como @ModelField.
+* **@ModelRelation**: Es utilizado para definir campos en un modelo que pertenecen a otro modelo de datos que fue previamente asociado con un @ModelJoin.
 
-## Ealgrey Console
+### Modelos Blueprints 
 
-To admin Earlgrey, you only need a web browser. Earlgrey provide a Admin interface to config the main posibilities. In this console you can config the properties, controllers, models, routes, view the logs, config the custer configuration and everything you needs to generate a great app.
+Para definir un "Blueprint Model" solo es necesario agregar la anotación @Route, con esto Earlgrey automaticamente lo reconocera como un Endpoint CRUD en la ruta especificada. Los blueprint model contienen el siguiente set de funciones.
 
-To access to the console only put in your web browser the next url.
+* **Get all data (GET):** Efectua una operación find recibiendo como parametro los campos que se deseen usar como criterio de busqueda. si es definido como criterio de bsuqueda un campo que no esta definido en el modelo, sera ignorado. retornara el codigo HTTP 200 [Ok](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/200) y los objetos del modelo si la petición es correcta.
+
+```
+curl -X GET [http/https]://[HOST]:[PORT]/CONTEXT/api/route?params
+```
+* **Get singular data (GET):** Efectua una operación findOne recibiendo como parametro de ruta el campo id. Retornara el codigo HTTP 200 [Ok](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/200) y el objeto que tenga como PrimaryKey el valor definido. Para esto es necesario que este definido el un atributo como @PrimaryKey, o retornara un error 400 [Bad Request](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400).
+
+```
+curl -X GET [http/https]://[HOST]:[PORT]/CONTEXT/api/route/:id
+```
+
+* **Insert (POST):** Efectua una operación insert recibiendo como parametro los campos que se desean agregar. Retornara el codigo 201 [Created](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/201) y el objeto creado, si la petición es exitosa. Si existe algun atributo definido como required y no es incluido en la petición, retornara un error 422 [Unprocessable Entity](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/422)
+
+```
+curl -H 'Content-Type: application/json' -X POST  -d '{JSON OBJECT}'
+[http/https]://[HOST]:[PORT]/CONTEXT/api/route
+```
+
+* **Update (PATCH):** Efectua una operación update recibiendo como parametro de ruta el campo id. Retornara el codigo HTTP 200 [Ok](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/200) y el objeto que tenga como PrimaryKey el valor definido. Para esto es necesario que este definido el un atributo como @PrimaryKey, o retornara un error 400 [Bad Request](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400).
+
+```
+curl -H 'Content-Type: application/json' -X PATCH -d '{JSON OBJECT}'
+[http/https]://[HOST]:[PORT]/CONTEXT/api/route/:id
+```
+
+* **Destroy (DELETE):** Efectua una operación delete recibiendo como parametro de ruta el campo id. Retornara el codigo HTTP 204 [No Content](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/204) en caso de ser exitoso. Para esto es necesario que este definido el un atributo como @PrimaryKey, o retornara un error 400 [Bad Request](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400).
+
+```
+curl -X DELETE [http/https]://[HOST]:[PORT]/CONTEXT/api/route/:id
+```
+### Operaciones ORM soportadas
+
+* [X] find()
+* [X] findOne()
+* [X] match()
+* [X] insert()
+* [X] delete()
+* [X] delete(Integer id)
+* [X] update()
+* [X] update(Integer id)
+* [X] count()
+
+## Consola Ealgrey
+
+Para administrar Earlgrey, solamente necesitas un navegador web. Earlgrey provee un interfaz de administrador para configurar las principales posibilidades. En esta consola, puedes configurar properties, controladores, modelos, rutas, ver logs, configurar la disposición en cluster y todo lo que neceitas para generar una gran app.
+
+Para acceder a la consola solo necesitas ingresar en tu navegador la siguiente url.
 
 ```bash
 [http/https]://[HOST]:[PORT]/CONTEXT/console/
 ```
 
-If your first time use this credentials:
+Si es tu primera vez, utiliza las siguientes credenciales.
 
 ```bash
 Username: admin
 Password: earlgrey
 ```
 
-For example, if you need access to the console with a www.test.com domain in the 8080 port, with the tessapp context, without a ssl connection, the url should be. 
+Por ejemplo, si necesitas acceder a la consola de una aplicación ubicada en el dominio www.test.com ubicada en el puerto 8080, con el contexto de aplicación testapp, sin un certificado ssl, la url podria ser.
 
 ```bash
 http://www.test.com:8080/testapp/console/
 ```
 
-If your app run on the 80 port, you can skip the port. An example should be.
+Si utilizadas el puerto 80, puedes omitir el puerto. El ejemplo quedaria como el siguiente.
 
 ```bash
 http://www.test.com/testapp/console/
@@ -253,17 +322,19 @@ http://www.test.com/testapp/console/
 
 ## Earlgrey Seed
 
-Use Earlgrey is simple with the common archetype developed by us. Only you need code your controller and models to make quickly a strongs API's, based on REST Arquitecture. Earlgrey provide a RESTFul support, and the posibility to write Blueprints Models to get the CRUD operations with a minimal coding operations. Also you can extend the archetype to build a large projects in java technology with types, custom errors and policies, and a lot of operations in the earlgrey console.
+Usar Earlgrey es simple con el arquetipo comun desarrollado por nosotros. Solo necesitas escribir tus controladores y modelos para crear rapidamente robustas API's, basadas en arquitectura REST. Earlgrey provee soporte RESTful y la posibilidad de escribir "Blueprints Models" para obtener operaciones CRUD con un minimo de esfuerzo y escribiendo muy poco codigo JAVA. Ademas, puedes extender el arquetipo para crear grandes proyectos en tecnologia JAVA con tipos, errores y politicas personalizadas y un gran conjunto de operaciones en la consola earlgrey.  
 
-Visit [Earlgrey Seed](https://github.com/acalvoa/Ealgrey_seed) to more information.
+Visita [Earlgrey Seed](https://github.com/acalvoa/Ealgrey_seed) Para obtener mas información.
 
 ## Earlgrey CLI
 
-Visit [Earlgrey CLI](https://github.com/brutalchrist/earlgrey-cli) to more information.
+Earlgrey provee un CLI llamado "Infusión", que permite no solo crear nuevos proyectos a partir de un arquetipo, sino tambien automatizar gran parte de las tardes de creación de nuevos componentes y elementos en earlgrey, bajo normas estructuradas. Su uso es altamente recomendado en proyectos donde se requieren normas y estructuras de directorio para definir componentes. 
 
-## Contributors
+Visita [Earlgrey CLI](https://github.com/brutalchrist/earlgrey-cli) para obtener mas información.
 
-Thanks to all beautiful people than make be possible this project
+## Contribuidores
+
+Gracias a todas las hermosas personas que hacen posible este proyecto.
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore -->
@@ -271,9 +342,9 @@ Thanks to all beautiful people than make be possible this project
 |:----:|:----:|:----:|
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-**Made with ♥ in Chile by all us.**
+**Hecho con ♥ en Chile por todos nosotros.**
 
-## LICENSE
+## LICENCIA
 
 MIT
 
