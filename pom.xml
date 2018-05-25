@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>earlgrey</groupId>
     <artifactId>earlgrey</artifactId>
-    <version>0.3.2</version>
+    <version>0.3.4</version>
     <name>earlgrey</name>
     <packaging>jar</packaging>
     <profiles>
@@ -61,6 +61,7 @@
                             <mainClass>${fully.qualified.main.class}</mainClass>
                         </transformer>
                         </transformers>
+                        <outputFile>target/compiled/${project.artifactId}-${project.version}.jar</outputFile>
                     </configuration>
                     </execution>
                 </executions>
@@ -162,5 +163,10 @@
                 <artifactId>guava</artifactId>
                 <version>23.0</version>
             </dependency>
+            <dependency>
+			    <groupId>mysql</groupId>
+			    <artifactId>mysql-connector-java</artifactId>
+			    <version>5.1.6</version>
+			</dependency>
     </dependencies>
 </project>

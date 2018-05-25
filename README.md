@@ -1,5 +1,4 @@
-![tea love](https://github.com/acalvoa/earlgrey/blob/master/console/src/client/assets/images/logoearlgrey2.png)
-
+![tea love](https://raw.githubusercontent.com/acalvoa/earlgrey/master/console/src/client/assets/images/logoearlgrey2.png)
 A Lightweight Java Services Framework inspired in Nodejs Express, Sails.js &amp; Phalcon PHP and Loopback for quick develop of apps based in client server architecture. Build apps with frontend frameworks like Angular, React and Vue.js. Code and build faster and leave the machine's work to machines.
 
 ## Why Earlgrey? 
@@ -131,7 +130,7 @@ public class HelloWorld extends ControllerBase {
 }
 ```
 
-This definitiion make automatically an endpoint, following the next definition.
+This definition make automatically an endpoint, following the next definition.
 
 ```bash
 [http/https]://[HOST]:[PORT]/CONTEXT/api/[CONTEXT ENDPOINT]/[ACTION ROUTE]
@@ -156,7 +155,7 @@ The next HTTP method are supported in Earlgrey. If your application container no
 
 #### Cache Support
 
-Ealrgrey support cache for the controller actions in two levels, The cache can be general using the @Cache Annotation or by User using the @UserCache annotation. The general cache is a global cache for all users, while the UserCache is a cache for each user that make petitions to system, normally with diferentns results by user. Both ways define the lifetime of cache; If the lifetime are cero, Earlgrey automatically remove the register of cache memory. If the cache is not set, in the first request of client made, the cache will the take the result of petition and save into the memory. the next petitions take the result of the cache memory, enhancing the speed of response.  
+Ealrgrey support cache for the controller actions in two levels, The cache can be general using the @Cache Annotation or by User using the @UserCache annotation. The general cache is a global cache for all users, while the UserCache is a cache for each user that make petitions to system, normally with diferentns results by user. Both ways define the lifetime of cache; When the lifetime are cero, Earlgrey automatically remove the register of cache memory. If the cache is not set, in the first request of client made, the cache will the take the result of petition and save into the memory. the next petitions take the result of the cache memory, enhancing the speed of response.  
 
 The way to use the cache are the next for global cache.
 
@@ -234,7 +233,7 @@ Username: admin
 Password: earlgrey
 ```
 
-For example, if you need access to the console with a www.test.com domain in the 8080 port, with the tessapp context, without a ssl connection, the url should be. 
+For example, if you need access to the console with a www.test.com domain in the 8080 port, with the testapp context, without a ssl connection, the url should be. 
 
 ```bash
 http://www.test.com:8080/testapp/console/

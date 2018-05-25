@@ -121,8 +121,8 @@ public class HttpActionDef implements Runnable, Process{
 		this.session.ping(metodo);
 		if(metodo.isAnnotationPresent(Cache.class)){
 			CacheCore cache = CacheCore.getInstance();
-			if(cache.hasCache(this.request.getRequestURI())) {
-				CacheElement element = cache.getCache(this.request.getRequestURI());
+			if(cache.hasCache(this.request.getRequestURI()+this.parametros.toString())) {
+				CacheElement element = cache.getCache(this.request.getRequestURI()+this.parametros.toString());
 				this.processCache(element, response);
 				return;
 			} else {
@@ -130,8 +130,8 @@ public class HttpActionDef implements Runnable, Process{
 			}
 		}
 		if(metodo.isAnnotationPresent(UserCache.class)){
-			if(this.session.hasCache(this.request.getRequestURI())) {
-				CacheElement element = this.session.getCache(this.request.getRequestURI());
+			if(this.session.hasCache(this.request.getRequestURI()+this.parametros.toString())) {
+				CacheElement element = this.session.getCache(this.request.getRequestURI()+this.parametros.toString());
 				this.processCache(element, response);
 				return;
 			} else {
@@ -189,10 +189,10 @@ public class HttpActionDef implements Runnable, Process{
 			if(metodo.isAnnotationPresent(Cache.class)){
 				Cache cache_annotation = metodo.getAnnotation(Cache.class);
 				CacheCore cache = CacheCore.getInstance();
-				cache.setCache(this.request.getRequestURI(), content, cache_annotation.time(), type);
+				cache.setCache(this.request.getRequestURI()+this.parametros.toString(), content, cache_annotation.time(), type);
 			} else if(metodo.isAnnotationPresent(UserCache.class)) {
 				Cache cache_annotation = metodo.getAnnotation(Cache.class);
-				this.session.setCache(this.request.getRequestURI(), content, cache_annotation.time(), type);
+				this.session.setCache(this.request.getRequestURI()+this.parametros.toString(), content, cache_annotation.time(), type);
 			}
 		}
 	}

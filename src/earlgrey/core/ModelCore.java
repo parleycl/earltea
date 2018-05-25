@@ -22,7 +22,9 @@ import earlgrey.annotations.ModelRelation;
 import earlgrey.annotations.PrimaryKey;
 import earlgrey.database.Connector;
 import earlgrey.database.QueryBuilder;
+import earlgrey.def.Criteria;
 import earlgrey.def.RelationDef;
+import earlgrey.error.EarlgreyException;
 import earlgrey.error.Error500;
 import earlgrey.error.Error70;
 import earlgrey.error.Error800;
@@ -36,10 +38,10 @@ public class ModelCore {
 	protected String datasource;
 	protected Connector conector;
 	protected Field primaryKey;
-	protected Hashtable<String,Field> fields = new Hashtable<String,Field>();
+	protected Hashtable<String,Criteria> fields = new Hashtable<String,Criteria>();
 	protected Hashtable<String,RelationDef> relation = new Hashtable<String,RelationDef>();
 	protected Hashtable<String,RelationDef> join = new Hashtable<String,RelationDef>();
-	protected Hashtable<String,Field> prepare_fields = new Hashtable<String,Field>();
+	protected Hashtable<String,Criteria> prepare_fields = new Hashtable<String,Criteria>();
 	protected ArrayList<String> where_field = new ArrayList<String>();
 	protected boolean transaction;
 	protected static Hashtable<String,Connector> conector_transaction = new Hashtable<String,Connector>();
@@ -197,7 +199,7 @@ public class ModelCore {
 				ModelCore m = (ModelCore) model.newInstance();
 				while(keys.hasMoreElements()){
 					String llave = keys.nextElement();
-					Field campo = fields.get(llave);
+					Field campo = fields.get(llave).field;
 					if(campo.getType().equals(int.class) || campo.getType().equals(Integer.class)){
 						campo.set(m, set.getInt(llave));
 					}
@@ -296,7 +298,7 @@ public class ModelCore {
 				JSONObject objeto = new JSONObject();
 				while(keys.hasMoreElements()){
 					String llave = keys.nextElement();
-					Field campo = fields.get(llave);
+					Field campo = fields.get(llave).field;
 					if(campo.getType().equals(int.class) || campo.getType().equals(Integer.class)){
 						objeto.put(llave, set.getInt(llave));
 					}
@@ -405,7 +407,7 @@ public class ModelCore {
 		for(int i=0;i<campos.length;i++){
 			try {
 				if(campos[i].get(this) != null){
-					this.prepare_fields.put(campos[i].getName(), campos[i]);
+					this.prepare_fields.put(campos[i].getName(), new Criteria(this,campos[i]));
 				}
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				// TODO Auto-generated catch block
@@ -444,8 +446,136 @@ public class ModelCore {
 	public static ModelCore FindOne(){
 		return null;
 	}
-	public static void update(){
-		
+	public boolean update(JSONObject criteria){
+		if(conector_transaction.contains(this.datasource)){
+			this.conector = conector_transaction.get(this.datasource);
+            this.transaction = true;
+		}
+		else
+		{
+			this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
+		}
+		if(conector != null){
+			// Efectuamos el mapeo de los campos que seran modificados
+			// Si los campos a modificar son invalidos o no existe ninguno la consulta no es valida
+			this.mapNNFields();
+			if(this.fields.size() == 0) {
+				this.log.Warning("The update querys need at least one field change to execute a query");
+				return false; 
+			}
+			QueryBuilder q = new QueryBuilder(table,this);
+			q.update(this.fields);
+			q.setField(this.fields);
+			// Extraemos los campos a modificar. Debe haber al menos una criteria valida
+			Hashtable<String, Criteria> wheref = this.getparams(criteria);
+			if(wheref.size() == 0) {
+				this.log.Warning("The update querys need at least one valid criteria params to execute a query");
+				return false;
+			}
+			q.where(wheref);
+			q.makeConditional();
+			conector.prepare(q.getQuery(), this.primaryKey);
+			// PREPARAMOS LOS FIELDS
+			conector.complete(q.prepared(), q.prepared_list());
+			if(!conector.executeUpdate()){
+				// HANDLEREAMOS EL INSERT
+				if(!conector_transaction.contains(this.datasource)){
+					conector.close();
+				}
+				return false;
+			}
+			if(!conector_transaction.contains(this.datasource)){
+				conector.close();
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+	public boolean update(int id){
+		if(conector_transaction.contains(this.datasource)){
+			this.conector = conector_transaction.get(this.datasource);
+            this.transaction = true;
+		}
+		else
+		{
+			this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
+		}
+		if(conector != null){
+			// Efectuamos el mapeo de los campos que seran modificados
+			// Si los campos a modificar son invalidos o no existe ninguno la consulta no es valida
+			this.mapNNFields();
+			if(this.primaryKey != null) {
+				if(this.primaryKey.getType() == Integer.class) {
+					if(this.fields.size() == 0) {
+						this.log.Warning("The update querys need at least one field change to execute a query");
+						return false; 
+					}
+					QueryBuilder q = new QueryBuilder(table,this);
+					q.update(this.fields);
+					q.setField(this.fields);
+					// Creamos una llave unica con el criteria
+					JSONObject criteria = new JSONObject();
+					criteria.put(this.primaryKey.getName(), id);
+					// Extraemos los campos a modificar. Debe haber al menos una criteria valida
+					Hashtable<String, Criteria> wheref = this.getparams(criteria);
+					if(wheref.size() == 0) {
+						this.log.Warning("The update querys need at least one valid criteria params to execute a query");
+						return false;
+					}
+					q.where(wheref);
+					q.makeConditional();
+					conector.prepare(q.getQuery(), this.primaryKey);
+					// PREPARAMOS LOS FIELDS
+					conector.complete(q.prepared(), q.prepared_list());
+					if(!conector.executeUpdate()){
+						// HANDLEREAMOS EL INSERT
+						if(!conector_transaction.contains(this.datasource)){
+							conector.close();
+						}
+						return false;
+					}
+					if(!conector_transaction.contains(this.datasource)){
+						conector.close();
+					}
+					return true;
+				} else {
+					this.log.Warning("The update queries with id need a PrimaryKey to execute and must be an Integer");
+					return false;
+				}
+			} else {
+				this.log.Warning("The update queries with id need a PrimaryKey to execute and must be an Integer");
+				return false;
+			}
+			
+		} else {
+			return false;
+		}
+	}
+	private Hashtable<String,Criteria> getparams(JSONObject params) {
+		Iterator<String> keys = params.keys();
+		Hashtable<String,Criteria> parametros = new Hashtable<String,Criteria>();
+		while(keys.hasNext()){
+			String key = keys.next();
+			try {
+				ModelCore mc = (ModelCore) this.model.newInstance();
+				Field campo = this.model.getField(key);
+				if(campo.getType().equals(int.class) || campo.getType().equals(Integer.class)){
+					campo.set(mc, params.getInt(key));
+				} else if(campo.getType().equals(float.class) || campo.getType().equals(Float.class)){
+					campo.set(mc, params.getDouble(key));
+				} else if(campo.getType().equals(double.class) || campo.getType().equals(Double.class)){
+					campo.set(mc, params.getDouble(key));
+				} else if(campo.getType().equals(String.class)){
+					campo.set(mc, params.getString(key));
+				} else {
+					continue;
+				}
+				parametros.put(campo.getName(), new Criteria(mc, campo));
+			} catch (NoSuchFieldException | SecurityException | InstantiationException | IllegalAccessException e) {
+			}
+		}
+		return parametros;
 	}
 	public boolean insert(){
 		this.prepareParams();
@@ -463,9 +593,14 @@ public class ModelCore {
 			if(!conector.executeUpdate()){
 			    this.conector.close();
 				// HANDLEREAMOS EL INSERT
+				if(!conector_transaction.contains(this.datasource)){
+					conector.close();
+				}
 				return false;
 			}
-			this.conector.close();
+			if(!conector_transaction.contains(this.datasource)){
+				conector.close();
+			}
 			return true;
 		}
 		this.conector.close();
@@ -481,8 +616,112 @@ public class ModelCore {
 		}
 		return -1;
 	}
-	public static void delete(){
-		
+	public boolean delete(){
+		this.prepareParams();
+		if(conector_transaction.contains(this.datasource)){
+			this.conector = conector_transaction.get(this.datasource);
+            this.transaction = true;
+		}
+		else
+		{
+			this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
+		}
+		if(conector != null){
+			this.prepareParams();
+			this.mapFields();
+			// BUSCAMOS EL NOMBRE DE LA TABLA
+			// EN ESTE SEGMENTO VA EL CODIGO DE LA CONSULTA
+			QueryBuilder q = new QueryBuilder(table,this);
+			q.delete();
+			q.where(prepare_fields);
+			q.makeConditional();
+			conector.prepare(q.getQuery(), this.primaryKey);
+			// PREPARAMOS LOS FIELDS
+			conector.complete(q.prepared(), q.prepared_list());
+			if(!conector.executeUpdate()){
+				// HANDLEREAMOS EL INSERT
+				if(!conector_transaction.contains(this.datasource)){
+					conector.close();
+				}
+				return false;
+			}
+			if(!conector_transaction.contains(this.datasource)){
+				conector.close();
+			}
+			return true;
+		}
+		return false;
+	}
+	public boolean delete(Integer id){
+		this.prepareParams();
+		if(conector_transaction.contains(this.datasource)){
+			this.conector = conector_transaction.get(this.datasource);
+            this.transaction = true;
+		}
+		else
+		{
+			this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
+		}
+		if(conector != null){
+			this.mapFields();
+			try {
+				if(this.primaryKey != null) {
+					if(this.primaryKey.getType() == Integer.class) {
+							QueryBuilder q = new QueryBuilder(table,this);
+							try {
+								this.primaryKey.set(this, id);
+								this.prepareParams();
+								q.delete();
+								q.where(prepare_fields);
+								q.makeConditional();
+								conector.prepare(q.getQuery(), this.primaryKey);
+								conector.complete(q.prepared(), q.prepared_list());
+								if(!conector.executeUpdate()){
+									// HANDLEREAMOS EL INSERT
+									if(!conector_transaction.contains(this.datasource)){
+										conector.close();
+									}
+									return false;
+								}
+								if(!conector_transaction.contains(this.datasource)){
+									conector.close();
+								}
+								return true;
+							} catch (IllegalArgumentException | IllegalAccessException e) {
+								// TODO Auto-generated catch block
+								StackTraceElement[] stack = e.getCause().getStackTrace();
+								this.log.Critic("Exists an error stablising the data model", Error70.PRIMARY_KEY_NOT_INTEGER);
+								this.log.Critic("Cause: "+e.getCause().getMessage(), Error70.PRIMARY_KEY_NOT_INTEGER);
+								this.log.Critic("Cause: ", Error70.PRIMARY_KEY_NOT_INTEGER);
+								this.log.Critic("Localized Message: "+e.getLocalizedMessage(), Error70.PRIMARY_KEY_NOT_INTEGER);
+								this.log.Critic("Message:"+e.getMessage(), Error70.PRIMARY_KEY_NOT_INTEGER);
+								this.log.Critic("-------------------- STACK --------------------", Error70.PRIMARY_KEY_NOT_INTEGER);
+								for(int k=0;k<stack.length;k++){
+									this.log.Critic(stack[k].toString(), Error70.PRIMARY_KEY_NOT_INTEGER);
+								}
+								return false;
+							}
+							
+					} else {
+						throw new EarlgreyException("To use delete with id, the primary key ModelField must be an Integer type.");
+					}
+				} else {
+					throw new EarlgreyException("To use delete with id, you need define a PrimaryKey ModelField");
+				}
+			} catch (EarlgreyException e) {
+				StackTraceElement[] stack = e.getCause().getStackTrace();
+				this.log.Critic("Exists an error stablising the data model", Error70.PRIMARY_KEY_NOT_INTEGER);
+				this.log.Critic("Cause: "+e.getCause().getMessage(), Error70.PRIMARY_KEY_NOT_INTEGER);
+				this.log.Critic("Cause: ", Error70.PRIMARY_KEY_NOT_INTEGER);
+				this.log.Critic("Localized Message: "+e.getLocalizedMessage(), Error70.PRIMARY_KEY_NOT_INTEGER);
+				this.log.Critic("Message:"+e.getMessage(), Error70.PRIMARY_KEY_NOT_INTEGER);
+				this.log.Critic("-------------------- STACK --------------------", Error70.PRIMARY_KEY_NOT_INTEGER);
+				for(int k=0;k<stack.length;k++){
+					this.log.Critic(stack[k].toString(), Error70.PRIMARY_KEY_NOT_INTEGER);
+				}
+			}
+		}
+		return false;
 	}
 	public static void openTransaction(Class clase){
 		Model modelo = (Model) clase.getAnnotation(Model.class);
@@ -534,7 +773,7 @@ public class ModelCore {
 		return true;
 	}
 	private void mapFields(){
-		this.fields = new Hashtable<String,Field>();
+		this.fields = new Hashtable<String,Criteria>();
 		Field[] field_array = model.getFields();
 		for(int i=0;i<field_array.length;i++){
 			Annotation[] anotaciones = field_array[i].getDeclaredAnnotations();
@@ -550,7 +789,7 @@ public class ModelCore {
 					}
 					else if(ModelField.class.isAssignableFrom(anotaciones[l].getClass())){
 						if(relation) throw new Exception("You can't declare a field like ModelField if previously was declared like ModelRelation");
-						this.fields.put(field_array[i].getName(), field_array[i]);
+						this.fields.put(field_array[i].getName(), new Criteria(this, field_array[i]));
 						field = true;
 					}
 					else if(ModelRelation.class.isAssignableFrom(anotaciones[l].getClass())){
@@ -581,7 +820,7 @@ public class ModelCore {
 		}
 	}
 	private void mapNNFields() {
-		this.fields = new Hashtable<String,Field>();
+		this.fields = new Hashtable<String,Criteria>();
 		Field[] field_array = model.getFields();
 		for(int i=0;i<field_array.length;i++){
 			Annotation[] anotaciones = field_array[i].getDeclaredAnnotations();
@@ -598,7 +837,7 @@ public class ModelCore {
 					else if(ModelField.class.isAssignableFrom(anotaciones[l].getClass())){
 						if(relation) throw new Exception("You can't declare a field like ModelField if previously was declared like ModelRelation");
 						if(field_array[i].get(this) != null){
-							this.fields.put(field_array[i].getName(), field_array[i]);
+							this.fields.put(field_array[i].getName(), new Criteria(this,field_array[i]));
 							field = true;
 						}
 					}
