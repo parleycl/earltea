@@ -1,6 +1,6 @@
 ## Changelog
 
-
+### [Bugfix: Modify the criteria of blueprint model](https://github.com/acalvoa/earlgrey/pull/68) (29/05/2018) 
 ### [Feature: Add the blueprint models](https://github.com/acalvoa/earlgrey/pull/67) (29/05/2018) 
 ### [Feature: Add update and delete operation in ORM ](https://github.com/acalvoa/earlgrey/pull/66) (24/05/2018) 
 ### [Bugfix: Se resuelve JSONArra not found, en getOneJSON ModelCore ](https://github.com/acalvoa/earlgrey/pull/49) (23/04/2018) 
