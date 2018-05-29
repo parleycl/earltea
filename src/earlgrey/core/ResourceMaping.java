@@ -28,7 +28,6 @@ import earlgrey.annotations.AddPropertieArray;
 import earlgrey.annotations.AddPropertieOption;
 import earlgrey.annotations.AddPropertieSet;
 import earlgrey.annotations.AddPropertieSetTemplate;
-import earlgrey.annotations.Blueprints;
 import earlgrey.annotations.CORS;
 import earlgrey.annotations.Console;
 import earlgrey.annotations.Controller;
@@ -101,8 +100,8 @@ public class ResourceMaping {
 		this.MapProperties();
 		this.MapPolicies();
 		this.MapConsole();
-		this.MapControllers();
 		this.MapModels();
+		this.MapControllers();
 		this.search_database_drivers();
 		
 	}
@@ -118,8 +117,8 @@ public class ResourceMaping {
 		this.MapProperties();
 		this.MapPolicies();
 		this.MapConsole();
-		this.MapControllers();
 		this.MapModels();
+		this.MapControllers();
 		this.search_database_drivers();
 	}
 	private void mapFiles(){
@@ -668,13 +667,16 @@ public class ResourceMaping {
 					// BUSCAMOS LAS ANOTACIONES QUE DECLARAN COMO MODELO
 					Model model = cls.getAnnotation(Model.class);
 					if(model != null){
+						if(this.ModelTable.containsKey(model.name())) {
+							this.log.Warning("You have more than one model with the name "+model.name());
+						}
 						this.log.Info("Mapping Model: "+model.name());
 						this.ModelTable.put(model.name(), cls);
 						// BUSCAMOS SI TIENE PROPIEDADES REST
 						// DE LO CONTRARIO NO TIENE SENTIDO EL QUE TENGA UNA RUTA ASIGNADA
 						// EN CASO DE QUE TENGA PROPIEDADES REST SE DEBE ASIGNAR UN OBJETO DE EJECUCIÓN PARA EL MODELO
 						// SI EL MODELO AUTOINSTANCIADO NO POSEE RUTA DAREMOS UN WARNING INFORMANDO
-						Blueprints blueprints = cls.getAnnotation(Blueprints.class);
+						Route blueprints = cls.getAnnotation(Route.class);
 						if(blueprints != null){
 							Route route = cls.getAnnotation(Route.class);
 							if(route != null){
@@ -682,21 +684,43 @@ public class ResourceMaping {
 								String ruta_uri = route.route().trim();
 								if(ruta_uri.endsWith("/")) ruta_uri = ruta_uri.substring(0, (ruta_uri.length()-1));
 								if(ruta_uri.startsWith("/")) ruta_uri = ruta_uri.substring(1);
+								// Route the method withouth params
 								RouteDef router = this.MapRoute(ruta_uri);
-								ActionDef actionHttp[] = new ActionDef[6];
-								actionHttp[0] = router.createAction(HttpMethod.DELETE, ModelRest.class);
-								actionHttp[1] = router.createAction(HttpMethod.GET, ModelRest.class);
-								actionHttp[2] = router.createAction(HttpMethod.POST, ModelRest.class);
-								actionHttp[3] = router.createAction(HttpMethod.PUT, ModelRest.class);
-								actionHttp[4] = router.createAction(HttpMethod.PATCH, ModelRest.class);
-								actionHttp[5] = router.createAction(HttpMethod.OPTIONS, ModelRest.class);
+								ActionDef actionHttp[] = new ActionDef[3];
+								try {
+									actionHttp[0] = router.createAction(HttpMethod.GET, ModelRest.class, ModelRest.class.getMethod("find", HttpRequest.class, HttpResponse.class, Class.class));
+									actionHttp[1] = router.createAction(HttpMethod.POST, ModelRest.class, ModelRest.class.getMethod("create", HttpRequest.class, HttpResponse.class, Class.class));
+									actionHttp[2] = router.createAction(HttpMethod.OPTIONS, ModelRest.class, ModelRest.class.getMethod("options", HttpRequest.class, HttpResponse.class, Class.class));
+								} catch (NoSuchMethodException | SecurityException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
 								// Set all actions like model rest
 								for(int g=0; g< actionHttp.length; g++){
 									actionHttp[g].ModelRest = true;
 									actionHttp[g].Model = (Class<ModelCore> ) cls;
 								}
+								
+								RouteDef router_id = this.MapRoute(ruta_uri+"/:earl_model_aaa_id_grey");
+								ActionDef actionHttp_id[] = new ActionDef[4];
+								
+								try {
+									actionHttp_id[0] = router_id.createAction(HttpMethod.DELETE, ModelRest.class, ModelRest.class.getMethod("destroy", HttpRequest.class, HttpResponse.class, Class.class));
+									actionHttp_id[1] = router_id.createAction(HttpMethod.GET, ModelRest.class, ModelRest.class.getMethod("findOne", HttpRequest.class, HttpResponse.class, Class.class));
+									actionHttp_id[2] = router_id.createAction(HttpMethod.PUT, ModelRest.class, ModelRest.class.getMethod("update", HttpRequest.class, HttpResponse.class, Class.class));
+									actionHttp_id[3] = router_id.createAction(HttpMethod.PATCH, ModelRest.class, ModelRest.class.getMethod("update", HttpRequest.class, HttpResponse.class, Class.class));
+								} catch (NoSuchMethodException  | SecurityException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+								// Set all actions like model rest
+								for(int g=0; g< actionHttp_id.length; g++){
+									actionHttp_id[g].ModelRest = true;
+									actionHttp_id[g].Model = (Class<ModelCore> ) cls;
+								}
 								// Set CORS in petition
 								if(cls.getAnnotation(CORS.class) != null) router.CORS = true;
+								if(cls.getAnnotation(CORS.class) != null) router_id.CORS = true;
 								
 								//BUSCAMOS POLICIES
 								Policie policie = cls.getAnnotation(Policie.class);
@@ -705,6 +729,9 @@ public class ResourceMaping {
 									if(policie_class != null){
 										for(int g=0; g< actionHttp.length; g++){
 											actionHttp[g].policie = policie_class;
+										}
+										for(int g=0; g< actionHttp_id.length; g++){
+											actionHttp_id[g].policie = policie_class;
 										}
 									}
 									else{

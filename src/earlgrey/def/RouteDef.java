@@ -147,12 +147,7 @@ public class RouteDef implements Cloneable {
 		// SI ES UN MODELO REST DE IGUAL FORMA SE EFECTUA LA LLAMADA
 		try {
 			ActionDef action = this.actions.get(httpMethod);
-			if((action != null && action.controlador != null && metodo != null) || (action != null && action.controlador != null && action.metodo != null) || (action != null && action.ModelRest && action.Model != null)){
-				ActionDef rt = (ActionDef)action.clone();
-				if(metodo != null) rt.metodo = metodo;
-				rt.setParams(params);
-				return rt;
-			} else if (this.CORS && httpMethod == HttpMethod.OPTIONS) {
+			if (this.CORS && httpMethod == HttpMethod.OPTIONS) {
 				Method[] methods = CORSResponse.class.getMethods();
 				for(Method method : methods) {
 					if(!method.getName().equals("CORS")) continue;
@@ -169,7 +164,17 @@ public class RouteDef implements Cloneable {
 					rt.setParams(method_allow);
 					return rt;
 				}
-			} else{
+			} else  if((action != null && action.controlador != null && metodo != null) || (action != null && action.controlador != null && action.metodo != null)){
+				ActionDef rt = (ActionDef)action.clone();
+				if(metodo != null) rt.metodo = metodo;
+				rt.setParams(params);
+				return rt;
+			} else if (action != null && action.ModelRest && action.Model != null) {
+				ActionDef rt = (ActionDef)action.clone();
+				if(metodo != null) rt.metodo = metodo;
+				rt.setParams(params);
+				return rt;
+			} else {
 				return null;
 			}
 		} catch (CloneNotSupportedException e) {

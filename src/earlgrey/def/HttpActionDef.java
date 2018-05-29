@@ -77,7 +77,7 @@ public class HttpActionDef implements Runnable, Process{
 		if(this.checkAllParams()) {
 			this.execute();
 		} else {
-			this.response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			this.response.setStatus(422);
 			try {
 				this.response.getWriter().println("Parameters are required");
 			} catch (IOException e) {
@@ -139,7 +139,12 @@ public class HttpActionDef implements Runnable, Process{
 			}
 		}
 		try {
-			metodo.invoke(null, request,response);
+			if(this.action.ModelRest && this.action.Model != null) {
+				metodo.invoke(null, request,response, this.action.Model);
+				
+			} else {
+				metodo.invoke(null, request,response);
+			}
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			StackTraceElement[] stack = e.getCause().getStackTrace();
 			this.log.Critic("Earlgrey detect an error in the method call: "+metodo.getName(), Error500.METHOD_INVOCATION_ERROR);
