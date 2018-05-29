@@ -39,9 +39,19 @@ public class ModelRest extends ControllerCore{
 				Iterator<String> ite = params.keys();
 				while(ite.hasNext()) {
 					String key = ite.next();
-					Field campo = (model.getField(key) != null) ? model.getField(key): (
-							(model.getField(key.toLowerCase()) != null) ? model.getField(key.toLowerCase()) : (
-									(model.getField(key.toUpperCase()) != null) ? model.getField(key.toUpperCase()) : null));
+					Field campo = null;
+					try {
+						campo = model.getField(key);
+					} catch (NoSuchFieldException e) {
+						try {
+							campo = model.getField(key.toLowerCase());
+						} catch (NoSuchFieldException e1) {
+							try {
+								campo = model.getField(key.toUpperCase());
+							} catch (NoSuchFieldException e2) {
+							}
+						}
+					}
 					if(campo != null) {
 						campo.set(model_obj, params.getString(key));
 					}
@@ -49,7 +59,7 @@ public class ModelRest extends ControllerCore{
 			}
 			JSONArray retorno = model_obj.find().getJSON();
 			res.json(retorno);
-		} catch (InstantiationException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+		} catch (InstantiationException | IllegalAccessException | SecurityException e) {
 			// TODO Auto-generated catch block
 			log.printException(e, Error500.MODELREST_GET_ERROR);
 			res.serverError();
