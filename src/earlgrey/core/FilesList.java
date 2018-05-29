@@ -12,11 +12,11 @@ public class FilesList {
 	public static FilePackage Annotations = new FilePackage("earlgrey.annotations", new String[]{"AddPropertie", "AddPropertieArray", "AddPropertieOption", "AddPropertieSet", "AddPropertieSetTemplate", "AutoIncrement", "Cache", "Console", "Controller",
     "ControllerAction", "Cronwork", "DatabaseDriver", "ErrorCode", "GroupParamOptional", "GroupParamRequire", "GroupPropertieOption", "GroupProperties", "GroupPropertiesArray",
     "GroupPropertieSet", "GroupPropertieSetTemplate", "Model", "ModelAutoIncrement", "ModelCollection", "ModelField", "ModelJoin", "ModelJoins", "ModelRelation", "ModelSpecialQuery", 
-    "ModelTransaction", "ParamOptional", "ParamRequire", "Policie", "PrimaryKey", "Required", "Route", "Unique"});
+    "ModelTransaction", "ParamOptional", "ParamRequire", "Policie", "PrimaryKey", "Required", "Route", "Unique", "GET", "POST", "PUT", "PATCH", "OPTIONS", "DELETE", "CORS"});
     // Database files
 	public static FilePackage Database = new FilePackage("earlgrey.database", new String[]{"Connector", "ConnectorDescriptor", "DelegatingDriver", "Mysql", "OracleConnector", "PostgresConnector", "QueryBuilder"});
     // Def files
-	public static FilePackage Def = new FilePackage("earlgrey.def", new String[]{"ActionDef", "ErrorDef", "HttpActionDef", "JobDef", "ModelRest", "RelationDef", "RouteDef", "SessionDef"});
+	public static FilePackage Def = new FilePackage("earlgrey.def", new String[]{"ActionDef", "Criteria", "ErrorDef", "HttpActionDef", "JobDef", "ModelRest", "RelationDef", "RouteDef", "SessionDef"});
     // Error Files
 	public static FilePackage Error = new FilePackage("earlgrey.error", new String[]{"Error500", "Error60", "Error70", "Error700", "Error800", "ErrorBase"});
 	// Gateway FilesSS
