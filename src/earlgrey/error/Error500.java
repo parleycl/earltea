@@ -23,4 +23,14 @@ public class Error500 extends ErrorBase{
 	public static int METHOD_INVOCATION_ERROR = 509;
 	@ErrorCode(description="There was and error while Earlgrey process the filter chain.", code=510)
 	public static int CHAIN_FILTER_ERROR = 510;
+	@ErrorCode(description="ModelRest get method have an error.", code=511)
+	public static int MODELREST_GET_ERROR = 511;
+	@ErrorCode(description="ModelRest get method have an error.", code=512)
+	public static int MODELREST_POST_ERROR = 512;
+	@ErrorCode(description="ModelRest post method have an error.", code=513)
+	public static int MODELREST_UPDATE_ERROR = 513;
+	@ErrorCode(description="ModelRest update method have an error.", code=514)
+	public static int MODELREST_DELETE_ERROR = 514;
+	@ErrorCode(description="ModelRest options method have an error.", code=515)
+	public static int MODELREST_OPTIONS_ERROR = 515;
 }

@@ -162,8 +162,6 @@ public class HttpResponse implements Response{
 
 	@Override
 	public void serverError(JSONArray obj) {
-		// TODO Auto-generated method stub
-		// TODO Auto-generated method stub
 		this.response.setContentType("application/json");
 		this.response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		try {
@@ -176,8 +174,6 @@ public class HttpResponse implements Response{
 	}
 	
 	public void serverError() {
-		// TODO Auto-generated method stub
-		// TODO Auto-generated method stub
 		this.response.setContentType("application/json");
 		this.response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		try {
@@ -203,7 +199,6 @@ public class HttpResponse implements Response{
 
 	@Override
 	public void notAllowed() {
-		// TODO Auto-generated method stub
 		this.response.setContentType("text/plain");
 		this.response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 		try {
@@ -216,7 +211,6 @@ public class HttpResponse implements Response{
 
 	@Override
 	public void notImplemented() {
-		// TODO Auto-generated method stub
 		this.response.setContentType("text/plain");
 		this.response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
 		try {
@@ -230,9 +224,21 @@ public class HttpResponse implements Response{
 
 	@Override
 	public void forbidden() {
-		// TODO Auto-generated method stub
 		this.response.setContentType("text/plain");
 		this.response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+		try {
+			this.response.getWriter().println("");
+		} catch (IOException e) {
+			this.log.Critic("Earlgrey can't write the web buffer to send the response", Error500.HTTP_RENDER_ERROR);
+		}
+		this.httpActionDef.finalice();
+		
+	}
+	
+	@Override
+	public void imTeaPot() {
+		this.response.setContentType("text/plain");
+		this.response.setStatus(418);
 		try {
 			this.response.getWriter().println("");
 		} catch (IOException e) {
@@ -244,7 +250,6 @@ public class HttpResponse implements Response{
 
 	@Override
 	public void customError(JSONArray obj, int code) {
-		// TODO Auto-generated method stub
 		this.response.setContentType("application/json");
 		this.response.setStatus(code);
 		try {
@@ -274,5 +279,50 @@ public class HttpResponse implements Response{
 	
 	private void setCORS(){
 		CORSResponse.CORS(request, response);
+	}
+	@Override
+	public void badRequest() {
+		this.response.setContentType("text/plain");
+		this.response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+		try {
+			this.response.getWriter().println("");
+		} catch (IOException e) {
+			this.log.Critic("Earlgrey can't write the web buffer to send the response", Error500.HTTP_RENDER_ERROR);
+		}
+		this.httpActionDef.finalice();
+	}
+	@Override
+	public void conflict() {
+		this.response.setContentType("text/plain");
+		this.response.setStatus(HttpServletResponse.SC_CONFLICT);
+		try {
+			this.response.getWriter().println("");
+		} catch (IOException e) {
+			this.log.Critic("Earlgrey can't write the web buffer to send the response", Error500.HTTP_RENDER_ERROR);
+		}
+		this.httpActionDef.finalice();
+	}
+	@Override
+	public void paramsRequired() {
+		this.response.setContentType("text/plain");
+		this.response.setStatus(422);
+		try {
+			this.response.getWriter().println("Parameters are required");
+		} catch (IOException e) {
+			this.log.Critic("Earlgrey can't write the web buffer to send the response", Error500.HTTP_RENDER_ERROR);
+		}
+		this.httpActionDef.finalice();
+	}
+	@Override
+	public void serverError(String text) {
+		this.response.setContentType("text/plain");
+		this.response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		try {
+			this.response.getWriter().println(text);
+		} catch (IOException e) {
+			this.log.Critic("Earlgrey can't write the web buffer to send the response", Error500.HTTP_RENDER_ERROR);
+		}
+		this.httpActionDef.finalice();
+		
 	}
 }
