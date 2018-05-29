@@ -7,7 +7,8 @@ public class FilesList {
 			"Session"});
 	
 	// Console Files
-	public static FilePackage Console = new FilePackage("earlgrey.admin", new String[]{"LogsConsole", "PropertiesManager", "UserConsole", "Datasources"});
+	public static FilePackage Console = new FilePackage("earlgrey.admin", new String[]{"LogsConsole", "PropertiesManager", "UserConsole", "Datasources", "RoutesConsole", 
+			"ControllersConsole", "ModelsConsole", "CronjobsConsole", "ConfigsConsole", "ClusterConsole"});
 	// Anotations Files
 	public static FilePackage Annotations = new FilePackage("earlgrey.annotations", new String[]{"AddPropertie", "AddPropertieArray", "AddPropertieOption", "AddPropertieSet", "AddPropertieSetTemplate", "AutoIncrement", "Cache", "Console", "Controller",
     "ControllerAction", "Cronwork", "DatabaseDriver", "ErrorCode", "GroupParamOptional", "GroupParamRequire", "GroupPropertieOption", "GroupProperties", "GroupPropertiesArray",

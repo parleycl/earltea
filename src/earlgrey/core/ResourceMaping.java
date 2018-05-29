@@ -828,21 +828,21 @@ public class ResourceMaping {
 									ActionDef actionHttp; 
 									if(metodos[g].getAnnotation(DELETE.class) != null) {
 										this.log.Info("Routing Controller Action: DELETE "+ruta_uri);
-										actionHttp = router.createAction(HttpMethod.DELETE, cls, metodos[g]);
+										actionHttp = router.createAction(HttpMethod.DELETE, cls, metodos[g], true);
 									} else if(metodos[g].getAnnotation(GET.class) != null) {
 										this.log.Info("Routing Controller Action: GET "+ruta_uri);
-										actionHttp = router.createAction(HttpMethod.GET, cls, metodos[g]);
+										actionHttp = router.createAction(HttpMethod.GET, cls, metodos[g], true);
 									} else if(metodos[g].getAnnotation(POST.class) != null) {
 										this.log.Info("Routing Controller Action: POST "+ruta_uri);
-										actionHttp = router.createAction(HttpMethod.POST, cls, metodos[g]);
+										actionHttp = router.createAction(HttpMethod.POST, cls, metodos[g], true);
 									} else if(metodos[g].getAnnotation(PUT.class) != null) {
 										this.log.Info("Routing Controller Action: PUT "+ruta_uri);
-										actionHttp = router.createAction(HttpMethod.PUT, cls, metodos[g]);
+										actionHttp = router.createAction(HttpMethod.PUT, cls, metodos[g], true);
 									} else if(metodos[g].getAnnotation(PATCH.class) != null) {
 										this.log.Info("Routing Controller Action: PATCH "+ruta_uri);
-										actionHttp = router.createAction(HttpMethod.PATCH, cls, metodos[g]);
+										actionHttp = router.createAction(HttpMethod.PATCH, cls, metodos[g], true);
 									} else {
-										actionHttp = router.createAction(HttpMethod.UNKNOW, cls, metodos[g]);
+										actionHttp = router.createAction(HttpMethod.UNKNOW, cls, metodos[g], true);
 									}
 									if(cls.getAnnotation(CORS.class) != null) router.CORS = true;
 									//BUSCAMOS POLICIES
@@ -866,19 +866,19 @@ public class ResourceMaping {
 									ActionDef actionHttp = null;
 									if(metodos[g].getAnnotation(DELETE.class) != null) {
 										this.log.Info("Routing Controller Action: DELETE "+ruta_uri);
-										actionHttp = router.createAction(HttpMethod.DELETE, cls, metodos[g]);
+										actionHttp = router.createAction(HttpMethod.DELETE, cls, metodos[g], true);
 									} else if(metodos[g].getAnnotation(GET.class) != null) {
 										this.log.Info("Routing Controller Action: GET "+ruta_uri);
-										actionHttp = router.createAction(HttpMethod.GET, cls, metodos[g]);
+										actionHttp = router.createAction(HttpMethod.GET, cls, metodos[g], true);
 									} else if(metodos[g].getAnnotation(POST.class) != null) {
 										this.log.Info("Routing Controller Action: POST "+ruta_uri);
-										actionHttp = router.createAction(HttpMethod.POST, cls, metodos[g]);
+										actionHttp = router.createAction(HttpMethod.POST, cls, metodos[g], true);
 									} else if(metodos[g].getAnnotation(PUT.class) != null) {
 										this.log.Info("Routing Controller Action: PUT "+ruta_uri);
-										actionHttp = router.createAction(HttpMethod.PUT, cls, metodos[g]);
+										actionHttp = router.createAction(HttpMethod.PUT, cls, metodos[g], true);
 									} else if(metodos[g].getAnnotation(PATCH.class) != null) {
 										this.log.Info("Routing Controller Action: PATCH "+ruta_uri);
-										actionHttp = router.createAction(HttpMethod.PATCH, cls, metodos[g]);
+										actionHttp = router.createAction(HttpMethod.PATCH, cls, metodos[g], true);
 									} else {
 										this.log.Warning("The controller action don't have a valid route. It's mapped but don't have a route.", Error500.ROUTE_NOT_DECLARED);
 									}
