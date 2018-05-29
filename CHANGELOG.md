@@ -1,5 +1,8 @@
 ## Changelog
 
+
+### [Feature: Add the blueprint models](https://github.com/acalvoa/earlgrey/pull/67) (29/05/2018) 
+### [Feature: Add update and delete operation in ORM ](https://github.com/acalvoa/earlgrey/pull/66) (24/05/2018) 
 ### [Bugfix: Se resuelve JSONArra not found, en getOneJSON ModelCore ](https://github.com/acalvoa/earlgrey/pull/49) (23/04/2018) 
 ### [Bugfix: Http get Headers fixed ](https://github.com/acalvoa/earlgrey/pull/47) (20/04/2018) 
 ### [Bugfix: Headers fixed ](https://github.com/acalvoa/earlgrey/pull/45) (20/04/2018) 
