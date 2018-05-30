@@ -947,7 +947,7 @@ public class Properties {
 		return this.config_obj.getJSONArray("comunication");
 	}
 	public void setComunication(JSONArray com){
-		this.config_target.put("comunication", com);
+		this.config_obj.put("comunication", com);
 		this.backupFile();
 		this.saveFile();
 		this.restartProperties();
