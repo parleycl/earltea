@@ -1,5 +1,13 @@
 ## Changelog
 
+### [Feature: Add cluster section ](https://github.com/acalvoa/earlgrey/pull/76) (29/05/2018)
+### [Feature: Add configs section ](https://github.com/acalvoa/earlgrey/pull/75) (29/05/2018)
+### [Feature: Add users section](https://github.com/acalvoa/earlgrey/pull/74) (29/05/2018)
+### [Feature: Finish the routes section ](https://github.com/acalvoa/earlgrey/pull/73) (29/05/2018)
+### [Feature: Add controllers section](https://github.com/acalvoa/earlgrey/pull/72) (29/05/2018)
+### [Feature: Add models section](https://github.com/acalvoa/earlgrey/pull/71) (29/05/2018)
+### [Feature: Add controllers section ](https://github.com/acalvoa/earlgrey/pull/70) (29/05/2018)
+### [Feature: Create the routes section ](https://github.com/acalvoa/earlgrey/pull/69) (29/05/2018)
 ### [Bugfix: Modify the criteria of blueprint model](https://github.com/acalvoa/earlgrey/pull/68) (29/05/2018) 
 ### [Feature: Add the blueprint models](https://github.com/acalvoa/earlgrey/pull/67) (29/05/2018) 
 ### [Feature: Add update and delete operation in ORM ](https://github.com/acalvoa/earlgrey/pull/66) (24/05/2018) 
