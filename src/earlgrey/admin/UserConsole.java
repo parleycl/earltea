@@ -100,7 +100,7 @@ public class UserConsole extends ControllerCore{
 		JSONArray retorno = new JSONArray();
 		JSONArray users = Properties.getInstance().getConsoleUsers();
 		for(int i=0; i < users.length(); i++) {
-			retorno.put((new JSONObject()).put("username", users.getJSONObject(i).getString("USERNAME")).put("id", i));
+			retorno.put((new JSONObject()).put("Name", users.getJSONObject(i).getString("USERNAME")).put("id", i).put("Admin", true));
 		}
 		res.json(retorno);
 		return;
@@ -117,7 +117,7 @@ public class UserConsole extends ControllerCore{
 		users.put((new JSONObject()).put("USERNAME",username).put("PASSWORD", password));
 		Properties.getInstance().saveToDisk();
 		Properties.getInstance().restartProperties();
-		res.json(retorno);
+		res.json((new JSONObject()).put("Name", username).put("id", users.length()-1).put("Admin", true));
 		return;
 	}
 	@ControllerAction(description = "Method update user", name = "Update user", version = 1)

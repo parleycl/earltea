@@ -1,1 +1,84 @@
-Users Component works!
+<div class="users" *ngIf="view=='panel'">
+    <div class="card list">
+        <div class="card-header card-inverse card-success header">
+            <div class="title">Admins</div>
+            <div class="create">
+                <button class="btn btn-primary" (click)="create()"><i class="fa fa-user"></i> Create</button>
+            </div>
+        </div>
+        <div class="card-block nopadding">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Actions</th>    
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let user of users_db">
+                        <td>
+                            {{ user.Name }}      
+                        </td>
+                        <td class="types">
+                            <div class="type normal" *ngIf="!user.Admin">Normal</div>
+                            <div class="type admin" *ngIf="user.Admin">Admin</div>
+                        </td>
+                        <td>
+                            <button class="btn btn-warning" (click)="edit(user)"><i class="fa fa-edit"></i></button>
+                            <button class="btn btn-danger" (click)="trash(user)"><i class="fa fa-trash"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="edit" *ngIf="userbox == 'edit'">
+    <div class="head">
+        <span class="title">Edit User</span>
+        <span class="close"><i class="fa fa-times" (click)="userbox=false"></i></span>
+    </div>
+    <div class="body">
+        <div class="form-group" >
+            <label>Username: </label>
+            <input type="text" placeholder="Username" name="username" #username [value]="user_view.Name"/>
+            <small>This input define the username of the admin.</small>
+        </div>
+        <div class="form-group" >
+            <label>Password: </label>
+            <input type="password" placeholder="Password" name="password" #password/>
+            <small>This input define the password of admin.</small>
+        </div>
+    </div>
+    <div class="footer">
+        <div class="buttons">
+            <button class="btn btn-success" (click)="edituser(username.value, password.value)">Edit</button>
+            <button class="btn btn-primary" (click)="userbox=false">Close</button>
+        </div>
+    </div>
+</div>
+<div class="edit" *ngIf="userbox === 'create'">
+    <div class="head">
+        <span class="title">Create User</span>
+        <span class="close"><i class="fa fa-times" (click)="userbox=false"></i></span>
+    </div>
+    <div class="body">
+        <div class="form-group" >
+            <label>Username: </label>
+            <input type="text" placeholder="Username" name="username" #username autocomplete="off"/>
+            <small>This input define the username of the admin.</small>
+        </div>
+        <div class="form-group" >
+            <label>Password: </label>
+            <input type="password" placeholder="Password" name="password" #password autocomplete="off"/>
+            <small>This input define the password of admin.</small>
+        </div>
+    </div>
+    <div class="footer">
+        <div class="buttons">
+            <button class="btn btn-success" (click)="newuser(username.value, password.value)">Create</button>
+            <button class="btn btn-primary" (click)="userbox=false">Close</button>
+        </div>
+    </div>
+</div>
