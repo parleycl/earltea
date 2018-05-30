@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import earlgrey.annotations.AutoIncrement;
 import earlgrey.annotations.ControllerAction;
 import earlgrey.annotations.DELETE;
+import earlgrey.annotations.DefaultValue;
 import earlgrey.annotations.GET;
 import earlgrey.annotations.OPTIONS;
 import earlgrey.annotations.PATCH;
@@ -139,7 +140,22 @@ public class ModelRest extends ControllerCore{
 					}
 					values++;
 				} else {
-					if(campos[i].isAnnotationPresent(Required.class)) {
+					if(campos[i].isAnnotationPresent(DefaultValue.class)) {
+						DefaultValue default_value = campos[i].getAnnotation(DefaultValue.class);
+						if(campos[i].getType().equals(int.class) || campos[i].getType().equals(Integer.class)){
+							campos[i].set(model_obj, Integer.parseInt(default_value.value()));
+						}
+						else if(campos[i].getType().equals(float.class) || campos[i].getType().equals(Float.class)){
+							campos[i].set(model_obj, Float.parseFloat(default_value.value()));
+						}
+						else if(campos[i].getType().equals(double.class) || campos[i].getType().equals(Double.class)){
+							campos[i].set(model_obj, Double.parseDouble(default_value.value()));
+						}
+						else {
+							campos[i].set(model_obj, default_value.value());
+						}
+						values++;
+					} else if(campos[i].isAnnotationPresent(Required.class)) {
 						res.paramsRequired();
 						return;
 					}

@@ -1,68 +1,60 @@
 <div class="controladores" *ngIf="view=='panel'">
-        <div class="card list">
-          <div class="card-header card-inverse card-success header">Routes</div>
-          <div class="card-block nopadding">
-                <table class="table table-striped">
-                   <thead>
-                        <tr>
-                            <th>Http Method</th>
-                            <th>Route</th>
-                            <th>Controller</th>
-                            <th>Method</th>
-                            <th>Type</th>
-                            <th>Model</th>
-                            <th>Info</th>    
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let route of routes_table">
-                            <td class="methods">
-                                <div class="type post" *ngIf="route.httpmethod === 'POST'">POST</div>
-                                <div class="type get" *ngIf="route.httpmethod === 'GET'">GET</div>    
-                                <div class="type delete" *ngIf="route.httpmethod === 'DELETE'">DELETE</div>    
-                                <div class="type put" *ngIf="route.httpmethod === 'PUT'">PUT</div>    
-                                <div class="type patch" *ngIf="route.httpmethod === 'PATCH'">PATCH</div>    
-                                <div class="type options" *ngIf="route.httpmethod === 'OPTIONS'">OPTIONS</div>        
-                            </td>
-                            <td class="actions">{{ route.route }}</td>
-                            <td>{{ route.controller }}</td>
-                            <td>
-                                <div *ngIf="!route.blueprint">{{ route.method }}</div>
-                                <div *ngIf="route.blueprint && route.httpmethod === 'POST'">Create {{ route.model }} Register</div>
-                                <div *ngIf="route.blueprint && route.httpmethod === 'GET'">Get {{ route.model }} Register</div>    
-                                <div *ngIf="route.blueprint && route.httpmethod === 'DELETE'">Destroy {{ route.model }} Register</div>    
-                                <div *ngIf="route.blueprint && route.httpmethod === 'PUT'">Update {{ route.model }} Register</div>    
-                                <div *ngIf="route.blueprint && route.httpmethod === 'PATCH'">Update {{ route.model }} Register</div>    
-                                <div *ngIf="route.blueprint && route.httpmethod === 'OPTIONS'">Options for {{ route.model }}</div>        
-                            </td>
-                            <td class="types">
-                                <div class="type normal" *ngIf="!route.blueprint">Normal</div>
-                                <div class="type blueprint" *ngIf="route.blueprint">Blueprint</div>
-                            </td>
-                            <td>
-                                <div class="model" *ngIf="!route.blueprint">Without Model</div>
-                                <div class="model" *ngIf="route.blueprint">{{ route.model }}</div>
-                            </td>
-                            <td>
-                                <button class="btn btn-success" (click)="showDetails(route.action)"><i class="fa fa-eye"></i></button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-          </div>
+    <div class="card list">
+        <div class="card-header card-inverse card-success header">Routes</div>
+        <div class="card-block nopadding">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Version</th>
+                        <th>Class Name</th>
+                        <th>Controller Actions</th>
+                        <th>Info</th>    
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let controller of controllers_db">
+                        <td >{{ controller.name }}</td>
+                        <td class="actions">{{ controller.version }}</td>
+                        <td>{{ controller.class_name }}</td>
+                        <td>{{ controller.actions.length }}</td>
+                        <td>
+                            <button class="btn btn-success" (click)="showDetails(controller)"><i class="fa fa-eye"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
-    <div class="detail" *ngIf="viewDetail">
-        <div class="head">
-            <span class="title">Route Detail</span>
-            <span class="close"><i class="fa fa-times" (click)="viewDetail=false"></i></span>
-        </div>
-        <div class="body">
-            
-        </div>
-        <div class="footer">
-            <div class="buttons">
-                <button class="btn btn-primary" (click)="viewDetail=false">Close</button>
-            </div>
+</div>
+<div class="detail" *ngIf="viewDetail">
+    <div class="head">
+        <span class="title">Controller Detail</span>
+        <span class="close"><i class="fa fa-times" (click)="viewDetail=false"></i></span>
+    </div>
+    <div class="body">
+        <table class="table table-striped">
+            <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Method</th>
+                        <th>Description</th>
+                        <th>Version</th>   
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let model of controller_view.actions">
+                        <td>{{ model.name }}</td>
+                        <td>{{ model.method_name }}</td>
+                        <td>{{ model.description }}</td>
+                        <td>{{ model.version }}</td>
+                    </tr>
+                </tbody>
+        </table>
+    </div>
+    <div class="footer">
+        <div class="buttons">
+            <button class="btn btn-primary" (click)="viewDetail=false">Close</button>
         </div>
     </div>
+</div>
