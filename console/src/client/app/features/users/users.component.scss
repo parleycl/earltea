@@ -3,14 +3,41 @@
 	background:white;
 	overflow-y: scroll;
 }
-.rutas{
+.users{
 	display: flex;
 	flex-direction:column;
 	width:100%;
 	height:100%;
-	padding:10px;
+	padding:5px;
 	.header{
-		color:#FFF;
+        color:#FFF;
+        display: flex;
+        flex-direction: row;
+        .title{
+            display: flex;
+            width: 50%;
+            flex-direction: row;
+            align-content: center;
+            align-items: center;
+        }
+        .create{
+            display: flex;
+            width: 50%;
+            flex-direction: row;
+            justify-content: flex-end;
+            padding: 0px;
+            button{
+                width: 150px;
+                height: 35px;
+                display: flex;
+                justify-content: center;
+                align-content: center;
+                align-items: center;
+                i{
+                    margin-right: 10px;
+                }
+            }
+        }
 	}
 	.list{
 		width: 100%;
@@ -51,6 +78,10 @@
 			}
 		}
 		.types{
+            display: flex;
+            flex-direction: row;
+            align-content: center;
+            align-items: center;
 			.type{
 				width: 100px;
 				display: flex;
@@ -65,7 +96,7 @@
 				background: blueviolet;
 				color: #FFF;
 			}
-			.blueprint {
+			.admin {
 				background: orange;
 				color: #FFF;
 			}
@@ -379,16 +410,15 @@
 		}
 	}
 }
-.detail {
+.edit {
 	position: absolute;
 	margin: auto;
 	left: 0;
 	top: 0;
 	right: 0;
 	bottom: 0;
-	height: 600px;
-	width: auto;
-	max-width: 70%;
+	height: 400px;
+	width: 500px;
 	background: #FFF;
 	border: 1px solid #333;
 	display: flex;
@@ -416,32 +446,10 @@
 		width: 100%;
 		height: calc(100% - 90px);
 		padding: 5px;
-		display: flex;
-		flex-direction: column;
-		overflow-y: scroll;
-		.section{
-			display: flex;
-			flex-direction: column;
-			padding: 10px;
-			.title_row{
-				display: flex;
-				background: #0275D8;
-				color: #FFF;
-				width: 100%;
-				padding: 5px;
-				margin-bottom: 5px;
-			}
-			.data_row{
-				display: flex;
-				flex-direction: row;
-				.title{
-					margin-right: 10px;
-				}
-				.data{
-	
-				}
-			}
-		}
+		.form-group{
+            display: flex;
+            flex-direction: column;
+        }
 	}
 	.footer{
 		height: 50px;

@@ -11,6 +11,8 @@ import { PropertiesComponent } from './properties/properties.component';
 import { RutasComponent } from './rutas/rutas.component';
 import { LoginComponent } from './login/login.component';
 import { IndexComponent } from './index/index.component';
+import { UsersComponent } from './users/users.component';
+import { ConfigsComponent } from './configs/configs.component';
 
 export const FeaturesRoutes: Route[] = [
 	{
@@ -30,13 +32,15 @@ export const FeaturesRoutes: Route[] = [
       { path: 'logs', component: LogsComponent },
       { path: 'models', component: ModelosComponent },
       { path: 'properties', component: PropertiesComponent },
-      { path: 'routes', component: RutasComponent }
-		],
-		//ROUTER CHILDREN LIMIT (NOT REMOVE - CLI COMPONENT)
+      { path: 'routes', component: RutasComponent },
+      { path: 'users', component: UsersComponent },
+      { path: 'configs', component: ConfigsComponent}
+    ],
+            //ROUTER CHILDREN LIMIT (NOT REMOVE - CLI COMPONENT)
 		canActivate: [GuardService],
   },
   {
     path: 'login',
     component: LoginComponent
   }
-];
+]
