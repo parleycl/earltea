@@ -13,6 +13,7 @@ import earlgrey.annotations.Console;
 import earlgrey.annotations.Controller;
 import earlgrey.annotations.ControllerAction;
 import earlgrey.annotations.GET;
+import earlgrey.annotations.PATCH;
 import earlgrey.annotations.POST;
 import earlgrey.annotations.ParamRequire;
 import earlgrey.annotations.Policie;
@@ -30,14 +31,21 @@ import earlgrey.def.SessionDef;
 @Route(route = "/configs")
 @CORS
 public class ConfigsConsole extends ControllerCore{
+	@ControllerAction(description = "Get Configs.", name = "Get Configs", version = 1)
 	@GET
 	public static void getConfigs(HttpRequest req, HttpResponse res){
-		ResourceMaping resources = ResourceMaping.getInstance();
-		Hashtable<String, RouteDef> routes = resources.getRouteTable();
-		Enumeration<String> keys = routes.keys();
-		while(keys.hasMoreElements()) {
-			System.out.println(keys.nextElement());
-		}
+		Properties prop = Properties.getInstance();
+		res.json(prop.getConfigs());
+		return;
+	}
+	@ControllerAction(description = "Update Config.", name = "Update Config", version = 1)
+	@PATCH
+	@ParamRequire(name = "configs")
+	public static void updateConfigs(HttpRequest req, HttpResponse res){
+		JSONObject config = new JSONObject(req.getParam("configs"));
+		Properties prop = Properties.getInstance();
+		prop.setConfig(config);
+		res.ok("");
 		return;
 	}
 }

@@ -939,4 +939,7 @@ public class Properties {
 		this.saveFile();
 		this.restartProperties();
 	}
+	public JSONObject getConfigs(){
+		return this.config_target;
+	}
 }
