@@ -386,8 +386,9 @@
 	top: 0;
 	right: 0;
 	bottom: 0;
-	height: 400px;
-	width: 500px;
+	height: 600px;
+	width: auto;
+	max-width: 70%;
 	background: #FFF;
 	border: 1px solid #333;
 	display: flex;
@@ -415,10 +416,31 @@
 		width: 100%;
 		height: calc(100% - 90px);
 		padding: 5px;
-		.drop-zone{
-			height: 100%;
-			widows: 100%;
-			border-color: #333;
+		display: flex;
+		flex-direction: column;
+		overflow-y: scroll;
+		.section{
+			display: flex;
+			flex-direction: column;
+			padding: 10px;
+			.title_row{
+				display: flex;
+				background: #7900C7;
+				color: #FFF;
+				width: 100%;
+				padding: 5px;
+				margin-bottom: 5px;
+			}
+			.data_row{
+				display: flex;
+				flex-direction: row;
+				.title{
+					margin-right: 10px;
+				}
+				.data{
+	
+				}
+			}
 		}
 	}
 	.footer{

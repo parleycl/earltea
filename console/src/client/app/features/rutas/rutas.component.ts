@@ -19,6 +19,7 @@ export class RutasComponent {
     private routes_table: Routetable[];
     private view: string = 'panel'
     private viewDetail: boolean = false;
+    private action_view: Action;
     
     constructor(private routes: RoutesService) {
         this.fetch();
@@ -43,5 +44,6 @@ export class RutasComponent {
 
     public showDetails(action: Action) {
         this.viewDetail = true;
+        this.action_view = action;
     }
 }
