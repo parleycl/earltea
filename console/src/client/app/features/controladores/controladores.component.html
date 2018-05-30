@@ -1,102 +1,60 @@
-<div class="modelos" *ngIf="view=='panel'">
-        <div class="card list">
-          <div class="card-header card-inverse card-success header">Models</div>
-          <div class="card-block nopadding">
-                <table class="table table-striped">
-                   <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Class name</th>
-                            <th>Table name</th>
-                            <th>Version</th>
-                            <th>Fields</th>
-                            <th>Multitenancy</th>
-                            <th>Info</th>    
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let model of models_db">
-                            <td>
-                                {{ model.name }}      
-                            </td>
-                            <td class="actions">{{ model.class_name }}</td>
-                            <td>{{ model.table_name}}</td>
-                            <td>{{ model.version }}</td>
-                            <td>{{ model.fields.length }}</td>
-                            <td class="types">
-                                <div class="type normal" *ngIf="!model.multi_tenant">Single</div>
-                                <div class="type tenant" *ngIf="model.multi_tenant">Multi Tenant</div>
-                            </td>
-                            <td>
-                                <button class="btn btn-success" (click)="showDetails(model)"><i class="fa fa-eye"></i></button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-          </div>
-        </div>
-    </div>
-    <div class="detail" *ngIf="viewDetail">
-        <div class="head">
-            <span class="title">Field Model Detail</span>
-            <span class="close"><i class="fa fa-times" (click)="viewDetail=false"></i></span>
-        </div>
-        <div class="body">
+<div class="controladores" *ngIf="view=='panel'">
+    <div class="card list">
+        <div class="card-header card-inverse card-success header">Routes</div>
+        <div class="card-block nopadding">
             <table class="table table-striped">
                 <thead>
-                     <tr>
-                         <th>Name</th>
-                         <th>Type</th>
-                         <th>Primary Key</th>
-                         <th>Unique</th>
-                         <th>Auto Increment</th>
-                         <th>Default Value</th>
-                         <th>Model Join</th>
-                         <th>Model Relation</th>    
-                     </tr>
-                 </thead>
-                 <tbody>
-                     <tr *ngFor="let model of model_view.fields">
-                        <td>{{ model.name }}</td>
-                        <td class="types">
-                            <div class="type integer" *ngIf="model.type === 'java.lang.Integer'">Integer</div>
-                            <div class="type string" *ngIf="model.type === 'java.lang.String'">String</div>
-                            <div class="type double" *ngIf="model.type === 'java.lang.Double'">Double</div>
-                            <div class="type float" *ngIf="model.type === 'java.lang.Float'">Float</div>
-                            <div class="type unknown" *ngIf="model.type !== 'java.lang.Float' && model.type !== 'java.lang.Double' && 
-                            model.type !== 'java.lang.String' && model.type !== 'java.lang.Integer'">{{ model.type }}</div>
+                    <tr>
+                        <th>Name</th>
+                        <th>Version</th>
+                        <th>Class Name</th>
+                        <th>Controller Actions</th>
+                        <th>Info</th>    
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let controller of controllers_db">
+                        <td >{{ controller.name }}</td>
+                        <td class="actions">{{ controller.version }}</td>
+                        <td>{{ controller.class_name }}</td>
+                        <td>{{ controller.actions.length }}</td>
+                        <td>
+                            <button class="btn btn-success" (click)="showDetails(controller)"><i class="fa fa-eye"></i></button>
                         </td>
-                        <td class="types">
-                            <div class="type normal" *ngIf="model.primary">Yes</div>
-                            <div class="type activate" *ngIf="!model.primary">No</div>
-                        </td>
-                        <td class="types">
-                            <div class="type normal" *ngIf="model.unique">Yes</div>
-                            <div class="type activate" *ngIf="!model.unique">No</div>
-                        </td>
-                        <td class="types">
-                            <div class="type normal" *ngIf="model.autoincrement">Yes</div>
-                            <div class="type activate" *ngIf="!model.prautoincrementimary">No</div>
-                        </td>
-                        <td class="types">
-                            <div class="type normal" *ngIf="model.defaultValue">{{ model.defaultValue }}</div>
-                            <div class="type activate" *ngIf="!model.defaultValue">No</div>
-                        </td>
-                        <td class="types">
-                            <div class="type model" *ngIf="!model.model_join">No relation</div>
-                            <div class="type model" *ngIf="model.model_join">{{ model.model_join.model.name}}</div>
-                        </td>
-                        <td class="types">
-                            <div class="type model" *ngIf="!model.model_relation">No relation</div>
-                            <div class="type model" *ngIf="model.model_relation">{{ model.model_relation.model.name}}</div>
-                        </td>
-                     </tr>
-                 </tbody>
+                    </tr>
+                </tbody>
             </table>
         </div>
-        <div class="footer">
-            <div class="buttons">
-                <button class="btn btn-primary" (click)="viewDetail=false">Close</button>
-            </div>
+    </div>
+</div>
+<div class="detail" *ngIf="viewDetail">
+    <div class="head">
+        <span class="title">Controller Detail</span>
+        <span class="close"><i class="fa fa-times" (click)="viewDetail=false"></i></span>
+    </div>
+    <div class="body">
+        <table class="table table-striped">
+            <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Method</th>
+                        <th>Description</th>
+                        <th>Version</th>   
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let model of controller_view.actions">
+                        <td>{{ model.name }}</td>
+                        <td>{{ model.method_name }}</td>
+                        <td>{{ model.description }}</td>
+                        <td>{{ model.version }}</td>
+                    </tr>
+                </tbody>
+        </table>
+    </div>
+    <div class="footer">
+        <div class="buttons">
+            <button class="btn btn-primary" (click)="viewDetail=false">Close</button>
         </div>
     </div>
+</div>

@@ -12,7 +12,7 @@ export class Method {
         if(method) {
             this.name = method.name;
             this.description = method.description;
-            this.method_name = method.class_name;
+            this.method_name = method.method_name;
             this.version = method.version;
         }
     }
