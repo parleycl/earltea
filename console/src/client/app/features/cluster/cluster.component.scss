@@ -1,4 +1,484 @@
 :host{
-	width:80%;
+	width:100%;
 	background:white;
+	overflow-y: scroll;
+}
+.cluster{
+	display: flex;
+	flex-direction:column;
+	width:100%;
+	height:100%;
+	padding:5px;
+	.header{
+        color:#FFF;
+        display: flex;
+        flex-direction: row;
+        .title{
+            display: flex;
+            width: 50%;
+            flex-direction: row;
+            align-content: center;
+            align-items: center;
+        }
+        .create{
+            display: flex;
+            width: 50%;
+            flex-direction: row;
+            justify-content: flex-end;
+            padding: 0px;
+            button{
+                width: 150px;
+                height: 35px;
+                display: flex;
+                justify-content: center;
+                align-content: center;
+                align-items: center;
+                i{
+                    margin-right: 10px;
+                }
+            }
+        }
+	}
+	.list{
+		width: 100%;
+		.methods{
+			.type{
+				width: 100px;
+				display: flex;
+				height: 30px;
+				border-radius: 5px;
+				text-align: center;
+				justify-content: center;
+				align-content: center;
+				align-items: center;
+			}
+			.post{
+				background: green;
+				color: #FFF;
+			}
+			.get {
+				background:#316192;
+				color: #FFF;
+			}
+			.put {
+				background: #666;
+				color: #FFF;
+			}
+			.patch {
+				background: #CA003E;
+				color: #FFF;
+			}
+			.delete {
+				background: red;
+				color: #FFF;
+			}
+			.options {
+				background: #55AFE4;
+				color: #FFF;
+			}
+		}
+		.types{
+            display: flex;
+            flex-direction: row;
+            align-content: center;
+            align-items: center;
+			.type{
+				width: 100px;
+				display: flex;
+				height: 30px;
+				border-radius: 5px;
+				text-align: center;
+				justify-content: center;
+				align-content: center;
+				align-items: center;
+			}
+			.normal{
+				background: blueviolet;
+				color: #FFF;
+			}
+			.admin {
+				background: orange;
+				color: #FFF;
+			}
+		}
+		.status{
+			color: #FFF;
+			.label{
+				height:25px;
+				width:100px;
+				align-items:center;
+				justify-content:center;
+				display:flex;
+				border-radius:10px;
+			}
+			.restart{
+				background: #FFCE01;
+			}
+			.running{
+				background: #00A103;
+			}
+			.stock{
+				background: #7900C7;
+			}
+		}
+		.actions{
+			display:flex;
+			flex-direction:row;
+			.item{
+				display:flex;
+				margin-right:10px;
+				align-items:center;
+				font-size: 1.3rem;
+				cursor: pointer;
+				&:hover{
+					color:red;
+				}
+			}
+			.prop{
+				display:flex;
+				margin-right:10px;
+				align-items:center;
+				font-size: 1.2rem;
+				cursor: pointer;
+				&:hover{
+					color:red;
+				}
+			}
+		}
+	}
+	.add{
+		padding:15px 0px;
+		.btn-panel{
+			height:40px;
+
+		}
+	}
+}
+.create{
+	display: flex;
+	flex-direction:column;
+	width:100%;
+	height:100%;
+	padding:10px;
+	.header{
+		color: #FFF;
+	}
+	.add{
+		padding:15px 0px;
+		.btn{
+			height:40px;
+
+		}
+	}
+}
+.modify{
+	display: flex;
+	flex-direction:column;
+	width:100%;
+	height:100%;
+	padding:10px;
+	.header{
+		color: #FFF;
+	}
+	.list{
+		.tipos{
+			display:flex;
+			flex-direction:row;
+			.label{
+				display:flex;
+				height:25px;
+				width:70px;
+				color:#FFF;
+				justify-content:center;
+				border-radius:5px;
+				margin-right:10px;
+			}
+			.single{
+				background:#62BDD7;
+			}
+			.option{
+				background:#6CA725;
+			}
+			.set{
+				background:#2E09AE;
+			}
+			.array{
+				background: #CA003E;
+			}
+			.title{
+				display:flex;
+				align-items:center;
+			}
+			.addset{
+				margin-left:10px;
+				button{
+					height: 25px;
+    				padding: 3px 10px;
+				}
+			}
+		}
+		.datasources{
+			.label{
+				display:flex;
+				height:30px;
+				width: 150px;
+				padding: 2.5px;
+				color:#FFF;
+				justify-content:center;
+				border-radius:5px;
+				margin-right:10px;
+			}
+			.item{
+				cursor: pointer;
+			}
+			.manual{
+				background: #7900C7;
+			}
+			.container{
+				background: blue;
+			}
+			.unknow{
+				background: #333;
+			}
+			.oracle{
+				background: red;
+			}
+			.disk{
+				background: orange;
+			}
+			.mysql{
+				background: #00688F;
+			}
+			.postgres{
+				background: #316192;
+			}
+			.sqlite{
+				background: #55AFE4;
+			}
+			.mongo{
+				background: #449A45;
+			}
+		}
+		.sets{
+			.set_item{
+				.set_header{
+					width:30%;
+					border:1px #CCC solid;
+					padding:5px;
+					display:flex;
+					flex-direction:row;
+					background:#EEE;
+					.title{
+						display:flex;
+						flex:1;
+						align-items:center;
+					}
+					.status{
+						display:flex;
+						flex:1;
+						.label{
+							height:25px;
+							width:100px;
+							align-items:center;
+							justify-content:center;
+							display:flex;
+							border-radius:10px;
+							color:white;
+						}
+						.running{
+							background: #00A103;
+						}
+						.saved{
+							background: #7900C7;
+						}
+					}
+					.action{
+						display:flex;
+						flex:1;
+						justify-content:center;
+						align-items:center;
+						align-content:center;
+						i{
+							cursor:pointer;
+							margin-right:10px;
+						}
+					}
+				}
+				.set_body{
+					display:flex;
+					flex-direction:column;
+					.item{
+						display:flex;
+						flex-direction:row;
+						padding:5px 10px;
+						.title{
+							display:flex;
+							width:15%;
+							font-size:14px;
+							align-items:center;
+							align-content:center;
+						}
+						.value{
+							display:flex;
+							input{
+								height:20px;
+								border: 1px solid #999;
+							}
+						}
+					}
+				}
+				.running{
+					font-weight:bold;
+				}
+			}
+		}
+	}
+	.add{
+		padding:15px 0px;
+		.btn{
+			height:40px;
+
+		}
+	}
+	.modify_datasource{
+		input{
+			width: 100%
+		}
+		.input_group{
+			display: flex;
+			flex-direction: column;
+			.select{
+				font-size: 16px;
+				width: 500px;
+				position: relative;
+				display: inline-block;
+				label{
+					width: 100%;
+					.flecha{
+						position: absolute;
+						right: 0px;
+						background: #00688F;
+						height: 35px;
+						width: 30px;
+						text-align: center;
+						line-height: 35px;
+						vertical-align: middle;
+						color: #FFF;
+  						pointer-events: none;
+					}
+					.flecha:before {
+						content: '';
+						position: absolute;
+						top: 50%;
+						right: 4px;
+						margin-top: -5px;
+						pointer-events: none;
+						border-top: 10px solid #FFF;
+						border-left: 10px solid transparent;
+						border-right: 10px solid transparent;
+					}
+					.flecha:after {
+						content: '';
+						position: absolute;
+						top: 50%;
+						right: 8px;
+						margin-top: -5px;
+						pointer-events: none;
+						border-top: 6px solid #00688F;;
+						border-left: 6px solid transparent;
+						border-right: 6px solid transparent;
+					}  
+				}
+			}
+		}
+		select{
+			outline: none;
+			-webkit-appearance: none;
+			display: block;
+			margin: 0;
+			height: 35px;
+			transition: border-color 0.2s;
+			border: 1px solid #666;
+			border-radius: 5px;
+			width: 100%;
+			background: #fff;
+			color: #555;
+			line-height: normal;
+			font-family: inherit;
+			font-size: inherit;
+			line-height: inherit;
+		}
+	}
+}
+.edit {
+	position: absolute;
+	margin: auto;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	height: 400px;
+	width: 500px;
+	background: #FFF;
+	border: 1px solid #333;
+	display: flex;
+	flex-direction: column;
+	.head {
+		display: flex;
+		flex-direction: row;
+		width: 100%;
+		height: 40px;
+		background: #333;
+		color: #FFF;
+		padding: 5px 10px;
+		.title {
+			display: flex;
+			width: calc(100% - 50px);
+		}
+		.close {
+			display: flex;
+			width: 50px;
+			justify-content: flex-end;
+			color: #FFF;
+		}
+	}
+	.body{
+		width: 100%;
+		height: calc(100% - 90px);
+		padding: 5px;
+		.form-group{
+            display: flex;
+            flex-direction: column;
+        }
+	}
+	.footer{
+		height: 50px;
+		width: 100%;
+		padding: 5px;
+		display: flex;
+		justify-content: flex-start;
+		.statusfile{
+			width: 300px;
+			span{
+				height: 40px;
+				padding: 7.5px;
+				display: inline-block;
+			}
+			.nofile{
+				background: #333;
+				color: #FFF;
+			}
+			.wrongfile{
+				background: red;
+				color: #FFF;
+			}
+			.okfile{
+				background: #12BC00;
+				color: #FFF;
+			}
+		}
+		.buttons{
+			width: 200px;
+		}
+	}
 }
