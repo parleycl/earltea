@@ -58,7 +58,71 @@
         <span class="close"><i class="fa fa-times" (click)="viewDetail=false"></i></span>
     </div>
     <div class="body">
-        
+        <div class="section" *ngIf="action_view.action">
+            <div class="title_row">Controller Action</div>
+            <div class="data_row">
+                <div class="title">Name:</div>
+                <div class="data">{{ action_view.action.name }}</div>
+            </div>
+            <div class="data_row">
+                <div class="title">Description:</div>
+                <div class="data">{{ action_view.action.description }}</div>
+            </div>
+            <div class="data_row">
+                <div class="title">Method Name:</div>
+                <div class="data">{{ action_view.action.method_name }}</div>
+            </div>
+            <div class="data_row">
+                <div class="title">Version:</div>
+                <div class="data">{{ action_view.action.version }}</div>
+            </div>
+        </div>
+        <div class="section" *ngIf="action_view.controller">
+            <div class="title_row">Controller</div>
+            <div class="data_row">
+                <div class="title">Name:</div>
+                <div class="data">{{ action_view.controller.name }}</div>
+            </div>
+            <div class="data_row">
+                <div class="title">Description:</div>
+                <div class="data">{{ action_view.action.description }}</div>
+            </div>
+            <div class="data_row">
+                <div class="title">Class Name:</div>
+                <div class="data">{{ action_view.action.class_name }}</div>
+            </div>
+            <div class="data_row">
+                <div class="title">Version:</div>
+                <div class="data">{{ action_view.action.version }}</div>
+            </div>
+        </div>
+        <div class="section">
+            <div class="title_row">Model Blueprint</div>
+            <div class="data_row">
+                <div class="title">Blueprint:</div>
+                <div class="data" *ngIf="action_view.blueprint">Yes</div>
+                <div class="data" *ngIf="!action_view.blueprint">No</div>
+            </div>
+        </div>
+        <div class="section" *ngIf="action_view.blueprint">
+            <div class="title_row">Model</div>
+            <div class="data_row">
+                <div class="title">Name:</div>
+                <div class="data">{{ action_view.model.name }}</div>
+            </div>
+            <div class="data_row">
+                <div class="title">Class Name:</div>
+                <div class="data">{{ action_view.model.class_name }}</div>
+            </div>
+            <div class="data_row">
+                <div class="title">Table Name:</div>
+                <div class="data">{{ action_view.model.table_name }}</div>
+            </div>
+            <div class="data_row">
+                <div class="title">Version:</div>
+                <div class="data">{{ action_view.model.version }}</div>
+            </div>
+        </div>
     </div>
     <div class="footer">
         <div class="buttons">
