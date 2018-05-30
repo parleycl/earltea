@@ -9,6 +9,8 @@ import { LoadingService } from './loading/loading.service';
 import { DatasourcesService } from './datasources/datasources.service';
 import { PropertiesService } from './properties/properties.service';
 import { RoutesService } from './routes/routes.service';
+import { ControllersService } from './controllers/controllers.service';
+import { ModelsService } from './models/models.service';
 import { Observable } from 'rxjs/Observable';
 /**
  * Do not specify providers for modules that might be imported by a lazy loaded module.
@@ -17,7 +19,7 @@ import { Observable } from 'rxjs/Observable';
 @NgModule({
   imports: [],
   declarations: [],
-  providers:[RestService, UserService, GuardService, LoadingService, DatasourcesService, PropertiesService, RoutesService],
+  providers:[RestService, UserService, GuardService, LoadingService, DatasourcesService, PropertiesService, RoutesService, ControllersService, ModelsService],
   exports: []
 })
 export class ServicesModule {

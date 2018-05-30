@@ -71,7 +71,13 @@ public class ModelsConsole extends ControllerCore{
 					field_obj.put("primary", fld[i].isAnnotationPresent(PrimaryKey.class));
 					field_obj.put("unique", fld[i].isAnnotationPresent(Unique.class));
 					field_obj.put("autoincrement", fld[i].isAnnotationPresent(AutoIncrement.class));
-					field_obj.put("defaultValue", (fld[i].isAnnotationPresent(DefaultValue.class)) ? fld[i].getAnnotation(DefaultValue.class).value() : false);
+					if(fld[i].isAnnotationPresent(DefaultValue.class)) {
+						DefaultValue default_value = fld[i].getAnnotation(DefaultValue.class);
+						field_obj.put("defaultValue", default_value.value());
+					} else {
+						field_obj.put("defaultValue", false);
+					}
+					
 					if(fld[i].isAnnotationPresent(ModelJoin.class)) {
 						ModelJoin model_join = fld[i].getAnnotation(ModelJoin.class);
 						Class<?> mdl_relation = model_join.model();

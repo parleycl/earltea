@@ -1,3 +1,4 @@
+import { Action } from './action';
 /*
 * This class represents the class definition.
 */
