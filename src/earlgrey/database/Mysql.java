@@ -28,7 +28,6 @@ import earlgrey.core.ResourceMaping;
 import earlgrey.def.Database;
 import earlgrey.error.Error800;
 import earlgrey.types.IType;
-import oracle.jdbc.OraclePreparedStatement;
 
 @DatabaseDriver(type="SQL", name="Mysql", id = Database.MYSQL)
 public class Mysql implements Connector{
@@ -38,7 +37,7 @@ public class Mysql implements Connector{
 	private Integer port = null;
 	private String datasource;
 	private Statement stmt;
-	private OraclePreparedStatement pstm;
+	private PreparedStatement pstm;
 	private ResultSet rset;
 	private String query;
 	private Logging log;
@@ -252,16 +251,16 @@ public class Mysql implements Connector{
 		}
 	}
 	// NUEVAS FUNCIONES
-	public OraclePreparedStatement prepare(String query, Field primarykey){
+	public PreparedStatement prepare(String query, Field primarykey){
 		 try {
 			this.query = query;
 			this.prepared_fields = 1;
 			if(primarykey != null){
-				this.pstm  = (OraclePreparedStatement)this.con.prepareStatement(query, new String[] {primarykey.getName()});
+				this.pstm  = this.con.prepareStatement(query, new String[] {primarykey.getName()});
 			}
 			else
 			{
-				this.pstm  = (OraclePreparedStatement)this.con.prepareStatement(query);
+				this.pstm  = this.con.prepareStatement(query);
 			}
 			return this.pstm;
 		} catch (SQLException e) {
@@ -339,7 +338,7 @@ public class Mysql implements Connector{
 			}
 			else if(IType.class.isAssignableFrom(campo.getType())){
 				try {
-					Method inv = campo.getType().getMethod("SQLPrepareField", OraclePreparedStatement.class, Integer.class);
+					Method inv = campo.getType().getMethod("SQLPrepareField", PreparedStatement.class, Integer.class);
 					inv.invoke(null, this.pstm, this.prepared_fields++);
 				} catch (NoSuchMethodException e) {
 					// TODO Auto-generated catch block
@@ -398,7 +397,7 @@ public class Mysql implements Connector{
 			}
 			else if(IType.class.isAssignableFrom(campo.getType())){
 				try {
-					Method inv = campo.getType().getMethod("SQLPrepareField", OraclePreparedStatement.class, Integer.class);
+					Method inv = campo.getType().getMethod("SQLPrepareField", PreparedStatement.class, Integer.class);
 					inv.invoke(null, this.pstm, this.prepared_fields++);
 				} catch (NoSuchMethodException e) {
 					// TODO Auto-generated catch block
@@ -514,7 +513,7 @@ public class Mysql implements Connector{
 			}
 			else if(IType.class.isAssignableFrom(campo.getType())){
 				try {
-					Method inv = campo.getType().getMethod("SQLPrepareField", OraclePreparedStatement.class, Integer.class);
+					Method inv = campo.getType().getMethod("SQLPrepareField", PreparedStatement.class, Integer.class);
 					inv.invoke(null, this.pstm, this.prepared_fields++);
 				} catch (NoSuchMethodException e) {
 					// TODO Auto-generated catch block

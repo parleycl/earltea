@@ -1,5 +1,16 @@
 ## Changelog
 
+### [Feature: Add cluster section ](https://github.com/acalvoa/earlgrey/pull/76) (29/05/2018)
+### [Feature: Add configs section ](https://github.com/acalvoa/earlgrey/pull/75) (29/05/2018)
+### [Feature: Add users section](https://github.com/acalvoa/earlgrey/pull/74) (29/05/2018)
+### [Feature: Finish the routes section ](https://github.com/acalvoa/earlgrey/pull/73) (29/05/2018)
+### [Feature: Add controllers section](https://github.com/acalvoa/earlgrey/pull/72) (29/05/2018)
+### [Feature: Add models section](https://github.com/acalvoa/earlgrey/pull/71) (29/05/2018)
+### [Feature: Add controllers section ](https://github.com/acalvoa/earlgrey/pull/70) (29/05/2018)
+### [Feature: Create the routes section ](https://github.com/acalvoa/earlgrey/pull/69) (29/05/2018)
+### [Bugfix: Modify the criteria of blueprint model](https://github.com/acalvoa/earlgrey/pull/68) (29/05/2018) 
+### [Feature: Add the blueprint models](https://github.com/acalvoa/earlgrey/pull/67) (29/05/2018) 
+### [Feature: Add update and delete operation in ORM ](https://github.com/acalvoa/earlgrey/pull/66) (24/05/2018) 
 ### [Bugfix: Se resuelve JSONArra not found, en getOneJSON ModelCore ](https://github.com/acalvoa/earlgrey/pull/49) (23/04/2018) 
 ### [Bugfix: Http get Headers fixed ](https://github.com/acalvoa/earlgrey/pull/47) (20/04/2018) 
 ### [Bugfix: Headers fixed ](https://github.com/acalvoa/earlgrey/pull/45) (20/04/2018) 

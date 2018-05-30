@@ -1,0 +1,60 @@
+<div class="controladores" *ngIf="view=='panel'">
+    <div class="card list">
+        <div class="card-header card-inverse card-success header">Routes</div>
+        <div class="card-block nopadding">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Version</th>
+                        <th>Class Name</th>
+                        <th>Controller Actions</th>
+                        <th>Info</th>    
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let controller of controllers_db">
+                        <td >{{ controller.name }}</td>
+                        <td class="actions">{{ controller.version }}</td>
+                        <td>{{ controller.class_name }}</td>
+                        <td>{{ controller.actions.length }}</td>
+                        <td>
+                            <button class="btn btn-success" (click)="showDetails(controller)"><i class="fa fa-eye"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="detail" *ngIf="viewDetail">
+    <div class="head">
+        <span class="title">Controller Detail</span>
+        <span class="close"><i class="fa fa-times" (click)="viewDetail=false"></i></span>
+    </div>
+    <div class="body">
+        <table class="table table-striped">
+            <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Method</th>
+                        <th>Description</th>
+                        <th>Version</th>   
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let model of controller_view.actions">
+                        <td>{{ model.name }}</td>
+                        <td>{{ model.method_name }}</td>
+                        <td>{{ model.description }}</td>
+                        <td>{{ model.version }}</td>
+                    </tr>
+                </tbody>
+        </table>
+    </div>
+    <div class="footer">
+        <div class="buttons">
+            <button class="btn btn-primary" (click)="viewDetail=false">Close</button>
+        </div>
+    </div>
+</div>

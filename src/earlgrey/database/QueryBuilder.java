@@ -10,6 +10,7 @@ import java.util.Hashtable;
 
 import earlgrey.annotations.Model;
 import earlgrey.core.ModelCore;
+import earlgrey.def.Criteria;
 import earlgrey.def.RelationDef;
 import earlgrey.types.CentroideType;
 import earlgrey.types.GeometriaType;
@@ -19,6 +20,7 @@ public class QueryBuilder {
 	private String table;
 	private String query;
 	private ModelCore modelCore;
+	private ModelCore where;
 	private Hashtable<Field,Object> prepared = new Hashtable<Field,Object>();
 	protected ArrayList<Field> prepare_list = new ArrayList<Field>();
 	private ArrayList<String> param_list = new ArrayList<String>();
@@ -30,15 +32,15 @@ public class QueryBuilder {
 		this.table = table;
 		this.modelCore = modelCore;
 	}
-	public void select(Hashtable<String,Field> params, Hashtable<String,RelationDef> relation){
+	public void select(Hashtable<String,Criteria> params, Hashtable<String,RelationDef> relation){
 		ArrayList<String> param_list = new ArrayList<String>(); 
 		Enumeration<String> llaves = params.keys();
 		while(llaves.hasMoreElements()){
 			String llave = llaves.nextElement();
-			if(IType.class.isAssignableFrom(params.get(llave).getType())){
+			if(IType.class.isAssignableFrom(params.get(llave).field.getType())){
 				Method inv;
 				try {
-					inv = params.get(llave).getType().getMethod("GetSQLQuery", Object.class, Object.class);
+					inv = params.get(llave).field.getType().getMethod("GetSQLQuery", Object.class, Object.class);
 					param_list.add((String) inv.invoke(null, llave, this.table));
 				} catch (NoSuchMethodException e) {
 					// TODO Auto-generated catch block
@@ -66,7 +68,7 @@ public class QueryBuilder {
 		String parametros = String.join(",", param_list);
 		this.query = "SELECT "+parametros+" FROM "+this.table;
 	}
-	public void insert(Hashtable<String,Field> params, Hashtable<String,RelationDef> relation){
+	public void insert(Hashtable<String,Criteria> params, Hashtable<String,RelationDef> relation){
 		ArrayList<String> param_list = new ArrayList<String>(); 
 		Enumeration<String> llaves = params.keys();
 		while(llaves.hasMoreElements()){
@@ -77,6 +79,9 @@ public class QueryBuilder {
 		String parametros = String.join(",", param_list);
 		String valores = String.join(",", Collections.nCopies(param_list.size(), "?"));
 		this.query = "INSERT INTO "+this.table+" ("+parametros+") VALUES ("+valores+")";
+	}
+	public void delete(){
+		this.query = "DELETE FROM "+this.table;
 	}
 	private void joinSelect(Hashtable<String,RelationDef> relation, ArrayList<String> params){
 		Enumeration<String> join_llaves = relation.keys();
@@ -105,22 +110,20 @@ public class QueryBuilder {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			}
-			else
-			{
+			} else {
 				params.add(tabla+"."+llave);
 			}
 		}
 	}
-	public void where(Hashtable<String,Field> params){
+	public void where(Hashtable<String,Criteria> params){
 		if(params.size() > 0){
 			Enumeration<String> llaves = params.keys();
 			while(llaves.hasMoreElements()){
 				String llave = llaves.nextElement();
 				this.param_list.add(llave+" = ?");
 				try {
-					prepare_list.add(params.get(llave));
-					prepared.put(params.get(llave), params.get(llave).get(this.modelCore));
+					prepare_list.add(params.get(llave).field);
+					prepared.put(params.get(llave).field, params.get(llave).field.get(params.get(llave).model));
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -163,15 +166,15 @@ public class QueryBuilder {
 			this.param_list.add(where_field.get(i));
 		}
 	}
-	public void match(Hashtable<String, Field> params) {
+	public void match(Hashtable<String, Criteria> params) {
 		if(params.size() > 0){
 			Enumeration<String> llaves = params.keys();
 			while(llaves.hasMoreElements()){
 				String llave = llaves.nextElement();
 				this.match_list.add(llave+" LIKE ?");
 				try {
-					this.prepare_match_list.add(params.get(llave));
-					this.prepared_match.put(params.get(llave), params.get(llave).get(this.modelCore));
+					this.prepare_match_list.add(params.get(llave).field);
+					this.prepared_match.put(params.get(llave).field, params.get(llave).field.get(params.get(llave).model));
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -218,15 +221,15 @@ public class QueryBuilder {
 		String joins = String.join(" ", join_list);
 		this.query = this.query + " " +joins;
 	}
-	public void setField(Hashtable<String, Field> params) {
+	public void setField(Hashtable<String, Criteria> params) {
 		// TODO Auto-generated method stub
 		if(params.size() > 0){
 			Enumeration<String> llaves = params.keys();
 			while(llaves.hasMoreElements()){
 				String llave = llaves.nextElement();
 				try {
-					prepare_list.add(params.get(llave));
-					prepared.put(params.get(llave), params.get(llave).get(this.modelCore));
+					prepare_list.add(params.get(llave).field);
+					prepared.put(params.get(llave).field, params.get(llave).field.get(params.get(llave).model));
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -234,5 +237,14 @@ public class QueryBuilder {
 			}
 		}
 	}
-	
+	public void update(Hashtable<String,Criteria> params) {
+		ArrayList<String> param_list = new ArrayList<String>(); 
+		Enumeration<String> llaves = params.keys();
+		while(llaves.hasMoreElements()){
+			String llave = llaves.nextElement();
+			param_list.add(this.table+"."+llave+"=?");
+		}
+		String parametros = String.join(",", param_list);
+		this.query = "UPDATE "+this.table+" SET "+parametros;
+	}
 }

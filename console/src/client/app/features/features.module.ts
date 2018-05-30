@@ -17,6 +17,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PipesModule } from '../pipes/pipes.module';
 import { SharedModule } from '../shared/shared.module';
 import { FileDropModule } from 'ngx-file-drop';
+import { UsersComponent } from './users/users.component';
+import { ConfigsComponent } from './configs/configs.component';
 /**
  * Do not specify providers for modules that might be imported by a lazy loaded module.
  */
@@ -26,11 +28,11 @@ import { FileDropModule } from 'ngx-file-drop';
   declarations: [HomeComponent,
   ClusterComponent,ConfiguracionesComponent,ControladoresComponent,CronjobsComponent,
   LogsComponent, ModelosComponent, PropertiesComponent, RutasComponent, LoginComponent, 
-  IndexComponent],
+  IndexComponent, UsersComponent, ConfigsComponent],
   exports: [CommonModule, FormsModule, RouterModule, HomeComponent,
   ClusterComponent,ConfiguracionesComponent,ControladoresComponent,CronjobsComponent,
   LogsComponent, ModelosComponent, PropertiesComponent, RutasComponent, LoginComponent, 
-  IndexComponent]
+  IndexComponent, UsersComponent, ConfigsComponent]
 })
 export class FeaturesModule {
 }

@@ -236,7 +236,11 @@ public class Properties {
 			environments.put(i,env);
 		}
 		prop_save.put("environment", environments);
-		prop_save.put("config", this.checkConfig(prop_save.getJSONObject("config"), config));
+		if(prop_save.has("config")){
+			prop_save.put("config", this.checkConfig(prop_save.getJSONObject("config"), config));
+		} else {
+			prop_save.put("config", this.checkConfig(this.getTemplateConfig(this.propertiesMap.getConfigTable()), config));
+		}
 		if(!prop_save.has("prop_templates")) prop_save.put("prop_templates", this.templates_prop);
 		this.config_obj = prop_save;
 		this.log.Info("Checking changes in the configuration file");
@@ -396,8 +400,9 @@ public class Properties {
 		Enumeration<String> keys = config.keys();
 		while(keys.hasMoreElements()){
 			String key = keys.nextElement();
-			if(save.has(key)){
-				JSONObject prop = save.getJSONObject(key);
+			JSONObject saveobj = save.getJSONObject("STATIC");
+			if(saveobj.has(key)){
+				JSONObject prop = saveobj.getJSONObject(key);
 				JSONObject new_prop = config.get(key);
 				if(new_prop.get("type").equals("single")){
 					//COMPARAMOS Y MODIFICAMOS EN CASO SE SERLO
@@ -575,7 +580,7 @@ public class Properties {
 			JSONObject env = envs.getJSONObject(i);
 			if(env.getString("EARLGREY_ENVNAME").equals(prop)){
 				this.joinProperties(env);
-				this.joinConfigs(this.config_obj.getJSONObject("config"));
+				if(this.config_obj.has("config")) this.joinConfigs(this.config_obj.getJSONObject("config"));
 				this.log.Info("Funcionando en entorno, "+prop);
 				return;
 			}
@@ -629,6 +634,9 @@ public class Properties {
 		JSONArray environments = this.config_obj.getJSONArray("environment");
 		for(int i=0;i<environments.length();i++){
 			JSONObject env = environments.getJSONObject(i);
+			if(!env.has("DATASOURCES")) {
+				env.put("DATASOURCES", new JSONObject());
+			}
 			JSONObject templ = env.getJSONObject("DATASOURCES");
 			if(!templ.has(datasource_name)){
 				templ.put(datasource_name, Datasource.getDatasourceTemplate());
@@ -870,7 +878,7 @@ public class Properties {
 			JSONObject env = envs.getJSONObject(i);
 			if(env.getString("EARLGREY_ENVNAME").equals(envi)){
 				this.joinProperties(env);
-				this.joinConfigs(this.config_obj.getJSONObject("config"));
+				if(this.config_obj.has("config")) this.joinConfigs(this.config_obj.getJSONObject("config"));
 				this.config_obj.put("env_used", envi);
 				this.saveFile();
 				this.restartProperties();
@@ -928,6 +936,18 @@ public class Properties {
 	}
 	public void setPropertiefile(JSONObject config){
 		this.config_obj = config;
+		this.backupFile();
+		this.saveFile();
+		this.restartProperties();
+	}
+	public JSONObject getConfigs(){
+		return this.config_target;
+	}
+	public JSONArray getComunication(){
+		return this.config_obj.getJSONArray("comunication");
+	}
+	public void setComunication(JSONArray com){
+		this.config_obj.put("comunication", com);
 		this.backupFile();
 		this.saveFile();
 		this.restartProperties();

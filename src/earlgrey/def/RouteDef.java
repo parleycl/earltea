@@ -99,6 +99,20 @@ public class RouteDef implements Cloneable {
 		return action;
 	}
 	
+	public ActionDef createAction(int httpAction, Class<?> clase, Method metodo, boolean console) {
+		ActionDef action = new ActionDef(httpAction, this, clase, metodo, console);
+		if(this.actions.containsKey(httpAction)) this.log.Warning("The last route with "+HttpMethod.toString(httpAction)+" method was duplicate. The core set the controller "+clase.getSuperclass().getName()+" with the action "+metodo.getName()+" in this route.");
+		this.actions.put(httpAction, action);
+		return action;
+	}
+	
+	public ActionDef createAction(int httpAction, Class<?> clase, boolean console) {
+		ActionDef action = new ActionDef(httpAction, this, clase, console);
+		if(this.actions.containsKey(httpAction)) this.log.Warning("The last route with "+HttpMethod.toString(httpAction)+" method was duplicate. The core set the controller "+clase.getSuperclass().getName()+" in this route.");
+		this.actions.put(httpAction, action);
+		return action;
+	}
+	
 	public ActionDef route(String[] route, int httpMethod, JSONObject params){		
 		if(params == null) params = new JSONObject();
 		Method metodo = null;
@@ -127,19 +141,17 @@ public class RouteDef implements Cloneable {
 								continue;
 							}
 						}
-						// EN CASO CONTRARIO INTENTAMOS SABER SI SON PARAMETROS
-						if(this.ParamByUri.size() > param_counter){
-							String pam = this.ParamByUri.get(param_counter++);
-							params.put(pam.substring(1,pam.length()-1), route[0]);
-							RouteDef router = this.RouteTable.get(pam);
-							route = ArrayUtils.remove(route,0);
-							return router.route(route, httpMethod, params);
-						}
-						else
-						{
-							return null;
-						}
-					} else {
+					} 
+					// EN CASO CONTRARIO INTENTAMOS SABER SI SON PARAMETROS
+					if(this.ParamByUri.size() > param_counter){
+						String pam = this.ParamByUri.get(param_counter++);
+						params.put(pam.substring(1,pam.length()-1), route[0]);
+						RouteDef router = this.RouteTable.get(pam);
+						route = ArrayUtils.remove(route,0);
+						return router.route(route, httpMethod, params);
+					}
+					else
+					{
 						return null;
 					}
 				}
@@ -149,12 +161,7 @@ public class RouteDef implements Cloneable {
 		// SI ES UN MODELO REST DE IGUAL FORMA SE EFECTUA LA LLAMADA
 		try {
 			ActionDef action = this.actions.get(httpMethod);
-			if((action != null && action.controlador != null && metodo != null) || (action != null && action.controlador != null && action.metodo != null) || (action != null && action.ModelRest && action.Model != null)){
-				ActionDef rt = (ActionDef)action.clone();
-				if(metodo != null) rt.metodo = metodo;
-				rt.setParams(params);
-				return rt;
-			} else if (this.CORS && httpMethod == HttpMethod.OPTIONS) {
+			if (this.CORS && httpMethod == HttpMethod.OPTIONS) {
 				Method[] methods = CORSResponse.class.getMethods();
 				for(Method method : methods) {
 					if(!method.getName().equals("CORS")) continue;
@@ -171,7 +178,17 @@ public class RouteDef implements Cloneable {
 					rt.setParams(method_allow);
 					return rt;
 				}
-			} else{
+			} else  if((action != null && action.controlador != null && metodo != null) || (action != null && action.controlador != null && action.metodo != null)){
+				ActionDef rt = (ActionDef)action.clone();
+				if(metodo != null) rt.metodo = metodo;
+				rt.setParams(params);
+				return rt;
+			} else if (action != null && action.ModelRest && action.Model != null) {
+				ActionDef rt = (ActionDef)action.clone();
+				if(metodo != null) rt.metodo = metodo;
+				rt.setParams(params);
+				return rt;
+			} else {
 				return null;
 			}
 		} catch (CloneNotSupportedException e) {
@@ -182,5 +199,9 @@ public class RouteDef implements Cloneable {
 	
 	public boolean hasHttpMethod(int method){
 		return this.actions.containsKey(method);
+	}
+	
+	public Hashtable<Integer,ActionDef> getActions() {
+		return this.actions;
 	}
 }

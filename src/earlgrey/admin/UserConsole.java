@@ -10,7 +10,9 @@ import earlgrey.annotations.CORS;
 import earlgrey.annotations.Console;
 import earlgrey.annotations.Controller;
 import earlgrey.annotations.ControllerAction;
+import earlgrey.annotations.DELETE;
 import earlgrey.annotations.GET;
+import earlgrey.annotations.PATCH;
 import earlgrey.annotations.POST;
 import earlgrey.annotations.ParamRequire;
 import earlgrey.annotations.Policie;
@@ -89,6 +91,61 @@ public class UserConsole extends ControllerCore{
 		SessionDef session = req.getSession();
 		session.killUser();
 		res.ok("");
+		return;
+	}
+	
+	@ControllerAction(description = "Method get all users.", name = "Get Users", version = 1)
+	@GET
+	public static void getUsers(HttpRequest req, HttpResponse res){
+		JSONArray retorno = new JSONArray();
+		JSONArray users = Properties.getInstance().getConsoleUsers();
+		for(int i=0; i < users.length(); i++) {
+			retorno.put((new JSONObject()).put("Name", users.getJSONObject(i).getString("USERNAME")).put("id", i).put("Admin", true));
+		}
+		res.json(retorno);
+		return;
+	}
+	@ControllerAction(description = "Method create user.", name = "Create User", version = 1)
+	@POST
+	@ParamRequire(name = "username")
+	@ParamRequire(name = "password")
+	public static void createUsers(HttpRequest req, HttpResponse res){
+		JSONArray retorno = new JSONArray();
+		String username = req.getParam("username");
+		String password = req.getParam("password");
+		JSONArray users = Properties.getInstance().getConsoleUsers();
+		users.put((new JSONObject()).put("USERNAME",username).put("PASSWORD", password));
+		Properties.getInstance().saveToDisk();
+		Properties.getInstance().restartProperties();
+		res.json((new JSONObject()).put("Name", username).put("id", users.length()-1).put("Admin", true));
+		return;
+	}
+	@ControllerAction(description = "Method update user", name = "Update user", version = 1)
+	@PATCH
+	@Route(route = "/:id")
+	public static void updateUsers(HttpRequest req, HttpResponse res){
+		String username = req.getParam("username");
+		String password = req.getParam("password");
+		JSONArray users = Properties.getInstance().getConsoleUsers();
+		JSONObject user = users.getJSONObject(Integer.parseInt(req.getParam("id")));
+		user.put("USERNAME", username);
+		user.put("PASSWORD", password);
+		Properties.getInstance().saveToDisk();
+		Properties.getInstance().restartProperties();
+		res.ok("");
+		return;
+	}
+	@ControllerAction(description = "Method delete user.", name = "Delete user", version = 1)
+	@DELETE
+	@Route(route = "/:id")
+	public static void deleteUsers(HttpRequest req, HttpResponse res){
+		String username = req.getParam("username");
+		String password = req.getParam("password");
+		JSONArray users = Properties.getInstance().getConsoleUsers();
+		users.remove(Integer.parseInt(req.getParam("id")));
+		Properties.getInstance().saveToDisk();
+		Properties.getInstance().restartProperties();
+		res.noContent();
 		return;
 	}
 }

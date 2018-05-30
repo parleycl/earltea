@@ -31,14 +31,14 @@ public class CacheCore implements Cacheable{
 	}
 	
 	public CacheElement getCache(String key) {
-		if(this.cachetable.contains(Hash.MD5(key))) {
+		if(this.cachetable.containsKey(Hash.MD5(key))) {
 			return this.cachetable.get(Hash.MD5(key));
 		}
 		return null;
 	}
 	
-	public boolean hasCache(String key) {
-		if(this.cachetable.contains(Hash.MD5(key))) {
+	public boolean hasCache(String key) {	
+		if(this.cachetable.containsKey(Hash.MD5(key))) {
 			return true;
 		}
 		return false;

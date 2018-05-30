@@ -14,10 +14,15 @@ public interface Response {
 	public void accepted();
 	public void send(String text, int code);
 	public void serverError(JSONArray obj);
+	public void serverError(String text);
 	public void setHeader(String key, String value);
 	public void notFound();
 	public void notAllowed();
+	public void imTeaPot();
 	public void notImplemented();
+	public void badRequest();
+	public void conflict();
+	public void paramsRequired();
 	public void forbidden();
 	public void customError(JSONArray obj, int code);
 	public void customResponse(JSONArray obj, int code);

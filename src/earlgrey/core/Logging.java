@@ -19,6 +19,8 @@ import java.util.stream.Stream;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import earlgrey.error.Error500;
+
 public class Logging {
 	private String name;
 	private Earlgrey core;
@@ -133,5 +135,21 @@ public class Logging {
 			e.printStackTrace();
 		}
 		return logtxt;
+	}
+	public void printStackTrace(StackTraceElement[] stack){
+		for(int i=0;i<stack.length;i++){
+			this.Critic(stack[i].toString(), Error500.METHOD_INVOCATION_ERROR);
+		}
+	}
+	public void printException(Exception e, int errorcode){
+		StackTraceElement[] stack = e.getStackTrace();
+		this.Critic("Cause: "+e.getCause().getMessage(), errorcode);
+		this.Critic("Cause: "+e.getCause().getLocalizedMessage(), errorcode);
+		this.Critic("Localized Message: "+e.getLocalizedMessage(), errorcode);
+		this.Critic("Message:"+e.getMessage(), errorcode);
+		this.Critic("-------------------- STACK --------------------", errorcode);
+		for(int i=0;i<stack.length;i++){
+			this.Critic(stack[i].toString(), errorcode);
+		}
 	}
 }

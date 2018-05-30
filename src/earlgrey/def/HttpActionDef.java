@@ -77,7 +77,7 @@ public class HttpActionDef implements Runnable, Process{
 		if(this.checkAllParams()) {
 			this.execute();
 		} else {
-			this.response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			this.response.setStatus(422);
 			try {
 				this.response.getWriter().println("Parameters are required");
 			} catch (IOException e) {
@@ -121,8 +121,8 @@ public class HttpActionDef implements Runnable, Process{
 		this.session.ping(metodo);
 		if(metodo.isAnnotationPresent(Cache.class)){
 			CacheCore cache = CacheCore.getInstance();
-			if(cache.hasCache(this.request.getRequestURI())) {
-				CacheElement element = cache.getCache(this.request.getRequestURI());
+			if(cache.hasCache(this.request.getRequestURI()+this.parametros.toString())) {
+				CacheElement element = cache.getCache(this.request.getRequestURI()+this.parametros.toString());
 				this.processCache(element, response);
 				return;
 			} else {
@@ -130,8 +130,8 @@ public class HttpActionDef implements Runnable, Process{
 			}
 		}
 		if(metodo.isAnnotationPresent(UserCache.class)){
-			if(this.session.hasCache(this.request.getRequestURI())) {
-				CacheElement element = this.session.getCache(this.request.getRequestURI());
+			if(this.session.hasCache(this.request.getRequestURI()+this.parametros.toString())) {
+				CacheElement element = this.session.getCache(this.request.getRequestURI()+this.parametros.toString());
 				this.processCache(element, response);
 				return;
 			} else {
@@ -139,7 +139,12 @@ public class HttpActionDef implements Runnable, Process{
 			}
 		}
 		try {
-			metodo.invoke(null, request,response);
+			if(this.action.ModelRest && this.action.Model != null) {
+				metodo.invoke(null, request,response, this.action.Model);
+				
+			} else {
+				metodo.invoke(null, request,response);
+			}
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			StackTraceElement[] stack = e.getCause().getStackTrace();
 			this.log.Critic("Earlgrey detect an error in the method call: "+metodo.getName(), Error500.METHOD_INVOCATION_ERROR);
@@ -154,8 +159,6 @@ public class HttpActionDef implements Runnable, Process{
 		}
 	}
 	private void processCache(CacheElement element, HttpResponse response){
-		this.response.setCharacterEncoding("UTF-8");
-		this.response.setStatus(HttpServletResponse.SC_OK);
 		if(element.getType() == CacheCore.CACHE_JSON){
 			this.response.setContentType("application/json");
 		} else if(element.getType() == CacheCore.CACHE_XML) {
@@ -165,6 +168,8 @@ public class HttpActionDef implements Runnable, Process{
 			this.response.setContentType("text/plain");
 		}
 		try {
+			this.response.setCharacterEncoding("UTF-8");
+			this.response.setStatus(HttpServletResponse.SC_OK);
 			this.response.getWriter().println(element.getContent());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -189,10 +194,10 @@ public class HttpActionDef implements Runnable, Process{
 			if(metodo.isAnnotationPresent(Cache.class)){
 				Cache cache_annotation = metodo.getAnnotation(Cache.class);
 				CacheCore cache = CacheCore.getInstance();
-				cache.setCache(this.request.getRequestURI(), content, cache_annotation.time(), type);
+				cache.setCache(this.request.getRequestURI()+this.parametros.toString(), content, cache_annotation.time(), type);
 			} else if(metodo.isAnnotationPresent(UserCache.class)) {
 				Cache cache_annotation = metodo.getAnnotation(Cache.class);
-				this.session.setCache(this.request.getRequestURI(), content, cache_annotation.time(), type);
+				this.session.setCache(this.request.getRequestURI()+this.parametros.toString(), content, cache_annotation.time(), type);
 			}
 		}
 	}
