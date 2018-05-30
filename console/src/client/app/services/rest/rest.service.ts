@@ -145,15 +145,21 @@ export class RestService {
 		});
 	}
 	public delete(id:number,uri:string) {
-		this.loading.show(this);
-		let header = this.createHeaders();
-		return this.http.delete(this.api+"admin/console/"+uri+'/'+id, {
-	      	headers: header,
-	      	withCredentials: true
-	    }).map((res:Response) => {
-			let response = res.json();
-			this.loading.hide(this);
-			return response;
+		var r = confirm('¿Estas seguro que deseas borrar el elemento?');
+		if (r == true) {
+			this.loading.show(this);
+			let header = this.createHeaders();
+			return this.http.delete(this.api+"admin/console/"+uri+'/'+id, {
+				headers: header,
+				withCredentials: true
+			}).map((res:Response) => {
+				let response = res.json();
+				this.loading.hide(this);
+				return response;
+			});
+		}
+		return new Observable(observe => {
+			observe.complete();
 		});
 	}
 	public put(id:number,uri:string, data:any) {
