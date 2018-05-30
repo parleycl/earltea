@@ -105,7 +105,22 @@ public class UserConsole extends ControllerCore{
 		res.json(retorno);
 		return;
 	}
-	@ControllerAction(description = "Method update user", name = "Get Users", version = 1)
+	@ControllerAction(description = "Method create user.", name = "Create User", version = 1)
+	@POST
+	@ParamRequire(name = "username")
+	@ParamRequire(name = "password")
+	public static void createUsers(HttpRequest req, HttpResponse res){
+		JSONArray retorno = new JSONArray();
+		String username = req.getParam("username");
+		String password = req.getParam("password");
+		JSONArray users = Properties.getInstance().getConsoleUsers();
+		users.put((new JSONObject()).put("USERNAME",username).put("PASSWORD", password));
+		Properties.getInstance().saveToDisk();
+		Properties.getInstance().restartProperties();
+		res.json(retorno);
+		return;
+	}
+	@ControllerAction(description = "Method update user", name = "Update user", version = 1)
 	@PATCH
 	@Route(route = "/:id")
 	public static void updateUsers(HttpRequest req, HttpResponse res){
@@ -120,7 +135,7 @@ public class UserConsole extends ControllerCore{
 		res.ok("");
 		return;
 	}
-	@ControllerAction(description = "Method delete user.", name = "Delete users", version = 1)
+	@ControllerAction(description = "Method delete user.", name = "Delete user", version = 1)
 	@DELETE
 	@Route(route = "/:id")
 	public static void deleteUsers(HttpRequest req, HttpResponse res){
