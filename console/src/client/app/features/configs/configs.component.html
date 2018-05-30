@@ -1,1 +1,192 @@
-Configs Component works!
+<div class="modify">
+    <form  #formmod (submit)="saveAll($event)">
+        <div class="card list">
+                <div class="card-header card-inverse card-success header">Modify configs</div>
+                <div class="card-block">
+                        <div class="form-group" *ngFor="let prop of prop_static | keys">
+                            <label for="nombre-txt" class="tipos"> 
+                                <div class="single label" *ngIf="prop.value.type == 'single'">Single</div>
+                                <div class="option label" *ngIf="prop.value.type == 'option'">Option</div>
+                                <div class="set label" *ngIf="prop.value.type == 'set'">Set</div>
+                                <div class="array label" *ngIf="prop.value.type == 'array'">Array</div>
+                                <div class="title">{{ prop.value.earlgrey_name }}</div>
+                                <div class="addset" *ngIf="prop.value.type == 'set'">
+                                    <button type="button" class="btn btn-primary" (click)="addNewSet(prop.value)"><i class="fa fa-plus" aria-hidden="true"></i> Agregar</button>
+                                </div>
+
+                            </label>
+                            <!-- SOLAMENTE SI ES UNA PROPERTIE DE TIPO SINGLE -->
+                            <input *ngIf="prop.value.type == 'single'" [(ngModel)]="prop_static[prop.key].value" type="text" class="form-control" [name]="prop.value.name" [id]="prop.value.name" [placeholder]="prop.value.name" [value]="prop.value.value" required />
+                        <!-- SOLAMENTE SI ES UNA PROPERTIE DE TIPO OPTION -->
+                        <select *ngIf="prop.value.type == 'option'" type="text" class="form-control" [name]="prop.value.name" [id]="prop.value.name" [value]="prop.value.value" required (change)="changeOption(prop.value,prope)" #prope>
+                                <option *ngFor="let option of prop.value.options | keys" [value]="option.key">{{ option.value }}</option>
+                        </select>
+                        <!-- SOLAMENTE SI ES UNA PROPERTIE DE TIPO SET -->
+                        <div *ngIf="prop.value.type == 'set'" class="sets">
+                            <div class="set_item" *ngFor="let set of prop.value.sets | keys">
+                                <div class="set_header" [class.running]="set.key == prop.value.value" (click)="changeset(prop.value.name+set.key)">
+                                    <div class="title">Set {{ set.key }}</div>
+                                    <div class="status">
+                                        <div class="running label" *ngIf="set.key == prop.value.value">Running</div>
+                                        <div class="saved label" *ngIf="set.key != prop.value.value">Saved</div>
+                                    </div>
+                                    <div class="action">
+                                        <i class="fa fa-play" aria-hidden="true" (click)="setSetDefault(prop.value, set.key, $event)" *ngIf="set.key != prop.value.value"></i>
+                                        <i class="fa fa-trash" aria-hidden="true" (click)="removeSet(prop.value, set.key, $event)" *ngIf="set.key != prop.value.value"></i>
+                                    </div>
+                                </div>
+                                <div class="set_body" *ngIf="setprop==prop.value.name+set.key">
+                                    <div class="item" *ngFor="let setprop of set.value | keys">
+                                        <div class="title">{{ setprop.key }}</div>
+                                        <div class="value"><input [value]="setprop.value" (change)="changesetvalue(prop.key, set.key, setprop.key, setvalue.value)" #setvalue/></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- TEMPLATES -->
+                    <div class="form-group" *ngFor="let prop of prop_templates | keys">
+                            <label for="nombre-txt" class="tipos"> 
+                                <div class="single label" *ngIf="prop.value.type == 'single'">Single</div>
+                                <div class="option label" *ngIf="prop.value.type == 'option'">Option</div>
+                                <div cl<div class="modify" *ngIf="view=='properties'">
+                                    <form  #formmod (submit)="saveAll($event)">
+                                        <div class="card list">
+                                                <div class="card-header card-inverse card-success header">Modificar entorno {{ env_mod.EARLGREY_ENVNAME }}</div>
+                                                <div class="card-block">
+                                                        <div class="form-group" *ngFor="let prop of prop_static | keys">
+                                                            <label for="nombre-txt" class="tipos"> 
+                                                                <div class="single label" *ngIf="prop.value.type == 'single'">Single</div>
+                                                                <div class="option label" *ngIf="prop.value.type == 'option'">Option</div>
+                                                                <div class="set label" *ngIf="prop.value.type == 'set'">Set</div>
+                                                                <div class="array label" *ngIf="prop.value.type == 'array'">Array</div>
+                                                                <div class="title">{{ prop.value.name }}</div>
+                                                                <div class="addset" *ngIf="prop.value.type == 'set'">
+                                                                    <button type="button" class="btn btn-primary" (click)="addNewSet(prop.value)"><i class="fa fa-plus" aria-hidden="true"></i> Agregar</button>
+                                                                </div>
+                                
+                                                            </label>
+                                                            <!-- SOLAMENTE SI ES UNA PROPERTIE DE TIPO SINGLE -->
+                                                            <input *ngIf="prop.value.type == 'single'" [(ngModel)]="prop_static[prop.key].value" type="text" class="form-control" [name]="prop.value.name" [id]="prop.value.name" [placeholder]="prop.value.name" [value]="prop.value.value" required />
+                                                        <!-- SOLAMENTE SI ES UNA PROPERTIE DE TIPO OPTION -->
+                                                        <select *ngIf="prop.value.type == 'option'" type="text" class="form-control" [name]="prop.value.name" [id]="prop.value.name" [value]="prop.value.value" required (change)="changeOption(prop.value,prope)" #prope>
+                                                                <option *ngFor="let option of prop.value.options | keys" [value]="option.key">{{ option.value }}</option>
+                                                        </select>
+                                                        <!-- SOLAMENTE SI ES UNA PROPERTIE DE TIPO SET -->
+                                                        <div *ngIf="prop.value.type == 'set'" class="sets">
+                                                            <div class="set_item" *ngFor="let set of prop.value.sets | keys">
+                                                                <div class="set_header" [class.running]="set.key == prop.value.value" (click)="changeset(prop.value.name+set.key)">
+                                                                    <div class="title">Set {{ set.key }}</div>
+                                                                    <div class="status">
+                                                                        <div class="running label" *ngIf="set.key == prop.value.value">Running</div>
+                                                                        <div class="saved label" *ngIf="set.key != prop.value.value">Saved</div>
+                                                                    </div>
+                                                                    <div class="action">
+                                                                        <i class="fa fa-play" aria-hidden="true" (click)="setSetDefault(prop.value, set.key, $event)" *ngIf="set.key != prop.value.value"></i>
+                                                                        <i class="fa fa-trash" aria-hidden="true" (click)="removeSet(prop.value, set.key, $event)" *ngIf="set.key != prop.value.value"></i>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="set_body" *ngIf="setprop==prop.value.name+set.key">
+                                                                    <div class="item" *ngFor="let setprop of set.value | keys">
+                                                                        <div class="title">{{ setprop.key }}</div>
+                                                                        <div class="value"><input [value]="setprop.value" (change)="changesetvalue(prop.key, set.key, setprop.key, setvalue.value)" #setvalue/></div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!-- TEMPLATES -->
+                                                    <div class="form-group" *ngFor="let prop of prop_templates | keys">
+                                                            <label for="nombre-txt" class="tipos"> 
+                                                                <div class="single label" *ngIf="prop.value.type == 'single'">Single</div>
+                                                                <div class="option label" *ngIf="prop.value.type == 'option'">Option</div>
+                                                                <div class="set label" *ngIf="prop.value.type == 'set'">Set</div>
+                                                                <div class="array label" *ngIf="prop.value.type == 'array'">Array</div>
+                                                                <div class="title">{{ prop.value.name }}</div>
+                                                                <div class="addset" *ngIf="prop.value.type == 'set'">
+                                                                    <button type="button" class="btn btn-primary" (click)="addNewSet(prop.value)"><i class="fa fa-plus" aria-hidden="true"></i> Agregar</button>
+                                                                </div>
+                                
+                                                            </label>
+                                                            <!-- SOLAMENTE SI ES UNA PROPERTIE DE TIPO SINGLE -->
+                                                            <input *ngIf="prop.value.type == 'single'" [(ngModel)]="prop_templates[prop.key].value" type="text" class="form-control" [name]="prop.value.name" [id]="prop.value.name" [placeholder]="prop.value.name" [value]="prop.value.value" required />
+                                                        <!-- SOLAMENTE SI ES UNA PROPERTIE DE TIPO OPTION -->
+                                                        <select *ngIf="prop.value.type == 'option'" type="text" class="form-control" [name]="prop.value.name" [id]="prop.value.name" [value]="prop.value.value" required (change)="changeOption(prop.value,prope)" #prope>
+                                                                <option *ngFor="let option of prop.value.options | keys" [value]="option.key">{{ option.value }}</option>
+                                                        </select>
+                                                        <!-- SOLAMENTE SI ES UNA PROPERTIE DE TIPO SET -->
+                                                        <div *ngIf="prop.value.type == 'set'" class="sets">
+                                                            <div class="set_item" *ngFor="let set of prop.value.sets | keys">
+                                                                <div class="set_header" [class.running]="set.key == prop.value.value" (click)="changeset(prop.value.name+set.key)">
+                                                                    <div class="title">Set {{ set.key }}</div>
+                                                                    <div class="status">
+                                                                        <div class="running label" *ngIf="set.key == prop.value.value">Running</div>
+                                                                        <div class="saved label" *ngIf="set.key != prop.value.value">Saved</div>
+                                                                    </div>
+                                                                    <div class="action">
+                                                                        <i class="fa fa-play" aria-hidden="true" (click)="setSetDefault(prop.value, set.key, $event)" *ngIf="set.key != prop.value.value"></i>
+                                                                        <i class="fa fa-trash" aria-hidden="true" (click)="removeSet(prop.value, set.key, $event)" *ngIf="set.key != prop.value.value"></i>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="set_body" *ngIf="setprop==prop.value.name+set.key">
+                                                                    <div class="item" *ngFor="let setprop of set.value | keys">
+                                                                        <div class="title">{{ setprop.key }}</div>
+                                                                        <div class="value"><input [value]="setprop.value" (change)="changesetvaluetemplate(prop.key, set.key, setprop.key, setvalue.value)" #setvalue/></div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                        </div>
+                                        <div class="add">
+                                            <button type="submit" class="btn btn-primary btn-panel">Modify Enviroment</button>
+                                            <button class="btn btn-warning btn-panel" (click)="backPanel()">Back</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="set label" *ngIf="prop.value.type == 'set'">Set</div>
+                                <div class="array label" *ngIf="prop.value.type == 'array'">Array</div>
+                                <div class="title">{{ prop.value.name }}</div>
+                                <div class="addset" *ngIf="prop.value.type == 'set'">
+                                    <button type="button" class="btn btn-primary" (click)="addNewSet(prop.value)"><i class="fa fa-plus" aria-hidden="true"></i> Agregar</button>
+                                </div>
+
+                            </label>
+                            <!-- SOLAMENTE SI ES UNA PROPERTIE DE TIPO SINGLE -->
+                            <input *ngIf="prop.value.type == 'single'" [(ngModel)]="prop_templates[prop.key].value" type="text" class="form-control" [name]="prop.value.name" [id]="prop.value.name" [placeholder]="prop.value.name" [value]="prop.value.value" required />
+                        <!-- SOLAMENTE SI ES UNA PROPERTIE DE TIPO OPTION -->
+                        <select *ngIf="prop.value.type == 'option'" type="text" class="form-control" [name]="prop.value.name" [id]="prop.value.name" [value]="prop.value.value" required (change)="changeOption(prop.value,prope)" #prope>
+                                <option *ngFor="let option of prop.value.options | keys" [value]="option.key">{{ option.value }}</option>
+                        </select>
+                        <!-- SOLAMENTE SI ES UNA PROPERTIE DE TIPO SET -->
+                        <div *ngIf="prop.value.type == 'set'" class="sets">
+                            <div class="set_item" *ngFor="let set of prop.value.sets | keys">
+                                <div class="set_header" [class.running]="set.key == prop.value.value" (click)="changeset(prop.value.name+set.key)">
+                                    <div class="title">Set {{ set.key }}</div>
+                                    <div class="status">
+                                        <div class="running label" *ngIf="set.key == prop.value.value">Running</div>
+                                        <div class="saved label" *ngIf="set.key != prop.value.value">Saved</div>
+                                    </div>
+                                    <div class="action">
+                                        <i class="fa fa-play" aria-hidden="true" (click)="setSetDefault(prop.value, set.key, $event)" *ngIf="set.key != prop.value.value"></i>
+                                        <i class="fa fa-trash" aria-hidden="true" (click)="removeSet(prop.value, set.key, $event)" *ngIf="set.key != prop.value.value"></i>
+                                    </div>
+                                </div>
+                                <div class="set_body" *ngIf="setprop==prop.value.name+set.key">
+                                    <div class="item" *ngFor="let setprop of set.value | keys">
+                                        <div class="title">{{ setprop.key }}</div>
+                                        <div class="value"><input [value]="setprop.value" (change)="changesetvaluetemplate(prop.key, set.key, setprop.key, setvalue.value)" #setvalue/></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+        <div class="add">
+            <button type="submit" class="btn btn-primary btn-panel">Modify Enviroment</button>
+            <button class="btn btn-warning btn-panel" (click)="backPanel()">Back</button>
+        </div>
+    </form>
+</div>
