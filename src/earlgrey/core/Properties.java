@@ -400,8 +400,9 @@ public class Properties {
 		Enumeration<String> keys = config.keys();
 		while(keys.hasMoreElements()){
 			String key = keys.nextElement();
-			if(save.has(key)){
-				JSONObject prop = save.getJSONObject(key);
+			JSONObject saveobj = save.getJSONObject("STATIC");
+			if(saveobj.has(key)){
+				JSONObject prop = saveobj.getJSONObject(key);
 				JSONObject new_prop = config.get(key);
 				if(new_prop.get("type").equals("single")){
 					//COMPARAMOS Y MODIFICAMOS EN CASO SE SERLO
@@ -941,5 +942,14 @@ public class Properties {
 	}
 	public JSONObject getConfigs(){
 		return this.config_target;
+	}
+	public JSONArray getComunication(){
+		return this.config_obj.getJSONArray("comunication");
+	}
+	public void setComunication(JSONArray com){
+		this.config_target.put("comunication", com);
+		this.backupFile();
+		this.saveFile();
+		this.restartProperties();
 	}
 }
