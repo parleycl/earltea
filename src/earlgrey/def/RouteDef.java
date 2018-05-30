@@ -99,6 +99,20 @@ public class RouteDef implements Cloneable {
 		return action;
 	}
 	
+	public ActionDef createAction(int httpAction, Class<?> clase, Method metodo, boolean console) {
+		ActionDef action = new ActionDef(httpAction, this, clase, metodo, console);
+		if(this.actions.containsKey(httpAction)) this.log.Warning("The last route with "+HttpMethod.toString(httpAction)+" method was duplicate. The core set the controller "+clase.getSuperclass().getName()+" with the action "+metodo.getName()+" in this route.");
+		this.actions.put(httpAction, action);
+		return action;
+	}
+	
+	public ActionDef createAction(int httpAction, Class<?> clase, boolean console) {
+		ActionDef action = new ActionDef(httpAction, this, clase, console);
+		if(this.actions.containsKey(httpAction)) this.log.Warning("The last route with "+HttpMethod.toString(httpAction)+" method was duplicate. The core set the controller "+clase.getSuperclass().getName()+" in this route.");
+		this.actions.put(httpAction, action);
+		return action;
+	}
+	
 	public ActionDef route(String[] route, int httpMethod, JSONObject params){		
 		if(params == null) params = new JSONObject();
 		Method metodo = null;
@@ -185,5 +199,9 @@ public class RouteDef implements Cloneable {
 	
 	public boolean hasHttpMethod(int method){
 		return this.actions.containsKey(method);
+	}
+	
+	public Hashtable<Integer,ActionDef> getActions() {
+		return this.actions;
 	}
 }
