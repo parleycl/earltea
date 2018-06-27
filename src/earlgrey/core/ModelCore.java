@@ -909,6 +909,26 @@ public class ModelCore {
 		this.where_field.add(key+" LIKE "+value);
 	}
 	
+	public void notLike(String key, int value){
+		this.where_field.add(key+" NOT LIKE "+value);
+	}
+	public void notLike(String key, double value){
+		this.where_field.add(key+" NOT LIKE "+value);
+	}
+	public void notLike(String key, String value){
+		this.where_field.add(key+" NOT LIKE '"+value+"'");
+	}
+	
+	public void notEqual(String key, int value){
+		this.where_field.add(key+" != "+value);
+	}
+	public void notEqual(String key, double value){
+		this.where_field.add(key+" != "+value);
+	}
+	public void notEqual(String key, String value){
+		this.where_field.add(key+" != '"+value+"'");
+	}
+	
 	//Double
 	public void mayorOrEqual(String key, double value) {
 		this.where_field.add(key+" >= "+value);
