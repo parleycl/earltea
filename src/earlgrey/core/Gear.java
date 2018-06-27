@@ -186,7 +186,7 @@ public class Gear {
 			if(chunks.length > 1) {
 				for(int i=0; i<chunks.length; i++) {
 					if(chunks[i].indexOf("charset=") != -1) {
-						charset = chunks[i].trim().replace("charset=", "").toUpperCase();
+						charset = chunks[i].trim().replace("charset=", "").trim().toUpperCase();
 						break;
 					}
 				}
