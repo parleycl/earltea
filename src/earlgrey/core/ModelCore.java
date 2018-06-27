@@ -871,14 +871,72 @@ public class ModelCore {
 			}
 		}
 	}
-	public void mayorOrEqual(String string, String from) {
-		// TODO Auto-generated method stub
-		
+	// Operaciones comparativas.
+	public void mayorOrEqual(String key, String value) {
+		this.where_field.add(key+" >= "+value);
 	}
-	public void minorOrEqual(String string, String from) {
-		// TODO Auto-generated method stub
+	public void minorOrEqual(String key, String value) {
+		this.where_field.add(key+" <= "+value);
 	}
+	public void mayor(String key, String value) {
+		this.where_field.add(key+" > "+value);
+	}
+	public void minor(String key, String value) {
+		this.where_field.add(key+" < "+value);
+	}
+	public void between(String key, String value1, String value2) {
+		this.where_field.add(key+" BETWEEN '"+value1+"' AND '"+value2+"'");
+	}
+	public void like(String key, String value){
+		this.where_field.add(key+" LIKE '"+value+"'");
+	}
+	public void mayorOrEqual(String key, int value) {
+		this.where_field.add(key+" >= "+value);
+	}
+	public void minorOrEqual(String key, int value) {
+		this.where_field.add(key+" <= "+value);
+	}
+	public void mayor(String key, int value) {
+		this.where_field.add(key+" > "+value);
+	}
+	public void minor(String key, int value) {
+		this.where_field.add(key+" < "+value);
+	}
+	public void between(String key, int value1, int value2) {
+		this.where_field.add(key+" BETWEEN "+value1+" AND "+value2+"");
+	}
+	public void like(String key, int value){
+		this.where_field.add(key+" LIKE "+value);
+	}
+	
+	//Double
+	public void mayorOrEqual(String key, double value) {
+		this.where_field.add(key+" >= "+value);
+	}
+	public void minorOrEqual(String key, double value) {
+		this.where_field.add(key+" <= "+value);
+	}
+	public void mayor(String key, double value) {
+		this.where_field.add(key+" > "+value);
+	}
+	public void minor(String key, double value) {
+		this.where_field.add(key+" < "+value);
+	}
+	public void between(String key, double value1, double value2) {
+		this.where_field.add(key+" BETWEEN "+value1+" AND "+value2+"");
+	}
+	public void like(String key, double value){
+		this.where_field.add(key+" LIKE "+value);
+	}
+	
+	
 	public void where(String key, String operator, String value){
+		this.where_field.add(key+" "+operator+" '"+value+"'");
+	}
+	public void where(String key, String operator, int value){
+		this.where_field.add(key+" "+operator+" "+value);
+	}
+	public void where(String key, String operator, double value){
 		this.where_field.add(key+" "+operator+" "+value);
 	}
 	@Override
