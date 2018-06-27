@@ -2,6 +2,7 @@ package earlgrey.core;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
@@ -178,7 +179,23 @@ public class Gear {
 	private JSONObject extract_params() {
 		String content = this.request.getHeader("Content-Type");
 		JSONObject params = new JSONObject();
-		if(content != null && content.equals("application/json")){
+		String charset = "UTF-8";
+		if(content != null && content.indexOf("application/json") == 0){
+			String[] chunks = content.split(";");
+			// Search Charset
+			if(chunks.length > 1) {
+				for(int i=0; i<chunks.length; i++) {
+					if(chunks[i].indexOf("charset=") != -1) {
+						charset = chunks[i].trim().replace("charset=", "").trim().toUpperCase();
+						break;
+					}
+				}
+			}
+			try {
+				this.request.setCharacterEncoding(charset);
+			} catch (UnsupportedEncodingException e1) {
+				this.response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+			}
 			StringBuffer jb = new StringBuffer();
 			String line = null;
 			try {
@@ -213,7 +230,7 @@ public class Gear {
 				for(String key : keys) {
 					String[] value = param_body.get(key);
 					if(value.length > 0) {
-					    params.put(key, URLDecoder.decode(value[0], StandardCharsets.UTF_8.toString()));
+					    params.put(key, URLDecoder.decode(value[0], charset));
 					}
 				}
 			} catch (IOException e) {
@@ -221,7 +238,6 @@ public class Gear {
 				e.printStackTrace();
 			}
 		}
-		
 		return params;
 	}
 	

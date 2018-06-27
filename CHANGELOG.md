@@ -1,5 +1,6 @@
 ## Changelog
 
+### [Feature: Add the charset & ORM operations  ](https://github.com/acalvoa/earlgrey/pull/79) (27/06/2018)
 ### [Feature: Add cluster section ](https://github.com/acalvoa/earlgrey/pull/76) (29/05/2018)
 ### [Feature: Add configs section ](https://github.com/acalvoa/earlgrey/pull/75) (29/05/2018)
 ### [Feature: Add users section](https://github.com/acalvoa/earlgrey/pull/74) (29/05/2018)
