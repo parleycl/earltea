@@ -61,4 +61,8 @@ public class CacheCore implements Cacheable{
 		this.cachetable.remove(key);
 	}
 	
+	public void cleanAllCache() {
+		this.cachetable = new Hashtable<String,CacheElement>();
+	}
+	
 }

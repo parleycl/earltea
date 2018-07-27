@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>earlgrey</groupId>
     <artifactId>earlgrey</artifactId>
-    <version>0.4.1</version>
+    <version>0.4.2</version>
     <name>earlgrey</name>
     <packaging>jar</packaging>
     <profiles>
@@ -49,6 +49,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                     <goals>

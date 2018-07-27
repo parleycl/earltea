@@ -325,4 +325,95 @@ public class HttpResponse implements Response{
 		this.httpActionDef.finalice();
 		
 	}
+	@Override
+	public void notFound(String text) {
+		this.response.setContentType("text/plain");
+		this.response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+		try {
+			this.response.getWriter().println(text);
+		} catch (IOException e) {
+			this.log.Critic("Earlgrey can't write the web buffer to send the response", Error500.HTTP_RENDER_ERROR);
+		}
+		this.httpActionDef.finalice();
+	}
+	@Override
+	public void notAllowed(String text) {
+		this.response.setContentType("text/plain");
+		this.response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+		try {
+			this.response.getWriter().println(text);
+		} catch (IOException e) {
+			this.log.Critic("Earlgrey can't write the web buffer to send the response", Error500.HTTP_RENDER_ERROR);
+		}
+		this.httpActionDef.finalice();
+	}
+	@Override
+	public void notImplemented(String text) {
+		this.response.setContentType("text/plain");
+		this.response.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
+		try {
+			this.response.getWriter().println(text);
+		} catch (IOException e) {
+			this.log.Critic("Earlgrey can't write the web buffer to send the response", Error500.HTTP_RENDER_ERROR);
+		}
+		this.httpActionDef.finalice();
+	}
+	@Override
+	public void badRequest(String text) {
+		this.response.setContentType("text/plain");
+		this.response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+		try {
+			this.response.getWriter().println(text);
+		} catch (IOException e) {
+			this.log.Critic("Earlgrey can't write the web buffer to send the response", Error500.HTTP_RENDER_ERROR);
+		}
+		this.httpActionDef.finalice();	
+	}
+	@Override
+	public void conflict(String text) {
+		this.response.setContentType("text/plain");
+		this.response.setStatus(HttpServletResponse.SC_CONFLICT);
+		try {
+			this.response.getWriter().println(text);
+		} catch (IOException e) {
+			this.log.Critic("Earlgrey can't write the web buffer to send the response", Error500.HTTP_RENDER_ERROR);
+		}
+		this.httpActionDef.finalice();
+	}
+	@Override
+	public void paramsRequired(String text) {
+		this.response.setContentType("text/plain");
+		this.response.setStatus(422);
+		try {
+			this.response.getWriter().println(text);
+		} catch (IOException e) {
+			this.log.Critic("Earlgrey can't write the web buffer to send the response", Error500.HTTP_RENDER_ERROR);
+		}
+		this.httpActionDef.finalice();
+		
+	}
+	@Override
+	public void forbidden(String text) {
+		this.response.setContentType("text/plain");
+		this.response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+		try {
+			this.response.getWriter().println(text);
+		} catch (IOException e) {
+			this.log.Critic("Earlgrey can't write the web buffer to send the response", Error500.HTTP_RENDER_ERROR);
+		}
+		this.httpActionDef.finalice();
+		
+	}
+	@Override
+	public void customResponse(String text, int code) {
+		// TODO Auto-generated method stub
+		this.response.setContentType("text/plain");
+		this.response.setStatus(code);
+		try {
+			this.response.getWriter().println(text);
+		} catch (IOException e) {
+			this.log.Critic("Earlgrey can't write the web buffer to send the response", Error500.HTTP_RENDER_ERROR);
+		}
+		this.httpActionDef.finalice();
+	}
 }

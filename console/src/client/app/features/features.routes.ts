@@ -13,6 +13,7 @@ import { LoginComponent } from './login/login.component';
 import { IndexComponent } from './index/index.component';
 import { UsersComponent } from './users/users.component';
 import { ConfigsComponent } from './configs/configs.component';
+import { CacheComponent } from './cache/cache.component';
 
 export const FeaturesRoutes: Route[] = [
 	{
@@ -28,6 +29,7 @@ export const FeaturesRoutes: Route[] = [
       { path: 'cluster', component: ClusterComponent },
       { path: 'config', component: ConfiguracionesComponent },
       { path: 'controllers', component: ControladoresComponent },
+      { path: 'cache', component: CacheComponent },
       { path: 'cronjobs', component: CronjobsComponent },
       { path: 'logs', component: LogsComponent },
       { path: 'models', component: ModelosComponent },

@@ -14,6 +14,7 @@ import { ModelsService } from './models/models.service';
 import { Observable } from 'rxjs/Observable';
 import { ConfigService } from './config/config.service';
 import { ClusterService } from './cluster/cluster.service';
+import { CacheService } from './cache/cache.service';
 /**
  * Do not specify providers for modules that might be imported by a lazy loaded module.
  */
@@ -22,7 +23,7 @@ import { ClusterService } from './cluster/cluster.service';
   imports: [],
   declarations: [],
   providers:[RestService, UserService, GuardService, LoadingService, DatasourcesService, PropertiesService, RoutesService, 
-    ControllersService, ModelsService, ConfigService, ClusterService],
+    ControllersService, ModelsService, ConfigService, ClusterService, CacheService],
   exports: []
 })
 export class ServicesModule {

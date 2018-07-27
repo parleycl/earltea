@@ -19,6 +19,7 @@ import { SharedModule } from '../shared/shared.module';
 import { FileDropModule } from 'ngx-file-drop';
 import { UsersComponent } from './users/users.component';
 import { ConfigsComponent } from './configs/configs.component';
+import { CacheComponent } from './cache/cache.component';
 /**
  * Do not specify providers for modules that might be imported by a lazy loaded module.
  */
@@ -28,11 +29,11 @@ import { ConfigsComponent } from './configs/configs.component';
   declarations: [HomeComponent,
   ClusterComponent,ConfiguracionesComponent,ControladoresComponent,CronjobsComponent,
   LogsComponent, ModelosComponent, PropertiesComponent, RutasComponent, LoginComponent, 
-  IndexComponent, UsersComponent, ConfigsComponent],
+  IndexComponent, UsersComponent, ConfigsComponent, CacheComponent],
   exports: [CommonModule, FormsModule, RouterModule, HomeComponent,
   ClusterComponent,ConfiguracionesComponent,ControladoresComponent,CronjobsComponent,
   LogsComponent, ModelosComponent, PropertiesComponent, RutasComponent, LoginComponent, 
-  IndexComponent, UsersComponent, ConfigsComponent]
+  IndexComponent, UsersComponent, ConfigsComponent, CacheComponent]
 })
 export class FeaturesModule {
 }
