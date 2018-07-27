@@ -953,7 +953,7 @@ public class ModelCore {
 	
 	public void where(String key, String operator, String value){
 		Pattern functionPattern = Pattern.compile("[a-zA-Z]+[a-zA-Z_]*\\([^\\)]*\\)");
-		if(functionPattern.matcher(value).matches()) {
+		if (functionPattern.matcher(value).matches()) {
 			this.where_field.add(key+" "+operator+" "+value+"");
 		} else {
 			this.where_field.add(key+" "+operator+" '"+value+"'");
