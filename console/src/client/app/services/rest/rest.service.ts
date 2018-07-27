@@ -145,11 +145,10 @@ export class RestService {
 		});
 	}
 	public delete(id:number,uri:string) {
-		var r = confirm('¿Estas seguro que deseas borrar el elemento?');
-		if (r == true) {
+		let header = this.createHeaders();
+		if(id === null) {
 			this.loading.show(this);
-			let header = this.createHeaders();
-			return this.http.delete(this.api+"admin/console/"+uri+'/'+id, {
+			return this.http.delete(this.api+"admin/console/"+uri, {
 				headers: header,
 				withCredentials: true
 			}).map((res:Response) => {
@@ -157,10 +156,23 @@ export class RestService {
 				this.loading.hide(this);
 				return response;
 			});
+		} else {
+			var r = confirm('¿Estas seguro que deseas borrar el elemento?');
+			if (r == true) {
+				this.loading.show(this);
+				return this.http.delete(this.api+"admin/console/"+uri+'/'+id, {
+					headers: header,
+					withCredentials: true
+				}).map((res:Response) => {
+					let response = res.json();
+					this.loading.hide(this);
+					return response;
+				});
+			}
+			return new Observable(observe => {
+				observe.complete();
+			});
 		}
-		return new Observable(observe => {
-			observe.complete();
-		});
 	}
 	public put(id:number,uri:string, data:any) {
 		this.loading.show(this);
