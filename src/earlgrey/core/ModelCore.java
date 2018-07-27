@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.regex.Pattern;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -951,7 +952,12 @@ public class ModelCore {
 	
 	
 	public void where(String key, String operator, String value){
-		this.where_field.add(key+" "+operator+" '"+value+"'");
+		Pattern functionPattern = Pattern.compile("[a-zA-Z]+[a-zA-Z_]*\\([^\\)]*\\)");
+		if (functionPattern.matcher(value).matches()) {
+			this.where_field.add(key+" "+operator+" "+value+"");
+		} else {
+			this.where_field.add(key+" "+operator+" '"+value+"'");
+		}
 	}
 	public void where(String key, String operator, int value){
 		this.where_field.add(key+" "+operator+" "+value);
