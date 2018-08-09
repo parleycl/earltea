@@ -885,9 +885,26 @@ public class ModelCore {
 	public void minor(String key, String value) {
 		this.where_field.add(key+" < "+value);
 	}
-	public void between(String key, String value1, String value2) {
-		this.where_field.add(key+" BETWEEN '"+value1+"' AND '"+value2+"'");
-	}
+
+    public void between(String key, String value1, String value2) {
+        Pattern functionPattern = Pattern.compile("\\{\\{(.*)\\}\\}");
+        String compiledString = key + " BETWEEN ";
+
+        if (functionPattern.matcher(value1).matches()) {
+            compiledString += value1;
+        } else {
+            compiledString += "'" + value1 + "'";
+        }		
+        compiledString += " AND ";
+        if (functionPattern.matcher(value2).matches()) {
+            compiledString += value2;
+        } else {
+            compiledString += "'" + value2 + "'";
+        }
+
+        this.where_field.add(compiledString);
+    }
+
 	public void like(String key, String value){
 		this.where_field.add(key+" LIKE '"+value+"'");
 	}
@@ -950,15 +967,15 @@ public class ModelCore {
 		this.where_field.add(key+" LIKE "+value);
 	}
 	
-	
-	public void where(String key, String operator, String value){
-		Pattern functionPattern = Pattern.compile("[a-zA-Z]+[a-zA-Z_]*\\([^\\)]*\\)");
-		if (functionPattern.matcher(value).matches()) {
-			this.where_field.add(key+" "+operator+" "+value+"");
-		} else {
-			this.where_field.add(key+" "+operator+" '"+value+"'");
-		}
-	}
+    public void where(String key, String operator, String value){
+        Pattern functionPattern = Pattern.compile("\\{\\{(.*)\\}\\}");
+        if (functionPattern.matcher(value).matches()) {
+            this.where_field.add(key+" "+operator+" "+value+"");
+        } else {
+            this.where_field.add(key+" "+operator+" '"+value+"'");
+        }
+    }
+
 	public void where(String key, String operator, int value){
 		this.where_field.add(key+" "+operator+" "+value);
 	}
