@@ -32,6 +32,7 @@ public interface Response {
 	public void forbidden();
 	public void forbidden(String text);
 	public void customError(JSONArray obj, int code);
+	public void customResponse(JSONObject obj, int code);
 	public void customResponse(JSONArray obj, int code);
 	public void customResponse(String text, int code);
 	public void created();

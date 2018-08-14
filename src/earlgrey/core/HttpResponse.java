@@ -416,4 +416,17 @@ public class HttpResponse implements Response{
 		}
 		this.httpActionDef.finalice();
 	}
+	
+	@Override
+	public void customResponse(JSONObject obj, int code) {
+		this.response.setContentType("application/json");
+		this.response.setStatus(code);
+		try {
+			this.response.getWriter().println(obj.toString());
+		} catch (IOException e) {
+			this.log.Critic("Earlgrey can't write the web buffer to send the response", Error500.HTTP_RENDER_ERROR);
+		}
+		this.httpActionDef.finalice();
+		
+	}
 }
