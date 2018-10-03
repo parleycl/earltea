@@ -176,7 +176,6 @@ public class ModelCore {
             }
             return modelo.count();
         } catch (InstantiationException | IllegalAccessException e) {
-            // TODO: Throw an exception
             e.printStackTrace();
         }
         return -1;
@@ -209,50 +208,66 @@ public class ModelCore {
                 conector.close();
                 return result;
             } catch (SQLException e) {
-                // TODO: Throw an exception
                 conector.close();
                 e.printStackTrace();
             }
         }
         return -1;
     }
+  
+    public ModelCore specialQuery(String query) {
+        if(this.conector != null) this.conector.close();
+        this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
+        if(conector != null){
+            this.mapFields();
+            // EN ESTE SEGMENTO VA EL CODIGO DE LA CONSULTA
+            conector.prepare(query, null);
+            this.set = conector.execute();
+            // SE ACABA EL CODIGO DE LA CONSULTA
+            return this;
+        }
+        return null;
+    }
 
-    public ArrayList<ModelCore> get(int init,int limit) {
+    public ArrayList<ModelCore> get(int init,int limit){
         int limite = 0;
         ArrayList<ModelCore> retorno = new ArrayList<ModelCore>();
         try {
-            while (this.set.next() && (limite++ < (init + limit) || limit == -1)) {
-                if (limite <= init) {
-                    continue;
-                }
+            while(this.set.next() && (limite++ < (init+limit) || limit == -1)){
+                if(limite <= init) continue;
                 Enumeration<String> keys = fields.keys();
                 ModelCore m = (ModelCore) model.newInstance();
-                while (keys.hasMoreElements()) {
+                while(keys.hasMoreElements()){
                     String llave = keys.nextElement();
                     Field campo = fields.get(llave).field;
-                    if (campo.getType().equals(int.class) || campo.getType().equals(Integer.class)) {
+                    if(campo.getType().equals(int.class) || campo.getType().equals(Integer.class)){
                         campo.set(m, set.getInt(llave));
-                    } else if (campo.getType().equals(float.class) || campo.getType().equals(Float.class)) {
+                    }
+                    else if(campo.getType().equals(float.class) || campo.getType().equals(Float.class)){
                         campo.set(m, set.getFloat(llave));
-                    } else if (campo.getType().equals(double.class) || campo.getType().equals(Double.class)) {
+                    }
+                    else if(campo.getType().equals(double.class) || campo.getType().equals(Double.class)){
                         campo.set(m, set.getDouble(llave));
-                    } else if (campo.getType().equals(String.class)) {
+                    }
+                    else if(campo.getType().equals(String.class)){
                         campo.set(m, set.getString(llave));
-                    } else if (IType.class.isAssignableFrom(campo.getType())) {
+                    }
+                    else if(IType.class.isAssignableFrom(campo.getType())){
+
                         try {
                             Method inv = campo.getType().getMethod("GetSQLResult", Object.class);
                             campo.set(m, inv.invoke(null, set.getObject(llave)));
                         } catch (NoSuchMethodException e) {
-                            // TODO: Throw an exception
+                            // TODO Auto-generated catch block
                             e.printStackTrace();
                         } catch (SecurityException e) {
-                            // TODO: Throw an exception
+                            // TODO Auto-generated catch block
                             e.printStackTrace();
                         } catch (IllegalArgumentException e) {
-                            // TODO: Throw an exception
+                            // TODO Auto-generated catch block
                             e.printStackTrace();
                         } catch (InvocationTargetException e) {
-                            // TODO: Throw an exception
+                            // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
                     }
@@ -459,7 +474,6 @@ public class ModelCore {
                     }
                 }
             } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException | JSONException e) {
-                // TODO: Throw an exception
                 e.printStackTrace();
             }
         }
@@ -556,7 +570,7 @@ public class ModelCore {
                         }
                         return false;
                     }
-                    if (!conector_transaction.contains(this.datasource)) {
+                    if (!conector_transaction.contains(this.datasource)) { 
                         conector.close();
                     }
                     return true;
@@ -1027,7 +1041,7 @@ public class ModelCore {
     public void where(String key, String operator, double value) {
         this.where_field.add(key + " " + operator + " " + value);
     }
-
+  
     @Override
     protected void finalize() throws Throwable {
          try {

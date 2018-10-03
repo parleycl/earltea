@@ -282,7 +282,7 @@ public class OracleConnector implements Connector{
 			this.query = query;
 			this.prepared_fields = 1;
 			if(primarykey != null){
-				this.pstm  = (OraclePreparedStatement)this.con.prepareStatement(query, new String[] {primarykey.getName()});
+				this.pstm  = (OraclePreparedStatement)this.con.prepareStatement(query, new String[] { primarykey.getName() });
 			}
 			else
 			{
