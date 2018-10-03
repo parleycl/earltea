@@ -46,41 +46,55 @@ public class ModelCore {
     protected ArrayList<String> where_field = new ArrayList<String>();
     protected boolean transaction;
     protected static Hashtable<String,Connector> conector_transaction = new Hashtable<String,Connector>();
+
     // LOGGING
     private Logging log = new Logging(this.getClass().getName());
+
     //PARTIMOS CON EL METODO FIND
-    public ModelCore(){
+    public ModelCore() {
         this.model = this.getClass();
         this.mapFields();
         Model modelo = this.getClass().getAnnotation(Model.class);
         this.table = modelo.tableName();
         this.datasource = modelo.datasource();
     }
-    public static ModelCore Find(JSONObject query, Class<?> clase){
+
+    public static ModelCore Find(JSONObject query, Class<?> clase) {
         try {
             ModelCore modelo = (ModelCore) clase.newInstance();
-            if(query != null) modelo.transformParams(query);
+            if (query != null) {
+                modelo.transformParams(query);
+            }
             return modelo.find();
         } catch (InstantiationException | IllegalAccessException e) {
-            // TODO Auto-generated catch block
+            // TODO: Throw an exception
             e.printStackTrace();
         }
         return null;
     }
-    public ModelCore find(JSONObject query){
-        if(query != null) this.transformParams(query);
+
+    public ModelCore find(JSONObject query) {
+        if (query != null) {
+            this.transformParams(query);
+        }
         return this.find();
     }
-    public ModelCore findOne(JSONObject query){
-        if(query != null) this.transformParams(query);
+
+    public ModelCore findOne(JSONObject query) {
+        if (query != null) {
+            this.transformParams(query);
+        }
         return this.findOne();
     }
+
     public ModelCore find() {
         // SE PREPARAN LOS PARAMETROS
         this.prepareParams();
-        if(this.conector != null) this.conector.close();
+        if (this.conector != null) {
+            this.conector.close();
+        }
         this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
-        if(conector != null){
+        if (conector != null) {
             this.mapFields();
             // BUSCAMOS EL NOMBRE DE LA TABLA
             // EN ESTE SEGMENTO VA EL CODIGO DE LA CONSULTA
@@ -99,12 +113,15 @@ public class ModelCore {
         }
         return null;
     }
+
     public ModelCore match() {
         // SE PREPARAN LOS PARAMETROS
         this.prepareParams();
-        if(this.conector != null) this.conector.close();
+        if (this.conector != null) {
+            this.conector.close();
+        }
         this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
-        if(conector != null){
+        if (conector != null) {
             this.mapFields();
             // BUSCAMOS EL NOMBRE DE LA TABLA
             // EN ESTE SEGMENTO VA EL CODIGO DE LA CONSULTA
@@ -123,12 +140,15 @@ public class ModelCore {
         }
         return null;
     }
+
     public ModelCore findOne() {
         // SE PREPARAN LOS PARAMETROS
         this.prepareParams();
-        if(this.conector != null) this.conector.close();
+        if (this.conector != null) {
+            this.conector.close();
+        }
         this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
-        if(conector != null){
+        if (conector != null) {
             this.mapFields();
             // BUSCAMOS EL NOMBRE DE LA TABLA
             // EN ESTE SEGMENTO VA EL CODIGO DE LA CONSULTA
@@ -147,23 +167,28 @@ public class ModelCore {
         }
         return null;
     }
-    public static int Count(JSONObject query, Class<?> clase){
+
+    public static int Count(JSONObject query, Class<?> clase) {
         try {
             ModelCore modelo = (ModelCore) clase.newInstance();
-            if(query != null) modelo.transformParams(query);
+            if (query != null) {
+                modelo.transformParams(query);
+            }
             return modelo.count();
         } catch (InstantiationException | IllegalAccessException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return -1;
     }
+
     public int count() {
         // SE PREPARAN LOS PARAMETROS
         this.prepareParams();
-        if(this.conector != null) this.conector.close();
+        if (this.conector != null) {
+            this.conector.close();
+        }
         this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
-        if(conector != null){
+        if (conector != null) {
             this.mapFields();
             // BUSCAMOS EL NOMBRE DE LA TABLA
             // EN ESTE SEGMENTO VA EL CODIGO DE LA CONSULTA
@@ -183,14 +208,13 @@ public class ModelCore {
                 conector.close();
                 return result;
             } catch (SQLException e) {
-                // TODO Auto-generated catch block
                 conector.close();
                 e.printStackTrace();
             }
         }
         return -1;
     }
-
+  
     public ModelCore specialQuery(String query) {
         if(this.conector != null) this.conector.close();
         this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
@@ -229,6 +253,7 @@ public class ModelCore {
                         campo.set(m, set.getString(llave));
                     }
                     else if(IType.class.isAssignableFrom(campo.getType())){
+
                         try {
                             Method inv = campo.getType().getMethod("GetSQLResult", Object.class);
                             campo.set(m, inv.invoke(null, set.getObject(llave)));
@@ -248,42 +273,38 @@ public class ModelCore {
                     }
                 }
                 Enumeration<String> r_keys = relation.keys();
-                while(r_keys.hasMoreElements()){
+                while (r_keys.hasMoreElements()) {
                     String llave = r_keys.nextElement();
                     Field campo = relation.get(llave).field;
-                    if(campo.getType().equals(int.class) || campo.getType().equals(Integer.class)){
+                    if (campo.getType().equals(int.class) || campo.getType().equals(Integer.class)) {
                         campo.set(m, set.getInt(llave));
-                    }
-                    else if(campo.getType().equals(float.class) || campo.getType().equals(Float.class)){
+                    } else if (campo.getType().equals(float.class) || campo.getType().equals(Float.class)) {
                         campo.set(m, set.getFloat(llave));
-                    }
-                    else if(campo.getType().equals(double.class) || campo.getType().equals(Double.class)){
+                    } else if (campo.getType().equals(double.class) || campo.getType().equals(Double.class)) {
                         campo.set(m, set.getDouble(llave));
-                    }
-                    else if(campo.getType().equals(String.class)){
+                    } else if (campo.getType().equals(String.class)) {
                         campo.set(m, set.getString(llave));
-                    }
-                    else if(IType.class.isAssignableFrom(campo.getType())){
+                    } else if (IType.class.isAssignableFrom(campo.getType())) {
                         try {
                             Method inv = campo.getType().getMethod("GetSQLResult", Object.class);
                             campo.set(m, inv.invoke(null, set.getObject(llave)));
                         } catch (NoSuchMethodException e) {
-                            // TODO Auto-generated catch block
+                            // TODO: Throw an exception
                             e.printStackTrace();
                         } catch (SecurityException e) {
-                            // TODO Auto-generated catch block
+                            // TODO: Throw an exception
                             e.printStackTrace();
                         } catch (IllegalArgumentException e) {
-                            // TODO Auto-generated catch block
+                            // TODO: Throw an exception
                             e.printStackTrace();
                         } catch (InvocationTargetException e) {
-                            // TODO Auto-generated catch block
+                            // TODO: Throw an exception
                             e.printStackTrace();
                         } catch (JSONException e) {
-                            // TODO Auto-generated catch block
+                            // TODO: Throw an exception
                             e.printStackTrace();
                         } catch (IllegalAccessException e) {
-                            // TODO Auto-generated catch block
+                            // TODO: Throw an exception
                             e.printStackTrace();
                         }
                     }
@@ -291,104 +312,99 @@ public class ModelCore {
                 retorno.add(m);
             }
         } catch (SQLException | InstantiationException | IllegalAccessException e) {
-            // TODO Auto-generated catch block
+            // TODO: Throw an exception
             StackTraceElement[] stack = e.getStackTrace();
             this.log.Critic(e.getCause().getMessage(), 510);
             this.log.Critic("Earlgrey detected an error while examinate the SQL data set", Error500.METHOD_INVOCATION_ERROR);
-            for(int i=0;i<stack.length;i++){
+            for (int i = 0; i < stack.length; i++) {
                 this.log.Critic(stack[i].toString(), Error800.DATABASE_SQL_SET);
             }
             conector.close();
         }
         this.conector.close();
+
         return retorno;
     }
-    public JSONArray getJSON(int init,int limit){
+
+    public JSONArray getJSON(int init,int limit) {
         int limite = 0;
         JSONArray retorno = new JSONArray();
         try {
-            int k=0;
-            while(this.set.next() && (limite++ < (init+limit) || limit == -1)){
-                if(limite <= init) continue;
+            while (this.set.next() && (limite++ < (init + limit) || limit == -1)) {
+                if (limite <= init) {
+                    continue;
+                }
                 Enumeration<String> keys = fields.keys();
                 JSONObject objeto = new JSONObject();
-                while(keys.hasMoreElements()){
+                while (keys.hasMoreElements()) {
                     String llave = keys.nextElement();
                     Field campo = fields.get(llave).field;
-                    if(campo.getType().equals(int.class) || campo.getType().equals(Integer.class)){
+                    if (campo.getType().equals(int.class) || campo.getType().equals(Integer.class)) {
                         objeto.put(llave, set.getInt(llave));
-                    }
-                    else if(campo.getType().equals(float.class) || campo.getType().equals(Float.class)){
+                    } else if (campo.getType().equals(float.class) || campo.getType().equals(Float.class)) {
                         objeto.put(llave, set.getFloat(llave));
-                    }
-                    else if(campo.getType().equals(double.class) || campo.getType().equals(Double.class)){
+                    } else if (campo.getType().equals(double.class) || campo.getType().equals(Double.class)) {
                         objeto.put(llave, set.getDouble(llave));
-                    }
-                    else if(campo.getType().equals(String.class)){
+                    } else if (campo.getType().equals(String.class)) {
                         objeto.put(llave, set.getString(llave));
-                    }
-                    else if(IType.class.isAssignableFrom(campo.getType())){
+                    } else if (IType.class.isAssignableFrom(campo.getType())) {
                         try {
                             Method inv = campo.getType().getMethod("GetSQLResult", Object.class);
                             objeto.put(llave, inv.invoke(null, set.getObject(llave)));
                         } catch (NoSuchMethodException e) {
-                            // TODO Auto-generated catch block
+                            // TODO: Throw an exception
                             e.printStackTrace();
                         } catch (SecurityException e) {
-                            // TODO Auto-generated catch block
+                            // TODO: Throw an exception
                             e.printStackTrace();
                         } catch (IllegalArgumentException e) {
-                            // TODO Auto-generated catch block
+                            // TODO: Throw an exception
                             e.printStackTrace();
                         } catch (InvocationTargetException e) {
-                            // TODO Auto-generated catch block
+                            // TODO: Throw an exception
                             e.printStackTrace();
                         } catch (JSONException e) {
-                            // TODO Auto-generated catch block
+                            // TODO: Throw an exception
                             e.printStackTrace();
                         } catch (IllegalAccessException e) {
-                            // TODO Auto-generated catch block
+                            // TODO: Throw an exception
                             e.printStackTrace();
                         }
                     }
                 }
                 Enumeration<String> r_keys = relation.keys();
-                while(r_keys.hasMoreElements()){
+                while (r_keys.hasMoreElements()) {
                     String llave = r_keys.nextElement();
                     Field campo = relation.get(llave).field;
-                    if(campo.getType().equals(int.class) || campo.getType().equals(Integer.class)){
+                    if (campo.getType().equals(int.class) || campo.getType().equals(Integer.class)) {
                         objeto.put(llave, set.getInt(llave));
-                    }
-                    else if(campo.getType().equals(float.class) || campo.getType().equals(Float.class)){
+                    } else if (campo.getType().equals(float.class) || campo.getType().equals(Float.class)) {
                         objeto.put(llave, set.getFloat(llave));
-                    }
-                    else if(campo.getType().equals(double.class) || campo.getType().equals(Double.class)){
+                    } else if (campo.getType().equals(double.class) || campo.getType().equals(Double.class)) {
                         objeto.put(llave, set.getDouble(llave));
-                    }
-                    else if(campo.getType().equals(String.class)){
+                    } else if (campo.getType().equals(String.class)) {
                         objeto.put(llave, set.getString(llave));
-                    }
-                    else if(IType.class.isAssignableFrom(campo.getType())){
+                    } else if (IType.class.isAssignableFrom(campo.getType())) {
                         try {
                             Method inv = campo.getType().getMethod("GetSQLResult", Object.class);
                             objeto.put(llave, inv.invoke(null, set.getObject(llave)));
                         } catch (NoSuchMethodException e) {
-                            // TODO Auto-generated catch block
+                            // TODO: Throw an exception
                             e.printStackTrace();
                         } catch (SecurityException e) {
-                            // TODO Auto-generated catch block
+                            // TODO: Throw an exception
                             e.printStackTrace();
                         } catch (IllegalArgumentException e) {
-                            // TODO Auto-generated catch block
+                            // TODO: Throw an exception
                             e.printStackTrace();
                         } catch (InvocationTargetException e) {
-                            // TODO Auto-generated catch block
+                            // TODO: Throw an exception
                             e.printStackTrace();
                         } catch (JSONException e) {
-                            // TODO Auto-generated catch block
+                            // TODO: Throw an exception
                             e.printStackTrace();
                         } catch (IllegalAccessException e) {
-                            // TODO Auto-generated catch block
+                            // TODO: Throw an exception
                             e.printStackTrace();
                         }
                     }
@@ -400,82 +416,86 @@ public class ModelCore {
             e.printStackTrace();
         }
         this.conector.close();
+        
         return retorno;
     }
-    public ArrayList<ModelCore> get(){
+
+    public ArrayList<ModelCore> get() {
         return this.get(0,-1);
     }
-    public ArrayList<ModelCore> get(int limit){
+
+    public ArrayList<ModelCore> get(int limit) {
         return this.get(0,limit);
     }
-    public JSONArray getJSON(){
+
+    public JSONArray getJSON() {
         return this.getJSON(0,-1);
     }
-    public JSONArray getJSON(int limit){
+
+    public JSONArray getJSON(int limit) {
         return this.getJSON(0,limit);
     }
-    public JSONObject getOneJSON(){
+
+    public JSONObject getOneJSON() {
         JSONArray result = this.getJSON(0,1);
         return (result.length() > 0) ? result.getJSONObject(0) : new JSONObject();
     }
-    private void prepareParams(){
+
+    private void prepareParams() {
         Field[] campos = this.getClass().getFields();
-        for(int i=0;i<campos.length;i++){
+        for (int i = 0; i < campos.length; i++) {
             try {
-                if(campos[i].get(this) != null){
+                if (campos[i].get(this) != null) {
                     this.prepare_fields.put(campos[i].getName(), new Criteria(this,campos[i]));
                 }
             } catch (IllegalArgumentException | IllegalAccessException e) {
-                // TODO Auto-generated catch block
+                // TODO: Throw an exception
                 conector.close();
                 e.printStackTrace();
             }
         }
     }
+
     private void transformParams(JSONObject query) {
         Iterator<String> llaves = query.keys();
-        while(llaves.hasNext()){
+        while (llaves.hasNext()) {
             String llave = llaves.next();
             try {
-                if(query.has(llave)){
+                if (query.has(llave)) {
                     Field campo = this.getClass().getField(llave);
-                    if(campo.getType().equals(int.class) || campo.getType().equals(Integer.class)){
+                    if (campo.getType().equals(int.class) || campo.getType().equals(Integer.class)) {
                         campo.set(this, query.getInt(llave));
-                    }
-                    else if(campo.getType().equals(float.class) || campo.getType().equals(Float.class)){
+                    } else if (campo.getType().equals(float.class) || campo.getType().equals(Float.class)) {
                         campo.set(this, query.getDouble(llave));
-                    }
-                    else if(campo.getType().equals(double.class) || campo.getType().equals(Double.class)){
+                    } else if (campo.getType().equals(double.class) || campo.getType().equals(Double.class)) {
                         campo.set(this, query.getDouble(llave));
-                    }
-                    else if(campo.getType().equals(String.class)){
+                    } else if (campo.getType().equals(String.class)) {
                         campo.set(this, query.getString(llave));
                     }
                 }
             } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException | JSONException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
     }
+
     // INCLUIMOS LOS OTROS METODOS
-    public static ModelCore FindOne(){
+    public static ModelCore FindOne() {
         return null;
     }
-    public boolean update(JSONObject criteria){
-        if(conector_transaction.contains(this.datasource)){
+
+    public boolean update(JSONObject criteria) {
+        if (conector_transaction.contains(this.datasource)) {
             this.conector = conector_transaction.get(this.datasource);
             this.transaction = true;
-        }
-        else
-        {
+        } else {
             this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
         }
-        if(conector != null){
+        if (conector != null) {
             // Efectuamos el mapeo de los campos que seran modificados
             // Si los campos a modificar son invalidos o no existe ninguno la consulta no es valida
             this.mapNNFields();
-            if(this.fields.size() == 0) {
+            if (this.fields.size() == 0) {
                 this.log.Warning("The update querys need at least one field change to execute a query");
                 return false; 
             }
@@ -484,7 +504,7 @@ public class ModelCore {
             q.setField(this.fields);
             // Extraemos los campos a modificar. Debe haber al menos una criteria valida
             Hashtable<String, Criteria> wheref = this.getparams(criteria);
-            if(wheref.size() == 0) {
+            if (wheref.size() == 0) {
                 this.log.Warning("The update querys need at least one valid criteria params to execute a query");
                 return false;
             }
@@ -493,14 +513,14 @@ public class ModelCore {
             conector.prepare(q.getQuery(), this.primaryKey);
             // PREPARAMOS LOS FIELDS
             conector.complete(q.prepared(), q.prepared_list());
-            if(!conector.executeUpdate()){
+            if (!conector.executeUpdate()) {
                 // HANDLEREAMOS EL INSERT
-                if(!conector_transaction.contains(this.datasource)){
+                if (!conector_transaction.contains(this.datasource)) {
                     conector.close();
                 }
                 return false;
             }
-            if(!conector_transaction.contains(this.datasource)){
+            if (!conector_transaction.contains(this.datasource)) {
                 conector.close();
             }
             return true;
@@ -508,22 +528,21 @@ public class ModelCore {
             return false;
         }
     }
-    public boolean update(int id){
-        if(conector_transaction.contains(this.datasource)){
+
+    public boolean update(int id) {
+        if (conector_transaction.contains(this.datasource)) {
             this.conector = conector_transaction.get(this.datasource);
             this.transaction = true;
-        }
-        else
-        {
+        } else {
             this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
         }
-        if(conector != null){
+        if (conector != null) {
             // Efectuamos el mapeo de los campos que seran modificados
             // Si los campos a modificar son invalidos o no existe ninguno la consulta no es valida
             this.mapNNFields();
-            if(this.primaryKey != null) {
-                if(this.primaryKey.getType() == Integer.class) {
-                    if(this.fields.size() == 0) {
+            if (this.primaryKey != null) {
+                if (this.primaryKey.getType() == Integer.class) {
+                    if (this.fields.size() == 0) {
                         this.log.Warning("The update querys need at least one field change to execute a query");
                         return false; 
                     }
@@ -535,7 +554,7 @@ public class ModelCore {
                     criteria.put(this.primaryKey.getName(), id);
                     // Extraemos los campos a modificar. Debe haber al menos una criteria valida
                     Hashtable<String, Criteria> wheref = this.getparams(criteria);
-                    if(wheref.size() == 0) {
+                    if (wheref.size() == 0) {
                         this.log.Warning("The update querys need at least one valid criteria params to execute a query");
                         return false;
                     }
@@ -544,14 +563,14 @@ public class ModelCore {
                     conector.prepare(q.getQuery(), this.primaryKey);
                     // PREPARAMOS LOS FIELDS
                     conector.complete(q.prepared(), q.prepared_list());
-                    if(!conector.executeUpdate()){
+                    if (!conector.executeUpdate()) {
                         // HANDLEREAMOS EL INSERT
-                        if(!conector_transaction.contains(this.datasource)){
+                        if (!conector_transaction.contains(this.datasource)) {
                             conector.close();
                         }
                         return false;
                     }
-                    if(!conector_transaction.contains(this.datasource)){
+                    if (!conector_transaction.contains(this.datasource)) { 
                         conector.close();
                     }
                     return true;
@@ -563,40 +582,42 @@ public class ModelCore {
                 this.log.Warning("The update queries with id need a PrimaryKey to execute and must be an Integer");
                 return false;
             }
-            
         } else {
             return false;
         }
     }
+
     private Hashtable<String,Criteria> getparams(JSONObject params) {
         Iterator<String> keys = params.keys();
         Hashtable<String,Criteria> parametros = new Hashtable<String,Criteria>();
-        while(keys.hasNext()){
+        while (keys.hasNext()) {
             String key = keys.next();
             try {
                 ModelCore mc = (ModelCore) this.model.newInstance();
                 Field campo = this.model.getField(key);
-                if(campo.getType().equals(int.class) || campo.getType().equals(Integer.class)){
+                if (campo.getType().equals(int.class) || campo.getType().equals(Integer.class)) {
                     campo.set(mc, params.getInt(key));
-                } else if(campo.getType().equals(float.class) || campo.getType().equals(Float.class)){
+                } else if (campo.getType().equals(float.class) || campo.getType().equals(Float.class)) {
                     campo.set(mc, params.getDouble(key));
-                } else if(campo.getType().equals(double.class) || campo.getType().equals(Double.class)){
+                } else if (campo.getType().equals(double.class) || campo.getType().equals(Double.class)) {
                     campo.set(mc, params.getDouble(key));
-                } else if(campo.getType().equals(String.class)){
+                } else if (campo.getType().equals(String.class)) {
                     campo.set(mc, params.getString(key));
                 } else {
                     continue;
                 }
                 parametros.put(campo.getName(), new Criteria(mc, campo));
             } catch (NoSuchFieldException | SecurityException | InstantiationException | IllegalAccessException e) {
+                // TODO: Throw an exception
             }
         }
         return parametros;
     }
-    public boolean insert(){
+
+    public boolean insert() {
         this.prepareParams();
         this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
-        if(conector != null){
+        if (conector != null) {
             this.mapNNFields();
             // BUSCAMOS EL NOMBRE DE LA TABLA
             // EN ESTE SEGMENTO VA EL CODIGO DE LA CONSULTA
@@ -606,15 +627,15 @@ public class ModelCore {
             conector.prepare(q.getQuery(), this.primaryKey);
             // PREPARAMOS LOS FIELDS
             conector.complete(q.prepared(), q.prepared_list());
-            if(!conector.executeUpdate()){
+            if (!conector.executeUpdate()) {
                 this.conector.close();
                 // HANDLEREAMOS EL INSERT
-                if(!conector_transaction.contains(this.datasource)){
+                if (!conector_transaction.contains(this.datasource)) {
                     conector.close();
                 }
                 return false;
             }
-            if(!conector_transaction.contains(this.datasource)){
+            if (!conector_transaction.contains(this.datasource)) {
                 conector.close();
             }
             return true;
@@ -622,27 +643,27 @@ public class ModelCore {
         this.conector.close();
         return false;
     }
-    public int getLastId(){
+
+    public int getLastId() {
         // SE ACABA EL CODIGO DE LA CONSULTA
         try {
             return conector.getLastInsertedId();
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
+            // TODO: Throw an exception
             e.printStackTrace();
         }
         return -1;
     }
-    public boolean delete(){
+
+    public boolean delete() {
         this.prepareParams();
-        if(conector_transaction.contains(this.datasource)){
+        if (conector_transaction.contains(this.datasource)) {
             this.conector = conector_transaction.get(this.datasource);
             this.transaction = true;
-        }
-        else
-        {
+        } else {
             this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
         }
-        if(conector != null){
+        if (conector != null) {
             this.prepareParams();
             this.mapFields();
             // BUSCAMOS EL NOMBRE DE LA TABLA
@@ -654,70 +675,67 @@ public class ModelCore {
             conector.prepare(q.getQuery(), this.primaryKey);
             // PREPARAMOS LOS FIELDS
             conector.complete(q.prepared(), q.prepared_list());
-            if(!conector.executeUpdate()){
+            if (!conector.executeUpdate()) {
                 // HANDLEREAMOS EL INSERT
-                if(!conector_transaction.contains(this.datasource)){
+                if (!conector_transaction.contains(this.datasource)) {
                     conector.close();
                 }
                 return false;
             }
-            if(!conector_transaction.contains(this.datasource)){
+            if (!conector_transaction.contains(this.datasource)) {
                 conector.close();
             }
             return true;
         }
         return false;
     }
-    public boolean delete(Integer id){
+
+    public boolean delete(Integer id) {
         this.prepareParams();
-        if(conector_transaction.contains(this.datasource)){
+        if (conector_transaction.contains(this.datasource)) {
             this.conector = conector_transaction.get(this.datasource);
             this.transaction = true;
-        }
-        else
-        {
+        } else {
             this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
         }
-        if(conector != null){
+        if (conector != null) {
             this.mapFields();
             try {
-                if(this.primaryKey != null) {
-                    if(this.primaryKey.getType() == Integer.class) {
-                            QueryBuilder q = new QueryBuilder(table,this);
-                            try {
-                                this.primaryKey.set(this, id);
-                                this.prepareParams();
-                                q.delete();
-                                q.where(prepare_fields);
-                                q.makeConditional();
-                                conector.prepare(q.getQuery(), this.primaryKey);
-                                conector.complete(q.prepared(), q.prepared_list());
-                                if(!conector.executeUpdate()){
-                                    // HANDLEREAMOS EL INSERT
-                                    if(!conector_transaction.contains(this.datasource)){
-                                        conector.close();
-                                    }
-                                    return false;
-                                }
-                                if(!conector_transaction.contains(this.datasource)){
+                if (this.primaryKey != null) {
+                    if (this.primaryKey.getType() == Integer.class) {
+                        QueryBuilder q = new QueryBuilder(table,this);
+                        try {
+                            this.primaryKey.set(this, id);
+                            this.prepareParams();
+                            q.delete();
+                            q.where(prepare_fields);
+                            q.makeConditional();
+                            conector.prepare(q.getQuery(), this.primaryKey);
+                            conector.complete(q.prepared(), q.prepared_list());
+                            if (!conector.executeUpdate()) {
+                                // HANDLEREAMOS EL INSERT
+                                if (!conector_transaction.contains(this.datasource)) {
                                     conector.close();
-                                }
-                                return true;
-                            } catch (IllegalArgumentException | IllegalAccessException e) {
-                                // TODO Auto-generated catch block
-                                StackTraceElement[] stack = e.getCause().getStackTrace();
-                                this.log.Critic("Exists an error stablising the data model", Error70.PRIMARY_KEY_NOT_INTEGER);
-                                this.log.Critic("Cause: "+e.getCause().getMessage(), Error70.PRIMARY_KEY_NOT_INTEGER);
-                                this.log.Critic("Cause: ", Error70.PRIMARY_KEY_NOT_INTEGER);
-                                this.log.Critic("Localized Message: "+e.getLocalizedMessage(), Error70.PRIMARY_KEY_NOT_INTEGER);
-                                this.log.Critic("Message:"+e.getMessage(), Error70.PRIMARY_KEY_NOT_INTEGER);
-                                this.log.Critic("-------------------- STACK --------------------", Error70.PRIMARY_KEY_NOT_INTEGER);
-                                for(int k=0;k<stack.length;k++){
-                                    this.log.Critic(stack[k].toString(), Error70.PRIMARY_KEY_NOT_INTEGER);
                                 }
                                 return false;
                             }
-                            
+                            if (!conector_transaction.contains(this.datasource)) {
+                                conector.close();
+                            }
+                            return true;
+                        } catch (IllegalArgumentException | IllegalAccessException e) {
+                            StackTraceElement[] stack = e.getCause().getStackTrace();
+                            this.log.Critic("Exists an error stablising the data model", Error70.PRIMARY_KEY_NOT_INTEGER);
+                            this.log.Critic("Cause: "+e.getCause().getMessage(), Error70.PRIMARY_KEY_NOT_INTEGER);
+                            this.log.Critic("Cause: ", Error70.PRIMARY_KEY_NOT_INTEGER);
+                            this.log.Critic("Localized Message: "+e.getLocalizedMessage(), Error70.PRIMARY_KEY_NOT_INTEGER);
+                            this.log.Critic("Message:"+e.getMessage(), Error70.PRIMARY_KEY_NOT_INTEGER);
+                            this.log.Critic("-------------------- STACK --------------------", Error70.PRIMARY_KEY_NOT_INTEGER);
+                            for (int k = 0; k < stack.length; k++) {
+                                this.log.Critic(stack[k].toString(), Error70.PRIMARY_KEY_NOT_INTEGER);
+                            }
+                            return false;
+                        }
                     } else {
                         throw new EarlgreyException("To use delete with id, the primary key ModelField must be an Integer type.");
                     }
@@ -732,26 +750,28 @@ public class ModelCore {
                 this.log.Critic("Localized Message: "+e.getLocalizedMessage(), Error70.PRIMARY_KEY_NOT_INTEGER);
                 this.log.Critic("Message:"+e.getMessage(), Error70.PRIMARY_KEY_NOT_INTEGER);
                 this.log.Critic("-------------------- STACK --------------------", Error70.PRIMARY_KEY_NOT_INTEGER);
-                for(int k=0;k<stack.length;k++){
+                for (int k = 0; k < stack.length; k++) {
                     this.log.Critic(stack[k].toString(), Error70.PRIMARY_KEY_NOT_INTEGER);
                 }
             }
         }
         return false;
     }
-    public static void openTransaction(Class clase){
+
+    public static void openTransaction(Class clase) {
         Model modelo = (Model) clase.getAnnotation(Model.class);
         String datasource = modelo.datasource();
-        if(!conector_transaction.containsKey(datasource)){
+        if (!conector_transaction.containsKey(datasource)) {
             Connector con = DatasourceManager.getInstance().getConnection(datasource).getConector();
             con.startTransaction();
             conector_transaction.put(datasource, con);
         }
     }
+
     public static boolean finishTransaction(Class clase) {
         Model modelo = (Model) clase.getAnnotation(Model.class);
         String datasource = modelo.datasource();
-        if(!conector_transaction.containsKey(datasource)){
+        if (!conector_transaction.containsKey(datasource)) {
             Connector con = conector_transaction.get(datasource);
             conector_transaction.remove(datasource);
             boolean resultado = con.finishTransaction();
@@ -761,18 +781,17 @@ public class ModelCore {
         }
         return false;
     }
+
     public static boolean finishAllTransaction() {
         Enumeration<String> keys = conector_transaction.keys();
         ArrayList<Connector> conectores = new ArrayList<Connector>();
-        while(keys.hasMoreElements()){
+        while (keys.hasMoreElements()) {
             String key = keys.nextElement();
             Connector con = conector_transaction.get(key);
-            if(con.finishTransaction()){
+            if (con.finishTransaction()) {
                 conectores.add(con);
-            }
-            else
-            {
-                for(int i=0; i<conectores.size(); i++){
+            } else {
+                for (int i = 0; i < conectores.size(); i++) {
                     Connector con_rollback = conectores.get(i);
                     con_rollback.rollback();
                     con.close();
@@ -781,45 +800,48 @@ public class ModelCore {
             }
         }
         // Finiquitamos las transacciones dejandolas en true autocommit
-        for(int i=0; i<conectores.size(); i++){
+        for (int i = 0; i < conectores.size(); i++) {
             Connector con = conectores.get(i);
             con.closeTransaction();
             con.close();
         }
         return true;
     }
-    private void mapFields(){
+
+    private void mapFields() {
         this.fields = new Hashtable<String,Criteria>();
         Field[] field_array = model.getFields();
-        for(int i=0;i<field_array.length;i++){
+        for (int i = 0; i < field_array.length; i++) {
             Annotation[] anotaciones = field_array[i].getDeclaredAnnotations();
             boolean field = false;
             boolean relation = false;
-            for(int l=0; l<anotaciones.length;l++){
+            for (int l = 0; l < anotaciones.length; l++) {
                 try{
-                    if(PrimaryKey.class.isAssignableFrom(anotaciones[l].getClass())){
-                        if(this.primaryKey != null) {
-                            if(this.primaryKey.getName() != field_array[i].getName()) throw new Exception("Only can declare one primary key");
+                    if (PrimaryKey.class.isAssignableFrom(anotaciones[l].getClass())) {
+                        if (this.primaryKey != null) {
+                            if (this.primaryKey.getName() != field_array[i].getName()) {
+                                throw new Exception("Only can declare one primary key");
+                            }
                         }
                         this.primaryKey = field_array[i];
-                    }
-                    else if(ModelField.class.isAssignableFrom(anotaciones[l].getClass())){
-                        if(relation) throw new Exception("You can't declare a field like ModelField if previously was declared like ModelRelation");
+                    } else if (ModelField.class.isAssignableFrom(anotaciones[l].getClass())) {
+                        if (relation) {
+                            throw new Exception("You can't declare a field like ModelField if previously was declared like ModelRelation");
+                        }
                         this.fields.put(field_array[i].getName(), new Criteria(this, field_array[i]));
                         field = true;
-                    }
-                    else if(ModelRelation.class.isAssignableFrom(anotaciones[l].getClass())){
-                        if(field) throw new Exception("You can't declare a field like ModelRelation if previously was declared like ModelField");
+                    } else if (ModelRelation.class.isAssignableFrom(anotaciones[l].getClass())) {
+                        if (field) {
+                            throw new Exception("You can't declare a field like ModelRelation if previously was declared like ModelField");
+                        }
                         ModelRelation relacion = (ModelRelation) anotaciones[l];
                         this.relation.put(field_array[i].getName(), new RelationDef(field_array[i], relacion.model()));
                         relation = true;
-                    }
-                    else if(ModelJoin.class.isAssignableFrom(anotaciones[l].getClass())){
+                    } else if (ModelJoin.class.isAssignableFrom(anotaciones[l].getClass())) {
                         ModelJoin join = (ModelJoin) anotaciones[l];
                         this.join.put(field_array[i].getName(), new RelationDef(field_array[i], join.field(), join.model()));
                     }
-                }
-                catch(Exception e){
+                } catch(Exception e) {
                     StackTraceElement[] stack = e.getCause().getStackTrace();
                     this.log.Critic("Exists an error stablising the data model", Error70.FIELD_OVERLAYED_DEFINITION);
                     this.log.Critic("Cause: "+e.getCause().getMessage(), Error70.FIELD_OVERLAYED_DEFINITION);
@@ -827,52 +849,54 @@ public class ModelCore {
                     this.log.Critic("Localized Message: "+e.getLocalizedMessage(), Error70.FIELD_OVERLAYED_DEFINITION);
                     this.log.Critic("Message:"+e.getMessage(), Error70.FIELD_OVERLAYED_DEFINITION);
                     this.log.Critic("-------------------- STACK --------------------", Error70.FIELD_OVERLAYED_DEFINITION);
-                    for(int k=0;k<stack.length;k++){
+                    for (int k = 0; k < stack.length; k++) {
                         this.log.Critic(stack[k].toString(), Error70.FIELD_OVERLAYED_DEFINITION);
                     }
                 }
-                
             }
         }
     }
+
     private void mapNNFields() {
         this.fields = new Hashtable<String,Criteria>();
         Field[] field_array = model.getFields();
-        for(int i=0;i<field_array.length;i++){
+        for (int i = 0; i < field_array.length; i++) {
             Annotation[] anotaciones = field_array[i].getDeclaredAnnotations();
             boolean field = false;
             boolean relation = false;
-            for(int l=0; l<anotaciones.length;l++){
+            for (int l = 0; l < anotaciones.length; l++) {
                 try{
-                    if(PrimaryKey.class.isAssignableFrom(anotaciones[l].getClass())){
-                        if(this.primaryKey != null) {
-                            if(this.primaryKey.getName() != field_array[i].getName()) throw new Exception("Only can declare one primary key");
+                    if (PrimaryKey.class.isAssignableFrom(anotaciones[l].getClass())) {
+                        if (this.primaryKey != null) {
+                            if (this.primaryKey.getName() != field_array[i].getName()) {
+                                throw new Exception("Only can declare one primary key");
+                            }
                         }
                         this.primaryKey = field_array[i];
-                    }
-                    else if(ModelField.class.isAssignableFrom(anotaciones[l].getClass())){
-                        if(relation) throw new Exception("You can't declare a field like ModelField if previously was declared like ModelRelation");
-                        if(field_array[i].get(this) != null){
+                    } else if (ModelField.class.isAssignableFrom(anotaciones[l].getClass())) {
+                        if (relation) {
+                            throw new Exception("You can't declare a field like ModelField if previously was declared like ModelRelation");
+                        }
+                        if (field_array[i].get(this) != null) {
                             this.fields.put(field_array[i].getName(), new Criteria(this,field_array[i]));
                             field = true;
                         }
-                    }
-                    else if(ModelRelation.class.isAssignableFrom(anotaciones[l].getClass())){
-                        if(field) throw new Exception("You can't declare a field like ModelRelation if previously was declared like ModelField");
+                    } else if (ModelRelation.class.isAssignableFrom(anotaciones[l].getClass())) {
+                        if (field) {
+                            throw new Exception("You can't declare a field like ModelRelation if previously was declared like ModelField");
+                        }
                         ModelRelation relacion = (ModelRelation) anotaciones[l];
-                        if(field_array[i].get(this) != null){
+                        if (field_array[i].get(this) != null) {
                             this.relation.put(field_array[i].getName(), new RelationDef(field_array[i], relacion.model()));
                             relation = true;
                         }
-                    }
-                    else if(ModelJoin.class.isAssignableFrom(anotaciones[l].getClass())){
+                    } else if (ModelJoin.class.isAssignableFrom(anotaciones[l].getClass())) {
                         ModelJoin join = (ModelJoin) anotaciones[l];
-                        if(field_array[i].get(this) != null){
+                        if (field_array[i].get(this) != null) {
                             this.join.put(field_array[i].getName(), new RelationDef(field_array[i], join.field(), join.model()));
                         }
                     }
-                }
-                catch(Exception e){
+                } catch(Exception e) {
                     StackTraceElement[] stack = e.getCause().getStackTrace();
                     this.log.Critic("Exists an error stablising the data model", Error70.FIELD_OVERLAYED_DEFINITION);
                     this.log.Critic("Cause: "+e.getCause().getMessage(), Error70.FIELD_OVERLAYED_DEFINITION);
@@ -880,106 +904,144 @@ public class ModelCore {
                     this.log.Critic("Localized Message: "+e.getLocalizedMessage(), Error70.FIELD_OVERLAYED_DEFINITION);
                     this.log.Critic("Message:"+e.getMessage(), Error70.FIELD_OVERLAYED_DEFINITION);
                     this.log.Critic("-------------------- STACK --------------------", Error70.FIELD_OVERLAYED_DEFINITION);
-                    for(int k=0;k<stack.length;k++){
+                    for (int k = 0; k < stack.length; k++) {
                         this.log.Critic(stack[k].toString(), Error70.FIELD_OVERLAYED_DEFINITION);
                     }
                 }
             }
         }
     }
+
     // Operaciones comparativas.
     public void mayorOrEqual(String key, String value) {
-        this.where_field.add(key+" >= "+value);
+        this.where_field.add(key + " >= " + value);
     }
+
     public void minorOrEqual(String key, String value) {
-        this.where_field.add(key+" <= "+value);
+        this.where_field.add(key + " <= " + value);
     }
+
     public void mayor(String key, String value) {
-        this.where_field.add(key+" > "+value);
+        this.where_field.add(key + " > " + value);
     }
+
     public void minor(String key, String value) {
-        this.where_field.add(key+" < "+value);
+        this.where_field.add(key + " < " + value);
     }
+
     public void between(String key, String value1, String value2) {
-        this.where_field.add(key+" BETWEEN '"+value1+"' AND '"+value2+"'");
+        Pattern functionPattern = Pattern.compile("\\{\\{(.*)\\}\\}");
+        String compiledString = key + " BETWEEN ";
+
+        if (functionPattern.matcher(value1).matches()) {
+            compiledString += value1;
+        } else {
+            compiledString += "'" + value1 + "'";
+        }
+        compiledString += " AND ";
+        if (functionPattern.matcher(value2).matches()) {
+            compiledString += value2;
+        } else {
+            compiledString += "'" + value2 + "'";
+        }
+
+        this.where_field.add(compiledString);
     }
-    public void like(String key, String value){
-        this.where_field.add(key+" LIKE '"+value+"'");
+
+    public void like(String key, String value) {
+        this.where_field.add(key + " LIKE '" + value + "'");
     }
+
     public void mayorOrEqual(String key, int value) {
-        this.where_field.add(key+" >= "+value);
+        this.where_field.add(key + " >= " + value);
     }
+
     public void minorOrEqual(String key, int value) {
-        this.where_field.add(key+" <= "+value);
+        this.where_field.add(key + " <= " + value);
     }
+
     public void mayor(String key, int value) {
-        this.where_field.add(key+" > "+value);
+        this.where_field.add(key + " > " + value);
     }
+
     public void minor(String key, int value) {
-        this.where_field.add(key+" < "+value);
+        this.where_field.add(key + " < " + value);
     }
+
     public void between(String key, int value1, int value2) {
-        this.where_field.add(key+" BETWEEN "+value1+" AND "+value2+"");
+        this.where_field.add(key + " BETWEEN " + value1 + " AND " + value2 + "");
     }
-    public void like(String key, int value){
-        this.where_field.add(key+" LIKE "+value);
+
+    public void like(String key, int value) {
+        this.where_field.add(key + " LIKE " + value);
     }
-    
-    public void notLike(String key, int value){
-        this.where_field.add(key+" NOT LIKE "+value);
+
+    public void notLike(String key, int value) {
+        this.where_field.add(key + " NOT LIKE " + value);
     }
-    public void notLike(String key, double value){
-        this.where_field.add(key+" NOT LIKE "+value);
+
+    public void notLike(String key, double value) {
+        this.where_field.add(key + " NOT LIKE " + value);
     }
-    public void notLike(String key, String value){
-        this.where_field.add(key+" NOT LIKE '"+value+"'");
+
+    public void notLike(String key, String value) {
+        this.where_field.add(key + " NOT LIKE '" + value + "'");
     }
-    
-    public void notEqual(String key, int value){
-        this.where_field.add(key+" != "+value);
+
+    public void notEqual(String key, int value) {
+        this.where_field.add(key + " != " + value);
     }
-    public void notEqual(String key, double value){
-        this.where_field.add(key+" != "+value);
+
+    public void notEqual(String key, double value) {
+        this.where_field.add(key + " != " + value);
     }
-    public void notEqual(String key, String value){
-        this.where_field.add(key+" != '"+value+"'");
+
+    public void notEqual(String key, String value) {
+        this.where_field.add(key + " != '" + value + "'");
     }
-    
+
     //Double
     public void mayorOrEqual(String key, double value) {
-        this.where_field.add(key+" >= "+value);
+        this.where_field.add(key + " >= " + value);
     }
+
     public void minorOrEqual(String key, double value) {
-        this.where_field.add(key+" <= "+value);
+        this.where_field.add(key + " <= " + value);
     }
+
     public void mayor(String key, double value) {
-        this.where_field.add(key+" > "+value);
+        this.where_field.add(key + " > " + value);
     }
+
     public void minor(String key, double value) {
-        this.where_field.add(key+" < "+value);
+        this.where_field.add(key + " < " + value);
     }
+
     public void between(String key, double value1, double value2) {
-        this.where_field.add(key+" BETWEEN "+value1+" AND "+value2+"");
+        this.where_field.add(key + " BETWEEN " + value1 + " AND " + value2 + "");
     }
-    public void like(String key, double value){
-        this.where_field.add(key+" LIKE "+value);
+
+    public void like(String key, double value) {
+        this.where_field.add(key + " LIKE " + value);
     }
-    
-    
-    public void where(String key, String operator, String value){
-        Pattern functionPattern = Pattern.compile("[a-zA-Z]+[a-zA-Z_]*\\([^\\)]*\\)");
+
+    public void where(String key, String operator, String value) {
+        Pattern functionPattern = Pattern.compile("\\{\\{(.*)\\}\\}");
         if (functionPattern.matcher(value).matches()) {
-            this.where_field.add(key+" "+operator+" "+value+"");
+            this.where_field.add(key + " " + operator + " " + value + "");
         } else {
-            this.where_field.add(key+" "+operator+" '"+value+"'");
+            this.where_field.add(key + " " + operator + " '" + value + "'");
         }
     }
-    public void where(String key, String operator, int value){
-        this.where_field.add(key+" "+operator+" "+value);
+
+    public void where(String key, String operator, int value) {
+        this.where_field.add(key + " " + operator + " " + value);
     }
-    public void where(String key, String operator, double value){
-        this.where_field.add(key+" "+operator+" "+value);
+
+    public void where(String key, String operator, double value) {
+        this.where_field.add(key + " " + operator + " " + value);
     }
+  
     @Override
     protected void finalize() throws Throwable {
          try {
