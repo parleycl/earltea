@@ -35,4 +35,5 @@ public interface Response {
 	public void customResponse(JSONArray obj, int code);
 	public void customResponse(String text, int code);
 	public void created();
+	public void unauthorized();
 }

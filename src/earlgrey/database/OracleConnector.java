@@ -25,6 +25,7 @@ import earlgrey.annotations.DatabaseDriver;
 import earlgrey.core.ConnectionPool;
 import earlgrey.core.Logging;
 import earlgrey.core.ModelCore;
+import earlgrey.core.Properties;
 import earlgrey.core.ResourceMaping;
 import earlgrey.def.Database;
 import earlgrey.error.Error800;
@@ -48,9 +49,11 @@ public class OracleConnector implements Connector{
 	private boolean on_demand = false;
 	private boolean datasource_connection = false;
 	private String datasource;
+	private boolean DEV_MODE;
 	//DECLARAMOS LOS CONSTRUCTORES
 	public OracleConnector(){
 		this.log = new Logging(this.getClass().getName());
+		this.DEV_MODE = (Properties.getInstance().getConfigOption("DEVELOPER_MODE").equals("Si")) ? true : false;
 	}
 	
 	public void connect() {
@@ -113,6 +116,7 @@ public class OracleConnector implements Connector{
 	
 	public ResultSet query(String query){
 		try{
+			 if (this.DEV_MODE) this.log.Info(query);
 			 this.rset = stmt.executeQuery(query);
 			 return rset;
 		}
@@ -133,7 +137,8 @@ public class OracleConnector implements Connector{
 		}
 	}
 	public boolean update(String query){
-		try{
+		try {
+			 if (this.DEV_MODE) this.log.Info(query);
 			 stmt.executeUpdate(query);
 			 return true;
 		}
@@ -144,7 +149,8 @@ public class OracleConnector implements Connector{
 	}
 	//METODO PARA REALIZAR OPERACIONES DE DELETE
 		public boolean delete(String query){
-			try{
+			try {
+				 if (this.DEV_MODE) this.log.Info(query);
 				 stmt.executeUpdate(query);
 				 return true;
 			}
@@ -279,6 +285,7 @@ public class OracleConnector implements Connector{
 	// NUEVAS FUNCIONES
 	public OraclePreparedStatement prepare(String query, Field primarykey){
 		 try {
+			if (this.DEV_MODE) this.log.Info(query); 
 			this.query = query;
 			this.prepared_fields = 1;
 			if(primarykey != null){
@@ -288,6 +295,19 @@ public class OracleConnector implements Connector{
 			{
 				this.pstm  = (OraclePreparedStatement)this.con.prepareStatement(query);
 			}
+			return this.pstm;
+		} catch (SQLException e) {
+			System.out.println("IMPOSIBLE GENERAR STATMENT, ERROR DE CONSULTA: "+query+"\n\r"+e.getMessage());
+			return null;
+		}
+	}
+	// NUEVAS FUNCIONES
+	public OraclePreparedStatement prepareInsert(String query){
+		 try {
+			if (this.DEV_MODE) this.log.Info(query); 
+			this.query = query;
+			this.prepared_fields = 1;
+			this.pstm  = (OraclePreparedStatement)this.con.prepareStatement(query);
 			return this.pstm;
 		} catch (SQLException e) {
 			System.out.println("IMPOSIBLE GENERAR STATMENT, ERROR DE CONSULTA: "+query+"\n\r"+e.getMessage());
@@ -451,6 +471,7 @@ public class OracleConnector implements Connector{
 	public void startTransaction() {
 		// TODO Auto-generated method stub
 		try {
+			if (this.DEV_MODE) this.log.Info("Start transaction");
 			this.con.setAutoCommit(false);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -461,6 +482,7 @@ public class OracleConnector implements Connector{
 	public boolean finishTransaction() {
 		// TODO Auto-generated method stub
 		try {
+			if (this.DEV_MODE) this.log.Info("Finish transaction");
 			this.con.commit();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

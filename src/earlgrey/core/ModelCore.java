@@ -288,13 +288,15 @@ public class ModelCore {
 		this.conector.close();
 		return retorno;
 	}
-	public JSONArray getJSON(int init,int limit){
+	public JSONArray getJSON(Integer offset, Integer limit){
+		if (offset == null) offset = 0;
+		if (limit == null) limit = -1;
 		int limite = 0;
 		JSONArray retorno = new JSONArray();
 		try {
 			int k=0;
-			while(this.set.next() && (limite++ < (init+limit) || limit == -1)){
-				if(limite <= init) continue;
+			while(this.set.next() && (limite++ < (offset+limit) || (limit == -1 || limit == null))){
+				if(limite <= offset) continue;
 				Enumeration<String> keys = fields.keys();
 				JSONObject objeto = new JSONObject();
 				while(keys.hasMoreElements()){
@@ -498,8 +500,7 @@ public class ModelCore {
 			this.conector = conector_transaction.get(this.datasource);
             this.transaction = true;
 		}
-		else
-		{
+		else {
 			this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
 		}
 		if(conector != null){
@@ -588,7 +589,7 @@ public class ModelCore {
 			QueryBuilder q = new QueryBuilder(table,this);
 			q.insert(fields, this.relation);
 			q.setField(prepare_fields);
-			conector.prepare(q.getQuery(), this.primaryKey);
+			conector.prepareInsert(q.getQuery());
 			// PREPARAMOS LOS FIELDS
 			conector.complete(q.prepared(), q.prepared_list());
 			if(!conector.executeUpdate()){
@@ -606,6 +607,37 @@ public class ModelCore {
 		}
 		this.conector.close();
 		return false;
+	}
+	
+	public Integer insertGetId(){
+		this.prepareParams();
+		this.conector = DatasourceManager.getInstance().getConnection(this.datasource).getConector();
+		if(conector != null){
+			this.mapNNFields();
+			// BUSCAMOS EL NOMBRE DE LA TABLA
+			// EN ESTE SEGMENTO VA EL CODIGO DE LA CONSULTA
+			QueryBuilder q = new QueryBuilder(table,this);
+			q.insert(fields, this.relation);
+			q.setField(prepare_fields);
+			conector.prepareInsert(q.getQuery());
+			// PREPARAMOS LOS FIELDS
+			conector.complete(q.prepared(), q.prepared_list());
+			if(!conector.executeUpdate()){
+			    this.conector.close();
+				// HANDLEREAMOS EL INSERT
+				if(!conector_transaction.contains(this.datasource)){
+					conector.close();
+				}
+				return null;
+			}
+			Integer id = this.getLastId();
+			if(!conector_transaction.contains(this.datasource)){
+				conector.close();
+			}
+			return id;
+		}
+		this.conector.close();
+		return null;
 	}
 	public int getLastId(){
 		// SE ACABA EL CODIGO DE LA CONSULTA

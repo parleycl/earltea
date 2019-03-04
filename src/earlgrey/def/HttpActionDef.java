@@ -156,6 +156,8 @@ public class HttpActionDef implements Runnable, Process{
 			for(int i=0;i<stack.length;i++){
 				this.log.Critic(stack[i].toString(), Error500.METHOD_INVOCATION_ERROR);
 			}
+			this.log.Critic("========== Stack Trace ==========");
+			e.printStackTrace();
 		}
 	}
 	private void processCache(CacheElement element, HttpResponse response){

@@ -7,9 +7,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+import earlgrey.annotations.AddConfig;
+import earlgrey.annotations.AddConfigOption;
 import earlgrey.core.ConnectionPool;
 import earlgrey.core.ModelCore;
 
+@AddConfigOption(earlgrey_name = "Developer Mode", name = "DEVELOPER_MODE", option = { "Si", "No" })
 public interface Connector {
 	public boolean busy = false;
 	public boolean TestConector();
@@ -18,6 +21,7 @@ public interface Connector {
 	public boolean delete(String query);
 	public void close();
 	public PreparedStatement prepare(String query, Field primaryKey);
+	public PreparedStatement prepareInsert(String query);
 	public boolean commit();
 	public void complete(Hashtable<Field, Object> prepare_fields, ArrayList<Field> arrayList, Hashtable<Field, Object> prepare_match_fields, ArrayList<Field> prepare_match_List);
 	public ResultSet execute();

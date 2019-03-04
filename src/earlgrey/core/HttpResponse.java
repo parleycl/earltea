@@ -405,6 +405,19 @@ public class HttpResponse implements Response{
 		
 	}
 	@Override
+	public void unauthorized() {
+		this.response.setContentType("text/plain");
+		this.response.setStatus(401);
+		this.response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		try {
+			this.response.getWriter().println("");
+		} catch (IOException e) {
+			this.log.Critic("Earlgrey can't write the web buffer to send the response", Error500.HTTP_RENDER_ERROR);
+		}
+		this.httpActionDef.finalice();
+		
+	}
+	@Override
 	public void customResponse(String text, int code) {
 		// TODO Auto-generated method stub
 		this.response.setContentType("text/plain");
