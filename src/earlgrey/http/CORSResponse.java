@@ -35,7 +35,7 @@ public class CORSResponse {
 		res.setHeader("Connection", "Keep-alive");
 		res.setHeader("Keep-Alive", "timeout=2, max=100");
 		res.setHeader("Access-Control-Allow-Methods", methods);
-		res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+		res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 		res.setHeader("Access-Control-Max-Age", "86400");
 		res.setHeader("Access-Control-Allow-Credentials", "true");
 		
@@ -48,7 +48,7 @@ public class CORSResponse {
 		if(clientOrigin != null && !clientOrigin.isEmpty()){
 			response.setHeader("Access-Control-Allow-Origin", clientOrigin);
 	        response.setHeader("Access-Control-Allow-Methods", "*");
-	        response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+	        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 	        response.setHeader("Access-Control-Max-Age", "86400");
 	        response.setHeader("Access-Control-Allow-Credentials", "true");
 		}

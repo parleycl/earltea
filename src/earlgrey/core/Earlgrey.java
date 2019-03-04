@@ -77,7 +77,7 @@ public class Earlgrey{
     	this.log.Info("*    BACKEND SYSTEM                                                                    *");
     	this.log.Info("****************************************************************************************");
     	this.log.Info("");
-    	this.log.Info("Version : 0.4.1");
+    	this.log.Info("Version : 0.4.9");
     	this.log.Info("Design by : Angelo Alejandro Calvo Alfaro");
     	this.log.Info("Code by : Angelo Alejandro Calvo Alfaro, Sebastian Gonzalez Villena");
     	this.log.Info("");

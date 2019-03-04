@@ -24,6 +24,7 @@ import org.json.JSONException;
 import earlgrey.annotations.DatabaseDriver;
 import earlgrey.core.ConnectionPool;
 import earlgrey.core.Logging;
+import earlgrey.core.Properties;
 import earlgrey.core.ResourceMaping;
 import earlgrey.def.Database;
 import earlgrey.error.Error800;
@@ -46,9 +47,11 @@ public class Mysql implements Connector{
 	private int conected = 0;
 	public boolean on_demand = false;
 	boolean datasource_connection = false;
+	boolean DEV_MODE = false;
 	//DECLARAMOS LOS CONSTRUCTORES
 	public Mysql(){
 		this.log = new Logging(this.getClass().getName());
+		this.DEV_MODE = (Properties.getInstance().getConfigOption("DEVELOPER_MODE").equals("Si")) ? true : false;
 	}
 	
 	public void connect() {
@@ -97,6 +100,7 @@ public class Mysql implements Connector{
 	
 	public ResultSet query(String query){
 		try{
+			 if (this.DEV_MODE) this.log.Info(query);
 			 this.rset = stmt.executeQuery(query);
 			 return rset;
 		}
@@ -118,6 +122,7 @@ public class Mysql implements Connector{
 	}
 	public boolean update(String query){
 		try{
+			 if (this.DEV_MODE) this.log.Info(query);
 			 stmt.executeUpdate(query);
 			 return true;
 		}
@@ -126,9 +131,11 @@ public class Mysql implements Connector{
 			return false;
 		}
 	}
+	
 	//METODO PARA REALIZAR OPERACIONES DE DELETE
 		public boolean delete(String query){
 			try{
+				 if (this.DEV_MODE) this.log.Info(query);
 				 stmt.executeUpdate(query);
 				 return true;
 			}
@@ -253,6 +260,7 @@ public class Mysql implements Connector{
 	// NUEVAS FUNCIONES
 	public PreparedStatement prepare(String query, Field primarykey){
 		 try {
+			if (this.DEV_MODE) this.log.Info(query); 
 			this.query = query;
 			this.prepared_fields = 1;
 			if(primarykey != null){
@@ -268,6 +276,21 @@ public class Mysql implements Connector{
 			return null;
 		}
 	}
+	
+	// NUEVAS FUNCIONES
+	public PreparedStatement prepareInsert(String query){
+		 try {
+			if (this.DEV_MODE) this.log.Info(query); 
+			this.query = query;
+			this.prepared_fields = 1;
+			this.pstm  = this.con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+			return this.pstm;
+		} catch (SQLException e) {
+			System.out.println("IMPOSIBLE GENERAR STATMENT, ERROR DE CONSULTA: "+query+"\n\r"+e.getMessage());
+			return null;
+		}
+	}
+	
 	public ResultSet execute(){
 		try{
 			 this.rset = pstm.executeQuery();
@@ -425,6 +448,7 @@ public class Mysql implements Connector{
 	public void startTransaction() {
 		// TODO Auto-generated method stub
 		try {
+			if (this.DEV_MODE) this.log.Info("Start transaction");
 			this.con.setAutoCommit(false);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -435,6 +459,7 @@ public class Mysql implements Connector{
 	public boolean finishTransaction() {
 		// TODO Auto-generated method stub
 		try {
+			if (this.DEV_MODE) this.log.Info("Finish transaction");
 			this.con.commit();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -539,13 +564,18 @@ public class Mysql implements Connector{
 	}
 	
 	@Override
-	public int getLastInsertedId() throws SQLException {
-		ResultSet rs = this.pstm.getGeneratedKeys();
-		if (rs.next()){
-		    // The generated id
-		    return rs.getInt(1);
-		}
-		return -1;
+	public int getLastInsertedId() {
+		try {
+			ResultSet rs = this.pstm.getGeneratedKeys();
+			if (rs.next()){
+			    // The generated id
+			    return rs.getInt(1);
+			}
+			return -1;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return -1;
+		}	
 	}
 	
 	@Override
