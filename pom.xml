@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>earlgrey</groupId>
     <artifactId>earlgrey</artifactId>
-    <version>0.4.9</version>
+    <version>0.4.10</version>
     <name>earlgrey</name>
     <packaging>jar</packaging>
     <profiles>
