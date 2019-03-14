@@ -1,6 +1,9 @@
 package earlgrey.core;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,9 +32,55 @@ public class HttpResponse implements Response{
 		if(CORS) this.setCORS();
 	}
 	@Override
-	public void file() {
-		// TODO Auto-generated method stub
+	public void file(String content, String name, byte[] raw) {
+		try {
+			this.response.setContentType(content);
+			this.response.setHeader("Content-Disposition", "attachment; filename=\"" + name + "\"");
+			this.response.setStatus(HttpServletResponse.SC_OK);
+			OutputStream outStream = this.response.getOutputStream();
+			outStream.write(raw);
+			outStream.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void file(String content, String name, String raw) {
+		this.response.setContentType(content);
+		this.response.setHeader("Content-Disposition", "attachment; filename=\"" + name + "\"");
+		this.response.setStatus(HttpServletResponse.SC_OK);
 		
+		try {
+			this.response.getWriter().print(raw);
+		} catch (IOException e) {
+			e.printStackTrace();
+			this.response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		}
+	}
+	@Override
+	public void file(String content, String name, FileInputStream raw) {
+		try {
+			this.response.setContentType(content);
+			this.response.setHeader("Content-Disposition", "attachment; filename=\"" + name + "\"");
+			this.response.setStatus(HttpServletResponse.SC_OK);
+			
+			byte[] buffer = new byte[4096];
+	        int bytesRead = -1;
+	        
+	        OutputStream outStream = this.response.getOutputStream();
+		         
+	        while ((bytesRead = raw.read(buffer)) != -1) {
+	            outStream.write(buffer, 0, bytesRead);
+	        }
+	        
+	        raw.close();
+	        outStream.close(); 
+		} catch (IOException e) {
+			e.printStackTrace();
+			this.response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	@Override
