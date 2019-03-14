@@ -1,10 +1,16 @@
 package earlgrey.interfaces;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public interface Response {
-	public void file();
+	public void file(String content, String name, byte[] raw);
+	public void file(String content, String name, String raw);
+	public void file(String content, String name, FileInputStream raw);
 	public void xml(JSONObject obj);
 	public void xml(JSONArray obj);
 	public void json(JSONObject obj);
