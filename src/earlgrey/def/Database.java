@@ -8,6 +8,7 @@ public class Database {
 	public static final int POSTGRES = 4;
 	public static final int SQLITE = 5;
 	public static final int MONGO = 6;
+	public static final int MARIADB = 7;
 	
 	private static final String[] databases = {
 			"UNKNOW",
@@ -16,7 +17,8 @@ public class Database {
 			"MYSQL",
 			"POSTGRES",
 			"SQLITE",
-			"MONGO"	
+			"MONGO",
+			"MARIADB"
 	};
 	
 	public static String toString(int type){

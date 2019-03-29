@@ -53,12 +53,10 @@ public class Properties {
 		// EN CASO DE QUE NO EXISTA DEBE SER CREADO
 		log.Info("Loading config properties file");
 		try {
-			if(!this.config.exists()){
+			if (!this.config.exists()) {
 				this.config.createNewFile();
 				this.setDefault();
-			}
-			else
-			{
+			} else {
 				log.Info("Checking integrity of config file");
 				FileReader fr = new FileReader(this.config);
 				BufferedReader br = new BufferedReader(fr);
@@ -70,10 +68,10 @@ public class Properties {
 						// VERIFICAMOS MODIFICACIONES
 						this.checkPropertieFileAndFix();
 				    } catch (JSONException ex) {
+				    	ex.printStackTrace();
 				    	this.log.Critic("The config file is corrupted, checking your configuration", Error700.FILE_DAMAGE_ERROR);
 				    }
-				}
-				else{
+				} else {
 					this.log.Critic("The config file is empty, restoring backup", Error700.FILE_EMPTY_ERROR);
 					this.setDefault();
 				}
@@ -209,6 +207,7 @@ public class Properties {
 			}
 			else if(prop.get("type").equals("option")){
 				prop.put("value", prop.getInt("default"));
+				prop.put("defaultTo", 0);
 				config.put(propName, prop);
 			}
 			else if(prop.get("type").equals("array")){
@@ -768,7 +767,7 @@ public class Properties {
 	}
 	
 	public String getConfigOption(String propname){
-		if(this.config_target.has(propname)){
+		if (this.config_target.has(propname)) {
 			if(this.config_target.getJSONObject(propname).getString("type").equals("option")){
 				return this.config_target.getJSONObject(propname).getJSONArray("options").getString(this.config_target.getJSONObject(propname).getInt("value"));
 			}
