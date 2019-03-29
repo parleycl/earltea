@@ -20,6 +20,7 @@ import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import earlgrey.annotations.DatabaseDriver;
 import earlgrey.core.ConnectionPool;
@@ -30,6 +31,7 @@ import earlgrey.core.ResourceMaping;
 import earlgrey.def.Database;
 import earlgrey.error.Error800;
 import earlgrey.types.IType;
+import earlgrey.types.ObraType;
 import oracle.jdbc.OraclePreparedStatement;
 
 @DatabaseDriver(type="SQL", name="Oracle", id = Database.ORACLE)
@@ -561,8 +563,8 @@ public class OracleConnector implements Connector{
 			}
 			else if(IType.class.isAssignableFrom(campo.getType())){
 				try {
-					Method inv = campo.getType().getMethod("SQLPrepareField", OraclePreparedStatement.class, Integer.class);
-					inv.invoke(null, this.pstm, this.prepared_fields++);
+					Method inv = campo.getType().getMethod("SQLPrepareField", OraclePreparedStatement.class, Integer.class, ObraType.class, Connection.class);
+					inv.invoke(null, this.pstm, this.prepared_fields++, prepare_fields.get(campo), this.con);
 				} catch (NoSuchMethodException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
