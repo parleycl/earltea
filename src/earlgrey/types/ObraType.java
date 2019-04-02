@@ -122,8 +122,6 @@ public class ObraType implements IType{
 		return new ObraType(data);
 	}
 	public static void SQLPrepareField(OraclePreparedStatement pstm, Integer number, ObraType data, Connection con){
-		Logging log = new Logging(ObraType.class.getName());
-		log.Info(data.gml);
 		//Desmenusamos el json y hacemos lo que queremos.
 		JSONArray lista = new JSONArray(data.gml);
 		if(lista.length() == 1) {
