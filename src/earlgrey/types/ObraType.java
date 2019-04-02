@@ -1,17 +1,23 @@
 package earlgrey.types;
 
 import java.sql.Clob;
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Struct;
+import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONML;
 import org.json.JSONObject;
 
+import earlgrey.core.Logging;
 import oracle.jdbc.OraclePreparedStatement;
+import oracle.spatial.geometry.JGeometry;
 
 public class ObraType implements IType{
 	String gml;
 	JSONObject coord = null;
+	
 	public ObraType(String GML){
 		super();
 		this.gml = GML;
@@ -115,7 +121,84 @@ public class ObraType implements IType{
 		}
 		return new ObraType(data);
 	}
-	public static void SQLPrepareField(OraclePreparedStatement pstm, int number){
-		
+	public static void SQLPrepareField(OraclePreparedStatement pstm, Integer number, ObraType data, Connection con){
+		//Desmenusamos el json y hacemos lo que queremos.
+		JSONArray lista = new JSONArray(data.gml);
+		if(lista.length() == 1) {
+			JSONObject feature = lista.getJSONObject(0);
+			JSONObject inside = feature.getJSONObject("SPATIAL_OBJECT");
+			if(inside.getString("type").equals("Point")) {
+				try {
+					int[] elemInfo = {1,1,1};
+					JSONArray coordenadas = inside.getJSONArray("coordinates");
+					double[] ordinates = new double[coordenadas.length()];
+					for(int i=0; i<coordenadas.length(); i++) {
+						ordinates[i] = coordenadas.getDouble(i);
+					}
+					JGeometry geometry = new JGeometry(JGeometry.GTYPE_POINT, 4326, elemInfo, ordinates);
+					Struct struc = JGeometry.store(geometry, con);
+					pstm.setObject(number, struc);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else {
+				try {
+					int[] elemInfo = {1,2,1};
+					JSONArray coordenadas = inside.getJSONArray("coordinates");
+					double[] ordinates = new double[coordenadas.length()];
+					for(int i=0; i<coordenadas.length(); i++) {
+						ordinates[i] = coordenadas.getDouble(i);
+					}
+					JGeometry geometry = new JGeometry(JGeometry.GTYPE_CURVE, 4326, elemInfo, ordinates);
+					Struct struc = JGeometry.store(geometry, con);
+					pstm.setObject(number, struc);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}else {
+			ArrayList<Integer> info = new ArrayList<>();
+			ArrayList<Double> coords = new ArrayList<>();
+			int ultimaPosicion = 1;
+			for(int i=0; i< lista.length(); i++) {
+				JSONObject feature = lista.getJSONObject(i);
+				JSONObject inside = feature.getJSONObject("SPATIAL_OBJECT");
+				if(inside.getString("type").equals("Point")) {
+					info.add(ultimaPosicion);
+					info.add(1);
+					info.add(1);
+					ultimaPosicion += 2;
+				}else {
+					info.add(ultimaPosicion);
+					info.add(2);
+					info.add(1);
+					JSONArray coordenadas = inside.getJSONArray("coordinates");
+					ultimaPosicion += coordenadas.length();
+				}
+				//genero multigeometria o coleccion
+				JSONArray coordenadas = inside.getJSONArray("coordinates");
+				for(int j=0; j<coordenadas.length(); j++) {
+						coords.add(coordenadas.getDouble(j));
+				}
+			}
+			int[] elemInfo = new int[info.size()];
+			for(int i=0; i<info.size(); i++) {
+				elemInfo[i] = info.get(i);
+			}
+			double[] ordinates = new double[coords.size()];
+			for(int j=0; j<coords.size(); j++) {
+				ordinates[j] = coords.get(j);
+			}
+			try {
+				JGeometry geometry = new JGeometry(JGeometry.GTYPE_COLLECTION, 4326, elemInfo, ordinates);
+				Struct struc = JGeometry.store(geometry, con);
+				pstm.setObject(number, struc);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 }
