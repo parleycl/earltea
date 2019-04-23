@@ -84,6 +84,10 @@ export class LogsComponent implements OnInit, AfterViewChecked {
     	);
   	}
   	private break_spaces(value:string){
-  		return value.replace(/\s/g, "&nbsp;");
+			if (value) {
+				return value.replace(/\s/g, "&nbsp;");
+			} else {
+				return value;
+			}
   	}
 }
