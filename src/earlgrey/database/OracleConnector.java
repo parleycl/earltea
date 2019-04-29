@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -376,6 +377,14 @@ public class OracleConnector implements Connector{
 					e.printStackTrace();
 				}
 			}
+			else if(campo.getType().equals(Timestamp.class)){
+				try {
+					this.pstm.setTimestamp(this.prepared_fields++, (Timestamp)prepare_fields.get(campo));
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} 
 			else if(campo.getType().equals(String.class)){
 				try {
 					this.pstm.setString(this.prepared_fields++, (String)prepare_fields.get(campo));
@@ -435,6 +444,14 @@ public class OracleConnector implements Connector{
 					e.printStackTrace();
 				}
 			}
+			else if(campo.getType().equals(Timestamp.class)){
+				try {
+					this.pstm.setTimestamp(this.prepared_fields++, (Timestamp)prepare_fields.get(campo));
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} 
 			else if(campo.getType().equals(String.class)){
 				try {
 					this.pstm.setString(this.prepared_fields++, "%"+(String)prepare_match_fields.get(campo)+"%");
@@ -553,6 +570,14 @@ public class OracleConnector implements Connector{
 					e.printStackTrace();
 				}
 			}
+			else if(campo.getType().equals(Timestamp.class)){
+				try {
+					this.pstm.setTimestamp(this.prepared_fields++, (Timestamp)prepare_fields.get(campo));
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} 
 			else if(campo.getType().equals(String.class)){
 				try {
 					this.pstm.setString(this.prepared_fields++, (String)prepare_fields.get(campo));
