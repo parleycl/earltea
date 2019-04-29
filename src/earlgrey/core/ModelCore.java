@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -213,6 +214,9 @@ public class ModelCore {
 					else if(campo.getType().equals(String.class)){
 						campo.set(m, set.getString(llave));
 					}
+					else if(campo.getType().equals(Timestamp.class)){
+						campo.set(m, set.getString(llave));
+					}
 					else if(IType.class.isAssignableFrom(campo.getType())){
 						try {
 							Method inv = campo.getType().getMethod("GetSQLResult", Object.class);
@@ -246,6 +250,9 @@ public class ModelCore {
 						campo.set(m, set.getDouble(llave));
 					}
 					else if(campo.getType().equals(String.class)){
+						campo.set(m, set.getString(llave));
+					}
+					else if(campo.getType().equals(Timestamp.class)){
 						campo.set(m, set.getString(llave));
 					}
 					else if(IType.class.isAssignableFrom(campo.getType())){
@@ -314,6 +321,9 @@ public class ModelCore {
 					else if(campo.getType().equals(String.class)){
 						objeto.put(llave, set.getString(llave));
 					}
+					else if(campo.getType().equals(Timestamp.class)){
+						objeto.put(llave, set.getString(llave));
+					}
 					else if(IType.class.isAssignableFrom(campo.getType())){
 						try {
 							Method inv = campo.getType().getMethod("GetSQLResult", Object.class);
@@ -353,6 +363,9 @@ public class ModelCore {
 						objeto.put(llave, set.getDouble(llave));
 					}
 					else if(campo.getType().equals(String.class)){
+						objeto.put(llave, set.getString(llave));
+					}
+					else if(campo.getType().equals(Timestamp.class)){
 						objeto.put(llave, set.getString(llave));
 					}
 					else if(IType.class.isAssignableFrom(campo.getType())){
@@ -436,6 +449,9 @@ public class ModelCore {
 						campo.set(this, query.getDouble(llave));
 					}
 					else if(campo.getType().equals(String.class)){
+						campo.set(this, query.getString(llave));
+					}
+					else if(campo.getType().equals(Timestamp.class)){
 						campo.set(this, query.getString(llave));
 					}
 				}
@@ -570,7 +586,10 @@ public class ModelCore {
 					campo.set(mc, params.getDouble(key));
 				} else if(campo.getType().equals(String.class)){
 					campo.set(mc, params.getString(key));
-				} else {
+				} else if(campo.getType().equals(Timestamp.class)){
+					campo.set(mc, params.getString(key));
+				} 
+				else {
 					continue;
 				}
 				parametros.put(campo.getName(), new Criteria(mc, campo));
