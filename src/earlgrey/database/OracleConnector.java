@@ -1,19 +1,16 @@
 package earlgrey.database;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Hashtable;
 
 import javax.naming.Context;
@@ -21,12 +18,10 @@ import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import earlgrey.annotations.DatabaseDriver;
 import earlgrey.core.ConnectionPool;
 import earlgrey.core.Logging;
-import earlgrey.core.ModelCore;
 import earlgrey.core.Properties;
 import earlgrey.core.ResourceMaping;
 import earlgrey.def.Database;
@@ -34,6 +29,7 @@ import earlgrey.error.Error800;
 import earlgrey.types.IType;
 import earlgrey.types.ObraType;
 import oracle.jdbc.OraclePreparedStatement;
+import oracle.sql.DATE;
 
 @DatabaseDriver(type="SQL", name="Oracle", id = Database.ORACLE)
 public class OracleConnector implements Connector{
@@ -385,6 +381,14 @@ public class OracleConnector implements Connector{
 					e.printStackTrace();
 				}
 			} 
+			else if(campo.getType().equals(DATE.class)){
+				try {
+					this.pstm.setDATE(this.prepared_fields++, (DATE)prepare_fields.get(campo));
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} 
 			else if(campo.getType().equals(String.class)){
 				try {
 					this.pstm.setString(this.prepared_fields++, (String)prepare_fields.get(campo));
@@ -451,7 +455,15 @@ public class OracleConnector implements Connector{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			} 
+			}
+			else if(campo.getType().equals(DATE.class)){
+				try {
+					this.pstm.setDATE(this.prepared_fields++, (DATE)prepare_fields.get(campo));
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			else if(campo.getType().equals(String.class)){
 				try {
 					this.pstm.setString(this.prepared_fields++, "%"+(String)prepare_match_fields.get(campo)+"%");
@@ -573,6 +585,14 @@ public class OracleConnector implements Connector{
 			else if(campo.getType().equals(Timestamp.class)){
 				try {
 					this.pstm.setTimestamp(this.prepared_fields++, (Timestamp)prepare_fields.get(campo));
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			else if(campo.getType().equals(DATE.class)){
+				try {
+					this.pstm.setDATE(this.prepared_fields++, (DATE)prepare_fields.get(campo));
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

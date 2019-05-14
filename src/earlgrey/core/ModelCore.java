@@ -31,6 +31,7 @@ import earlgrey.error.Error500;
 import earlgrey.error.Error70;
 import earlgrey.error.Error800;
 import earlgrey.types.IType;
+import oracle.sql.DATE;
 
 public class ModelCore {
 	protected ResultSet set;
@@ -217,6 +218,9 @@ public class ModelCore {
 					else if(campo.getType().equals(Timestamp.class)){
 						campo.set(m, set.getString(llave));
 					}
+					else if(campo.getType().equals(DATE.class)){
+						campo.set(m, set.getDate(llave));
+					}
 					else if(IType.class.isAssignableFrom(campo.getType())){
 						try {
 							Method inv = campo.getType().getMethod("GetSQLResult", Object.class);
@@ -254,6 +258,9 @@ public class ModelCore {
 					}
 					else if(campo.getType().equals(Timestamp.class)){
 						campo.set(m, set.getString(llave));
+					}
+					else if(campo.getType().equals(DATE.class)){
+						campo.set(m, set.getDate(llave));
 					}
 					else if(IType.class.isAssignableFrom(campo.getType())){
 						try {
@@ -324,6 +331,9 @@ public class ModelCore {
 					else if(campo.getType().equals(Timestamp.class)){
 						objeto.put(llave, set.getString(llave));
 					}
+					else if(campo.getType().equals(DATE.class)){
+						objeto.put(llave, set.getDate(llave));
+					}
 					else if(IType.class.isAssignableFrom(campo.getType())){
 						try {
 							Method inv = campo.getType().getMethod("GetSQLResult", Object.class);
@@ -367,6 +377,9 @@ public class ModelCore {
 					}
 					else if(campo.getType().equals(Timestamp.class)){
 						objeto.put(llave, set.getString(llave));
+					}
+					else if(campo.getType().equals(DATE.class)){
+						objeto.put(llave, set.getDate(llave));
 					}
 					else if(IType.class.isAssignableFrom(campo.getType())){
 						try {
@@ -452,6 +465,9 @@ public class ModelCore {
 						campo.set(this, query.getString(llave));
 					}
 					else if(campo.getType().equals(Timestamp.class)){
+						campo.set(this, query.getString(llave));
+					}
+					else if(campo.getType().equals(DATE.class)){
 						campo.set(this, query.getString(llave));
 					}
 				}
@@ -588,7 +604,9 @@ public class ModelCore {
 					campo.set(mc, params.getString(key));
 				} else if(campo.getType().equals(Timestamp.class)){
 					campo.set(mc, params.getString(key));
-				} 
+				} else if(campo.getType().equals(DATE.class)){
+					campo.set(mc, params.getString(key));
+				}
 				else {
 					continue;
 				}
