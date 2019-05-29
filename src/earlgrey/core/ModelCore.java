@@ -436,7 +436,6 @@ public class ModelCore {
 		}
 	}
 	public boolean update(int id){
-		log.Info("pase por aqui");
 		if(conector_transaction.contains(this.datasource)){
 			this.conector = conector_transaction.get(this.datasource);
             this.transaction = true;
