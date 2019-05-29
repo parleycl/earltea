@@ -214,7 +214,7 @@ public class ModelCore {
 					} else if (campo.getType().equals(Timestamp.class)){
 						campo.set(m, set.getString(llave));
 					} else if (campo.getType().equals(DATE.class)){
-						campo.set(m, set.getDate(llave));
+						campo.set(m, set.getString(llave));
 					} else if (IType.class.isAssignableFrom(campo.getType())){
 						try {
 							Method inv = campo.getType().getMethod("GetSQLResult", Object.class);
@@ -238,7 +238,7 @@ public class ModelCore {
 					} else if (campo.getType().equals(Timestamp.class)){
 						campo.set(m, set.getString(llave));
 					} else if (campo.getType().equals(DATE.class)){
-						campo.set(m, set.getDate(llave));
+						campo.set(m, set.getString(llave));
 					} else if (IType.class.isAssignableFrom(campo.getType())){
 						try {
 							Method inv = campo.getType().getMethod("GetSQLResult", Object.class);
@@ -287,7 +287,7 @@ public class ModelCore {
 					} else if (campo.getType().equals(Timestamp.class)){
 						objeto.put(llave, set.getString(llave));
 					} else if (campo.getType().equals(DATE.class)){
-						objeto.put(llave, set.getDate(llave));
+						objeto.put(llave, set.getString(llave));
 					} else if (IType.class.isAssignableFrom(campo.getType())){
 						try {
 							Method inv = campo.getType().getMethod("GetSQLResult", Object.class);
@@ -311,7 +311,7 @@ public class ModelCore {
 					} else if (campo.getType().equals(Timestamp.class)){
 						objeto.put(llave, set.getString(llave));
 					} else if (campo.getType().equals(DATE.class)){
-						objeto.put(llave, set.getDate(llave));
+						objeto.put(llave, set.getString(llave));
 					} else if (IType.class.isAssignableFrom(campo.getType())){
 						try {
 							Method inv = campo.getType().getMethod("GetSQLResult", Object.class);
@@ -436,6 +436,7 @@ public class ModelCore {
 		}
 	}
 	public boolean update(int id){
+		log.Info("pase por aqui");
 		if(conector_transaction.contains(this.datasource)){
 			this.conector = conector_transaction.get(this.datasource);
             this.transaction = true;
