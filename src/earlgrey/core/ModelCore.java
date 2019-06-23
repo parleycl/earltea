@@ -31,6 +31,7 @@ import earlgrey.error.Error500;
 import earlgrey.error.Error70;
 import earlgrey.error.Error800;
 import earlgrey.types.IType;
+import oracle.sql.DATE;
 
 public class ModelCore {
 	protected ResultSet set;
@@ -204,36 +205,22 @@ public class ModelCore {
 					Field campo = fields.get(llave).field;
 					if(campo.getType().equals(int.class) || campo.getType().equals(Integer.class)){
 						campo.set(m, set.getInt(llave));
-					}
-					else if(campo.getType().equals(float.class) || campo.getType().equals(Float.class)){
+					} else if (campo.getType().equals(float.class) || campo.getType().equals(Float.class)){
 						campo.set(m, set.getFloat(llave));
-					}
-					else if(campo.getType().equals(double.class) || campo.getType().equals(Double.class)){
+					} else if (campo.getType().equals(double.class) || campo.getType().equals(Double.class)){
 						campo.set(m, set.getDouble(llave));
-					}
-					else if(campo.getType().equals(String.class)){
+					} else if (campo.getType().equals(String.class)){
 						campo.set(m, set.getString(llave));
-					}
-					else if(campo.getType().equals(Timestamp.class)){
+					} else if (campo.getType().equals(Timestamp.class)){
 						campo.set(m, set.getString(llave));
-					}
-					else if(IType.class.isAssignableFrom(campo.getType())){
+					} else if (campo.getType().equals(DATE.class)){
+						campo.set(m, set.getString(llave));
+					} else if (IType.class.isAssignableFrom(campo.getType())){
 						try {
 							Method inv = campo.getType().getMethod("GetSQLResult", Object.class);
 							campo.set(m, inv.invoke(null, set.getObject(llave)));
-						} catch (NoSuchMethodException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (SecurityException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (IllegalArgumentException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (InvocationTargetException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						} catch (NoSuchMethodException | IllegalArgumentException | InvocationTargetException e) {
+							log.Info(e.toString());}
 					}
 				}
 				Enumeration<String> r_keys = relation.keys();
@@ -242,41 +229,22 @@ public class ModelCore {
 					Field campo = relation.get(llave).field;
 					if(campo.getType().equals(int.class) || campo.getType().equals(Integer.class)){
 						campo.set(m, set.getInt(llave));
-					}
-					else if(campo.getType().equals(float.class) || campo.getType().equals(Float.class)){
+					} else if (campo.getType().equals(float.class) || campo.getType().equals(Float.class)){
 						campo.set(m, set.getFloat(llave));
-					}
-					else if(campo.getType().equals(double.class) || campo.getType().equals(Double.class)){
+					} else if (campo.getType().equals(double.class) || campo.getType().equals(Double.class)){
 						campo.set(m, set.getDouble(llave));
-					}
-					else if(campo.getType().equals(String.class)){
+					} else if (campo.getType().equals(String.class)){
 						campo.set(m, set.getString(llave));
-					}
-					else if(campo.getType().equals(Timestamp.class)){
+					} else if (campo.getType().equals(Timestamp.class)){
 						campo.set(m, set.getString(llave));
-					}
-					else if(IType.class.isAssignableFrom(campo.getType())){
+					} else if (campo.getType().equals(DATE.class)){
+						campo.set(m, set.getString(llave));
+					} else if (IType.class.isAssignableFrom(campo.getType())){
 						try {
 							Method inv = campo.getType().getMethod("GetSQLResult", Object.class);
 							campo.set(m, inv.invoke(null, set.getObject(llave)));
-						} catch (NoSuchMethodException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (SecurityException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (IllegalArgumentException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (InvocationTargetException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (IllegalAccessException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+						} catch (NoSuchMethodException | IllegalArgumentException | InvocationTargetException e) {
+							log.Info(e.toString());
 						}
 					}
 				}
@@ -301,7 +269,6 @@ public class ModelCore {
 		int limite = 0;
 		JSONArray retorno = new JSONArray();
 		try {
-			int k=0;
 			while(this.set.next() && (limite++ < (offset+limit) || (limit == -1 || limit == null))){
 				if(limite <= offset) continue;
 				Enumeration<String> keys = fields.keys();
@@ -311,42 +278,22 @@ public class ModelCore {
 					Field campo = fields.get(llave).field;
 					if(campo.getType().equals(int.class) || campo.getType().equals(Integer.class)){
 						objeto.put(llave, set.getInt(llave));
-					}
-					else if(campo.getType().equals(float.class) || campo.getType().equals(Float.class)){
+					} else if (campo.getType().equals(float.class) || campo.getType().equals(Float.class)){
 						objeto.put(llave, set.getFloat(llave));
-					}
-					else if(campo.getType().equals(double.class) || campo.getType().equals(Double.class)){
+					} else if (campo.getType().equals(double.class) || campo.getType().equals(Double.class)){
 						objeto.put(llave, set.getDouble(llave));
-					}
-					else if(campo.getType().equals(String.class)){
+					} else if (campo.getType().equals(String.class)){
 						objeto.put(llave, set.getString(llave));
-					}
-					else if(campo.getType().equals(Timestamp.class)){
+					} else if (campo.getType().equals(Timestamp.class)){
 						objeto.put(llave, set.getString(llave));
-					}
-					else if(IType.class.isAssignableFrom(campo.getType())){
+					} else if (campo.getType().equals(DATE.class)){
+						objeto.put(llave, set.getString(llave));
+					} else if (IType.class.isAssignableFrom(campo.getType())){
 						try {
 							Method inv = campo.getType().getMethod("GetSQLResult", Object.class);
 							objeto.put(llave, inv.invoke(null, set.getObject(llave)));
-						} catch (NoSuchMethodException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (SecurityException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (IllegalArgumentException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (InvocationTargetException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (IllegalAccessException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						} catch (NoSuchMethodException | JSONException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+							log.Info(e.toString());}
 					}
 				}
 				Enumeration<String> r_keys = relation.keys();
@@ -355,42 +302,22 @@ public class ModelCore {
 					Field campo = relation.get(llave).field;
 					if(campo.getType().equals(int.class) || campo.getType().equals(Integer.class)){
 						objeto.put(llave, set.getInt(llave));
-					}
-					else if(campo.getType().equals(float.class) || campo.getType().equals(Float.class)){
+					} else if (campo.getType().equals(float.class) || campo.getType().equals(Float.class)){
 						objeto.put(llave, set.getFloat(llave));
-					}
-					else if(campo.getType().equals(double.class) || campo.getType().equals(Double.class)){
+					} else if (campo.getType().equals(double.class) || campo.getType().equals(Double.class)){
 						objeto.put(llave, set.getDouble(llave));
-					}
-					else if(campo.getType().equals(String.class)){
+					} else if (campo.getType().equals(String.class)){
 						objeto.put(llave, set.getString(llave));
-					}
-					else if(campo.getType().equals(Timestamp.class)){
+					} else if (campo.getType().equals(Timestamp.class)){
 						objeto.put(llave, set.getString(llave));
-					}
-					else if(IType.class.isAssignableFrom(campo.getType())){
+					} else if (campo.getType().equals(DATE.class)){
+						objeto.put(llave, set.getString(llave));
+					} else if (IType.class.isAssignableFrom(campo.getType())){
 						try {
 							Method inv = campo.getType().getMethod("GetSQLResult", Object.class);
 							objeto.put(llave, inv.invoke(null, set.getObject(llave)));
-						} catch (NoSuchMethodException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (SecurityException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (IllegalArgumentException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (InvocationTargetException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (IllegalAccessException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						} catch (NoSuchMethodException | JSONException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+							log.Info(e.toString());}
 					}
 				}
 				retorno.put(objeto);
@@ -441,23 +368,20 @@ public class ModelCore {
 					Field campo = this.getClass().getField(llave);
 					if(campo.getType().equals(int.class) || campo.getType().equals(Integer.class)){
 						campo.set(this, query.getInt(llave));
-					}
-					else if(campo.getType().equals(float.class) || campo.getType().equals(Float.class)){
+					} else if (campo.getType().equals(float.class) || campo.getType().equals(Float.class)){
 						campo.set(this, query.getDouble(llave));
-					}
-					else if(campo.getType().equals(double.class) || campo.getType().equals(Double.class)){
+					} else if (campo.getType().equals(double.class) || campo.getType().equals(Double.class)){
 						campo.set(this, query.getDouble(llave));
-					}
-					else if(campo.getType().equals(String.class)){
+					} else if (campo.getType().equals(String.class)){
 						campo.set(this, query.getString(llave));
-					}
-					else if(campo.getType().equals(Timestamp.class)){
+					} else if (campo.getType().equals(Timestamp.class)){
+						campo.set(this, query.getString(llave));
+					} else if (campo.getType().equals(DATE.class)){
 						campo.set(this, query.getString(llave));
 					}
 				}
 			} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException | JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.Info(e.toString());;
 			}
 		}
 	}
@@ -588,7 +512,9 @@ public class ModelCore {
 					campo.set(mc, params.getString(key));
 				} else if(campo.getType().equals(Timestamp.class)){
 					campo.set(mc, params.getString(key));
-				} 
+				} else if(campo.getType().equals(DATE.class)){
+					campo.set(mc, params.getString(key));
+				}
 				else {
 					continue;
 				}

@@ -1,19 +1,16 @@
 package earlgrey.database;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Hashtable;
 
 import javax.naming.Context;
@@ -21,12 +18,10 @@ import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import earlgrey.annotations.DatabaseDriver;
 import earlgrey.core.ConnectionPool;
 import earlgrey.core.Logging;
-import earlgrey.core.ModelCore;
 import earlgrey.core.Properties;
 import earlgrey.core.ResourceMaping;
 import earlgrey.def.Database;
@@ -34,6 +29,7 @@ import earlgrey.error.Error800;
 import earlgrey.types.IType;
 import earlgrey.types.ObraType;
 import oracle.jdbc.OraclePreparedStatement;
+import oracle.sql.DATE;
 
 @DatabaseDriver(type="SQL", name="Oracle", id = Database.ORACLE)
 public class OracleConnector implements Connector{
@@ -357,64 +353,50 @@ public class OracleConnector implements Connector{
 				try {
 					this.pstm.setInt(this.prepared_fields++, (Integer)prepare_fields.get(campo));
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.Info(e.toString());
 				}
 			}
 			else if(campo.getType().equals(float.class) || campo.getType().equals(Float.class)){
 				try {
 					this.pstm.setFloat(this.prepared_fields++, (Float)prepare_fields.get(campo));
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.Info(e.toString());
 				}
 			}
 			else if(campo.getType().equals(double.class) || campo.getType().equals(Double.class)){
 				try {
 					this.pstm.setDouble(this.prepared_fields++, (Double)prepare_fields.get(campo));
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.Info(e.toString());
 				}
 			}
 			else if(campo.getType().equals(Timestamp.class)){
 				try {
 					this.pstm.setTimestamp(this.prepared_fields++, (Timestamp)prepare_fields.get(campo));
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.Info(e.toString());
+				}
+			} 
+			else if(campo.getType().equals(DATE.class)){
+				try {
+					this.pstm.setDATE(this.prepared_fields++, (DATE)prepare_fields.get(campo));
+				} catch (SQLException e) {
+					log.Info(e.toString());
 				}
 			} 
 			else if(campo.getType().equals(String.class)){
 				try {
 					this.pstm.setString(this.prepared_fields++, (String)prepare_fields.get(campo));
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.Info(e.toString());
 				}
 			}
 			else if(IType.class.isAssignableFrom(campo.getType())){
 				try {
 					Method inv = campo.getType().getMethod("SQLPrepareField", OraclePreparedStatement.class, Integer.class);
 					inv.invoke(null, this.pstm, this.prepared_fields++);
-				} catch (NoSuchMethodException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SecurityException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				} catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					log.Info(e.toString());
 				}
 			}
 		}
@@ -424,65 +406,50 @@ public class OracleConnector implements Connector{
 				try {
 					this.pstm.setInt(this.prepared_fields++, (Integer)prepare_match_fields.get(campo));
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.Info(e.toString());
 				}
 			}
 			else if(campo.getType().equals(float.class) || campo.getType().equals(Float.class)){
 				try {
 					this.pstm.setFloat(this.prepared_fields++, (Float)prepare_match_fields.get(campo));
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.Info(e.toString());
 				}
 			}
 			else if(campo.getType().equals(double.class) || campo.getType().equals(Double.class)){
 				try {
 					this.pstm.setDouble(this.prepared_fields++, (Double)prepare_match_fields.get(campo));
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.Info(e.toString());
 				}
 			}
 			else if(campo.getType().equals(Timestamp.class)){
 				try {
 					this.pstm.setTimestamp(this.prepared_fields++, (Timestamp)prepare_fields.get(campo));
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.Info(e.toString());
 				}
-			} 
+			}
+			else if(campo.getType().equals(DATE.class)){
+				try {
+					this.pstm.setDATE(this.prepared_fields++, (DATE)prepare_fields.get(campo));
+				} catch (SQLException e) {
+					log.Info(e.toString());
+				}
+			}
 			else if(campo.getType().equals(String.class)){
 				try {
 					this.pstm.setString(this.prepared_fields++, "%"+(String)prepare_match_fields.get(campo)+"%");
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.Info(e.toString());
 				}
 			}
 			else if(IType.class.isAssignableFrom(campo.getType())){
 				try {
 					Method inv = campo.getType().getMethod("SQLPrepareField", OraclePreparedStatement.class, Integer.class);
 					inv.invoke(null, this.pstm, this.prepared_fields++);
-				} catch (NoSuchMethodException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SecurityException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				} catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					log.Info(e.toString());}
 			}
 		}
 	}
@@ -550,65 +517,50 @@ public class OracleConnector implements Connector{
 				try {
 					this.pstm.setInt(this.prepared_fields++, (Integer)prepare_fields.get(campo));
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.Info(e.toString());
 				}
 			}
 			else if(campo.getType().equals(float.class) || campo.getType().equals(Float.class)){
 				try {
 					this.pstm.setFloat(this.prepared_fields++, (Float)prepare_fields.get(campo));
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.Info(e.toString());
 				}
 			}
 			else if(campo.getType().equals(double.class) || campo.getType().equals(Double.class)){
 				try {
 					this.pstm.setDouble(this.prepared_fields++, (Double)prepare_fields.get(campo));
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.Info(e.toString());
 				}
 			}
 			else if(campo.getType().equals(Timestamp.class)){
 				try {
 					this.pstm.setTimestamp(this.prepared_fields++, (Timestamp)prepare_fields.get(campo));
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.Info(e.toString());
+				}
+			}
+			else if(campo.getType().equals(DATE.class)){
+				try {
+					this.pstm.setDATE(this.prepared_fields++, (DATE)prepare_fields.get(campo));
+				} catch (SQLException e) {
+					log.Info(e.toString());
 				}
 			} 
 			else if(campo.getType().equals(String.class)){
 				try {
 					this.pstm.setString(this.prepared_fields++, (String)prepare_fields.get(campo));
 				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.Info(e.toString());
 				}
 			}
 			else if(IType.class.isAssignableFrom(campo.getType())){
 				try {
 					Method inv = campo.getType().getMethod("SQLPrepareField", OraclePreparedStatement.class, Integer.class, ObraType.class, Connection.class);
 					inv.invoke(null, this.pstm, this.prepared_fields++, prepare_fields.get(campo), this.con);
-				} catch (NoSuchMethodException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SecurityException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalArgumentException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				} catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					log.Info(e.toString());}
 			}
 		}
 	}
