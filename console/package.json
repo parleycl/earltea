@@ -153,7 +153,7 @@
     "@ng-bootstrap/ng-bootstrap": "^1.0.0-alpha.29",
     "core-js": "^2.4.1",
     "intl": "^1.2.5",
-    "marked": "^0.3.9",
+    "marked": "^4.0.10",
     "ngx-file-drop": "^3.0.0",
     "rxjs": "^5.4.2",
     "systemjs": "0.20.14",
