@@ -77,7 +77,7 @@
     "cssnano": "^3.7.7",
     "deep-extend": "^0.5.0",
     "event-stream": "^3.3.4",
-    "express": "~4.15.2",
+    "express": "~4.17.3",
     "express-history-api-fallback": "^2.0.0",
     "gulp": "^3.9.1",
     "gulp-cached": "^1.1.0",
